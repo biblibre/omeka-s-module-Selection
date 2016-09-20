@@ -113,9 +113,32 @@ class IndexController extends AbstractActionController
     }
 
     public function showAction() {
+        if (!($user = $this->getAuthenticationService()->getIdentity())) {
+            return $this->redirect()->toUrl($this->currentSite()->url());
+        }
+
         $baskets = $this->getEntityManager()
                         ->getRepository('Basket\Entity\Basket')
-                        ->findBy(['user' => $user]);
+                        ->findBy(['user' => $user ]);
+        $items = [];
+        $medias = [];
+
+        foreach ($baskets as $basket) {
+            if ($item = $basket->getItem())
+                $items[]=$item;
+            if ($media = $basket->getMedia())
+                $medias[]=$media;
+
+
+        }
+        $view = new ViewModel;
+        $site = $this->currentSite();
+        $view->setVariable('site', $site);
+        $view->setVariable('items', $items);
+        $view->setVariable('medias', $medias);
+        $view->setVariable('resourceName', 'media');
+        $view->setVariable('title', 'Panier');
+        return $view;
 
     }
 

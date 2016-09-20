@@ -138,9 +138,23 @@ class BasketControllerTest extends OmekaControllerTestCase {
         $this->assertEmpty($em->getRepository('Basket\Entity\Basket')->findOneBy(['user' => $this->user]));
     }
 
+    /** @test */
     public function displayBasketShoudDisplayItems() {
         $this->additemToBasketShouldStoreBasketForUSer();
         $this->dispatch('/s/test/basket/show');
+        echo $this->getResponse()->getBody();
+        $this->assertXPathQueryContentContains('//h4' ,'First Item');
+
     }
+    /** @test */
+    public function displayBasketShoudDisplayMedia() {
+        $this->dispatch('/s/test/basket/addmedia/'.$this->item->getContent()->jsonSerialize()['o:media'][0]->id());
+        $this->dispatch('/s/test/basket/show');
+        echo $this->getResponse()->getBody();
+        $this->assertXPathQueryContentContains('//div' ,'media1');
+
+    }
+
+
 }
 ?>
