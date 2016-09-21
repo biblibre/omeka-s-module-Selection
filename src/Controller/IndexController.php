@@ -30,14 +30,27 @@
 namespace Basket\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
+use Zend\View\Model\JsonModel;
 use Omeka\Mvc\Exception\RuntimeException;
 use Omeka\Service\Paginator;
 use Basket\Entity\Basket;
-
-class IndexController extends AbstractActionController
+use Zend\Mvc\Controller\AbstractRestfulController;
+use Zend\View\Strategy\JsonStrategy;
+use Omeka\View\Model\ApiJsonModel;
+class IndexController extends AbstractRestfulController
 {
     protected $authenticationService;
+    /**
+     * Fetch all contexts and render a JSON-LD context object.
+     */
+    public function contextAction()
+    {
+        $eventManager = $this->getEventManager();
+        $args = $eventManager->prepareArgs(['context' => []]);
+        $eventManager->trigger(new Event(Event::API_CONTEXT, null, $args));
+        return new ApiJsonModel($args['context'], $this->getViewOptions());
+    }
+
 
 
     public function additemAction() {
@@ -52,6 +65,14 @@ class IndexController extends AbstractActionController
         if ($this->basketExistsFor($user,$item))
             return;
         $this->createBasket($user,$item);
+        $result = new ApiJsonModel(array(
+                                      'div' => 'true',
+                                      'success'=>true,
+                                      ));
+        return $result;
+
+
+        return $this->redirect()->toUrl($this->currentSite()->url());
     }
 
     protected function createBasket($user,$item,$media = null) {
@@ -72,9 +93,10 @@ class IndexController extends AbstractActionController
 
         if (!$media = $this->getEntityManager()->getRepository('Omeka\Entity\Media')->find($id_media))
             return;
-        if ($this->basketExistsFor($user,$media))
+        if ($this->basketExistsForMedia($user,$media))
             return;
         $this->createBasket($user,null,$media);
+
     }
 
 
@@ -82,6 +104,14 @@ class IndexController extends AbstractActionController
         return $this->getEntityManager()
                     ->getRepository('Basket\Entity\Basket')
                     ->findOneBy(['item' => $item,
+                                 'user' => $user]);
+    }
+
+
+    protected function basketExistsForMedia($user,$media) {
+        return $this->getEntityManager()
+                    ->getRepository('Basket\Entity\Basket')
+                    ->findOneBy(['media' => $media,
                                  'user' => $user]);
     }
 
@@ -98,6 +128,12 @@ class IndexController extends AbstractActionController
             return;
         $this->getEntityManager()->remove($basket);
         $this->getEntityManager()->flush();
+        $result = new JsonModel(array(
+                                      'div' => 'true',
+                                      'success'=>true,
+                                      ));
+        return $result;
+
     }
 
     public function deleteAction() {
@@ -109,6 +145,11 @@ class IndexController extends AbstractActionController
             return;
         $this->getEntityManager()->remove($basket);
         $this->getEntityManager()->flush();
+        $result = new JsonModel(array(
+                                      'data' => 'true',
+                                      'success'=>true,
+                                      ));
+        return $result;
 
     }
 

@@ -18,8 +18,8 @@ return  [
 
 
     'view_helpers' => [
-        'invokables' => [
-
+        'factories' => [
+                         'addToBasketLink' => 'Basket\Service\Helper\AddToBasketLinkFactory'
         ],
     ],
     'service_manager' => [

@@ -34,7 +34,8 @@
         <?php foreach ($items as $result): ?>
             <?php $resource = $this->api()->read('items', $result->getId())->getContent(); ?>
             <?php echo $this->partial('resource', ['resource' => $resource,
-                                                          'tag' => 'div']); ?>
+                                                   'site' => $site,
+                                                   'tag' => 'div']); ?>
         <?php endforeach; ?>
     </div>
 <?php endif; ?>
@@ -45,8 +46,10 @@
     <div class="resource-list">
         <?php foreach ($medias as $result): ?>
             <?php $resource = $this->api()->read('media', $result->getId())->getContent(); ?>
+
             <?php echo  $resource->render()?>
           <?php echo $resource->displayValues(); ?>
+          <?php echo $this->addToBasketLink($resource); ?>
         <?php endforeach; ?>
     </div>
 <?php endif; ?>
