@@ -18,8 +18,12 @@ return  [
 
 
     'view_helpers' => [
+        'invokables' => [
+                         'showBasketLink' => 'Basket\View\Helper\ShowBasketLink'
+        ],
         'factories' => [
-                         'addToBasketLink' => 'Basket\Service\Helper\AddToBasketLinkFactory'
+                        'addToBasketLink' => 'Basket\Service\Helper\AddToBasketLinkFactory',
+                         'divBasketLink' => 'Basket\Service\Helper\DivBasketLinkFactory'
         ],
     ],
     'service_manager' => [
@@ -34,7 +38,7 @@ return  [
                     'basket' => [
                         'type' => 'segment',
                         'options' => [
-                            'route' => '/basket/:action[/:id]',
+                            'route' => '/basket/:action[/:id][/:div_id]',
                             'defaults' => [
                                 '__NAMESPACE__' => 'Basket\Controller',
                                 'controller' => 'Index',

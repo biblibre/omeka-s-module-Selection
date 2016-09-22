@@ -8,7 +8,7 @@ use Zend\Mvc\Controller\AbstractController;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Mvc\MvcEvent;
 
-
+use Omeka\Event\Event;
 /**
  * Basket
  *
@@ -56,6 +56,15 @@ class Module extends AbstractModule
         $sql = 'DROP TABLE IF EXISTS `basket`';
         $connection->exec($sql);
 
+    }
+
+    public function appendJs(Event $event) {
+        $view = $event->getTarget();
+        $view->headScript()->appendFile($view->assetUrl('js/basket.js','Basket'));
+    }
+
+    public function attachListeners(SharedEventManagerInterface $sharedEventManager) {
+        $sharedEventManager->attach('*', 'view.layout', [$this, 'appendJs']);
     }
 
 

@@ -28,7 +28,8 @@
  */
 
 namespace Basket\Controller;
-
+use Omeka\Api\Response;
+use Zend\View\Model\ViewModel;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
 use Omeka\Mvc\Exception\RuntimeException;
@@ -37,23 +38,13 @@ use Basket\Entity\Basket;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\View\Strategy\JsonStrategy;
 use Omeka\View\Model\ApiJsonModel;
-class IndexController extends AbstractRestfulController
+class IndexController extends AbstractActionController
 {
     protected $authenticationService;
-    /**
-     * Fetch all contexts and render a JSON-LD context object.
-     */
-    public function contextAction()
-    {
-        $eventManager = $this->getEventManager();
-        $args = $eventManager->prepareArgs(['context' => []]);
-        $eventManager->trigger(new Event(Event::API_CONTEXT, null, $args));
-        return new ApiJsonModel($args['context'], $this->getViewOptions());
-    }
-
 
 
     public function additemAction() {
+        $response = new Response;
         if (!$id_item = $this->params('id'))
             return ;
         if (!($user = $this->getAuthenticationService()->getIdentity())) {
@@ -64,16 +55,21 @@ class IndexController extends AbstractRestfulController
             return;
         if ($this->basketExistsFor($user,$item))
             return;
-        $this->createBasket($user,$item);
-        $result = new ApiJsonModel(array(
-                                      'div' => 'true',
-                                      'success'=>true,
-                                      ));
-        return $result;
+        $basket = $this->createBasket($user,$item);
 
+        $response->setStatus(Response::SUCCESS);
+        $basketHelper=$this->viewHelpers()->get('addToBasketLink');
+        $item_representation = $this->api()->read('items',$item->getId())->getContent();
+        $content = $basketHelper($item_representation,$this->params('div_id',0),$this->currentSite());
+        $response->setContent(['content' => $content ]);
+        return new ApiJsonModel($response, []);
 
-        return $this->redirect()->toUrl($this->currentSite()->url());
     }
+    protected function getBasketLink($representation) {
+        $basketHelper=$this->viewHelpers()->get('addToBasketLink');
+        return $basketHelper($representation,$this->params('div_id',0),$this->currentSite());
+    }
+
 
     protected function createBasket($user,$item,$media = null) {
         $basket = new Basket;
@@ -81,8 +77,16 @@ class IndexController extends AbstractRestfulController
         $basket->setItem($item);
         $basket->setMedia($media);
         $this->save($basket);
-
+        return $basket;
     }
+
+    protected function getSuccessResponse($content) {
+        $response = new Response;
+        $response->setStatus(Response::SUCCESS);
+        $response->setContent(['content' => $content ]);
+        return $response;
+    }
+
 
     public function addmediaAction() {
         if (!$id_media = $this->params('id'))
@@ -93,9 +97,14 @@ class IndexController extends AbstractRestfulController
 
         if (!$media = $this->getEntityManager()->getRepository('Omeka\Entity\Media')->find($id_media))
             return;
+
         if ($this->basketExistsForMedia($user,$media))
             return;
+        $media_representation = $this->api()->read('media',$media->getId())->getContent();
+
         $this->createBasket($user,null,$media);
+        return new ApiJsonModel($this->getSuccessResponse($this->getBasketLink($media_representation)),
+                                []);
 
     }
 
@@ -118,6 +127,7 @@ class IndexController extends AbstractRestfulController
     public function removeitemAction() {
         if (!$id_item = $this->params('id'))
             return ;
+
         if (!($user = $this->getAuthenticationService()->getIdentity())) {
             return $this->redirect()->toUrl($this->currentSite()->url());
         }
@@ -128,6 +138,7 @@ class IndexController extends AbstractRestfulController
             return;
         $this->getEntityManager()->remove($basket);
         $this->getEntityManager()->flush();
+
         $result = new JsonModel(array(
                                       'div' => 'true',
                                       'success'=>true,
@@ -136,20 +147,37 @@ class IndexController extends AbstractRestfulController
 
     }
 
+    protected function jsonError() {
+        $response = new Response;
+        $response->setStatus(Response::ERROR);
+        return new  ApiJsonModel($response);
+    }
+
     public function deleteAction() {
+        $response = new Response;
+
         if (!$id_basket = $this->params('id'))
-            return;
+            return $this->jsonError();
+
         if (!$basket = $this->getEntityManager()
             ->getRepository('Basket\Entity\Basket')
             ->find($id_basket))
-            return;
+            return $this->jsonError();
+
+        if ($basket->getItem())
+            $item_representation = $this->api()->read('items',$basket->getItem()->getId())->getContent();
+        if ($basket->getMedia())
+            $item_representation = $this->api()->read('media',$basket->getMedia()->getId())->getContent();
+
         $this->getEntityManager()->remove($basket);
         $this->getEntityManager()->flush();
-        $result = new JsonModel(array(
-                                      'data' => 'true',
-                                      'success'=>true,
-                                      ));
-        return $result;
+        $response = new Response;
+        $response->setStatus(Response::SUCCESS);
+        $basketHelper=$this->viewHelpers()->get('addToBasketLink');
+        $content = $basketHelper($item_representation,$this->params('div_id',0),$this->currentSite());
+        $response->setContent(['content' => $content ]);
+
+        return new ApiJsonModel($this->getSuccessResponse($content),[]);
 
     }
 

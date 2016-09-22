@@ -10,13 +10,14 @@ class AddItemToBasketLink extends AbstractHelper
     protected $entityManager,
         $authenticationService;
 
-    public function __invoke($item)
+    public function __invoke($item,$id_div=0,$site=null)
     {
         $view = $this->getView();
         $action = 'add';
         if (!($user = $this->authenticationService->getIdentity()))
             return '';
-
+        if (!$site)
+            $site= $view->site;
         $class = "add_basket";
         $is_item = $item instanceof ItemRepresentation;
 
@@ -35,11 +36,12 @@ class AddItemToBasketLink extends AbstractHelper
         }
 
 
-        return '<button id="update_basket'.$id.'" onclick="updateBasket(\''
-            .$view->url(null,['controller' => 'basket',
-                              'action' => $action,
-                              'site-slug' => $view->site->slug(),
-                              ]).'/'.$id.'\','.$id.')" alt="'.$text.'"><div class="'.$class.'"><span>'.$text.'</span></div></a>';
+        return '<button  class="update_basket" onclick="updateBasket(\''
+            .$view->url('site/basket',
+                        [
+                         'action' => $action,
+                         'site-slug' => $site->slug(),
+                        ]).'/'.$id.'/'.$id_div.'\','.$id_div.')" title="'.$text.'"><div class="'.$class.'"><span>'.$text.'</span></div></a>';
 
 
 
