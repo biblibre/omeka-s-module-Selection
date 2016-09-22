@@ -10,6 +10,8 @@ use Omeka\Entity\User;
 
 class BasketControllerTest extends OmekaControllerTestCase {
     protected $user,$item;
+
+
     public function setUp() {
         parent::setUp();
         $this->loginAsAdmin();
@@ -25,6 +27,8 @@ class BasketControllerTest extends OmekaControllerTestCase {
     }
 
     protected function createUrlItem($title) {
+        if ($this->item)
+            return $this->item;
         $api = $this->getApplicationServiceLocator()->get('Omeka\ApiManager');
         $media_url = 'http://farm8.staticflickr.com/7495/28077970085_4d976b3c96_z_d.jpg';
 
@@ -62,6 +66,10 @@ class BasketControllerTest extends OmekaControllerTestCase {
 
     protected function createSite($slug, $title)
     {
+        $em = $this->getEntityManager();
+
+        if (!empty($em->getRepository('Omeka\Entity\Site')->findOneBy(['slug'=> $slug])))
+            return true;
         $response = $this->api()->create('sites', [
             'o:slug' => $slug,
             'o:theme' => 'default',
@@ -77,7 +85,8 @@ class BasketControllerTest extends OmekaControllerTestCase {
 
     protected function createUser($login,$password) {
         $em = $this->getEntityManager();
-
+        if (!empty($em->getRepository('Omeka\Entity\User')->findOneBy(['email'=> $login])))
+            return true;
         $response = $this->api()->create('users', [
             'o:email' => $login,
             'o:name' => $login,
