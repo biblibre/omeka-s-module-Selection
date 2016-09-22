@@ -10,7 +10,7 @@ class AddItemToBasketLink extends AbstractHelper
     protected $entityManager,
         $authenticationService;
 
-    public function __invoke($item,$id_div=0,$site=null)
+    public function __invoke($item,$site=null)
     {
         $view = $this->getView();
         $action = 'add';
@@ -41,7 +41,7 @@ class AddItemToBasketLink extends AbstractHelper
                         [
                          'action' => $action,
                          'site-slug' => $site->slug(),
-                        ]).'/'.$id.'/'.$id_div.'\','.$id_div.')" title="'.$text.'"><div class="'.$class.'"><span>'.$text.'</span></div></a>';
+                        ]).'/'.$id.'\','.$item->id().')" title="'.$text.'"><div class="'.$class.'"><span>'.$text.'</span></div></a>';
 
 
 

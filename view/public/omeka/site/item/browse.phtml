@@ -15,7 +15,7 @@
     <?php else: ?>
         <?php echo $this->pageTitle($this->translate('Items'), 2); ?>
     <?php endif; ?>
-<?php $count=0;?>
+
     <?php echo $this->searchFilters(); ?>
     <?php echo $this->hyperlink($this->translate('Advanced search'), $this->url(null, ['action' => 'search'], true), ['class' => 'advanced-search']); ?>
     <?php echo $this->pagination(); ?>
@@ -30,8 +30,8 @@
             >
             <?php endif; ?>
             <h4><?php echo $item->link($item->displayTitle()); ?></h4>
-            <?php $count++; ?>
-            <?php echo $this->divBasketLink($item,$count); ?>
+
+            <?php echo $this->divBasketLink($item); ?>
 
             <?php if ($description = $item->displayDescription()): ?>
             <div class="description"><?php echo $description; ?></div>

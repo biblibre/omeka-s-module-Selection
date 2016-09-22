@@ -27,16 +27,14 @@
  */
 ?>
 
-<?php $count=0; ?>
+
 <?php if (!empty($items)): ?>
     <h3><?php echo $title; ?></h3>
     <div class="resource-list">
         <?php foreach ($items as $result): ?>
             <?php $resource = $this->api()->read('items', $result->getId())->getContent(); ?>
-            <?php $count++ ?>
             <?php echo $this->partial('resource', ['resource' => $resource,
                                                    'site' => $site,
-                                                   'count'=> $count,
                                                    'tag' => 'div']); ?>
         <?php endforeach; ?>
     </div>
@@ -52,7 +50,7 @@
 
             <?php echo  $resource->render()?>
           <?php echo $resource->displayValues(); ?>
-          <?php $count++;echo $this->divBasketLink($resource,$count); ?>
+          <?php echo $this->divBasketLink($resource); ?>
         <?php endforeach; ?>
     </div>
 <?php endif; ?>

@@ -60,14 +60,14 @@ class IndexController extends AbstractActionController
         $response->setStatus(Response::SUCCESS);
         $basketHelper=$this->viewHelpers()->get('addToBasketLink');
         $item_representation = $this->api()->read('items',$item->getId())->getContent();
-        $content = $basketHelper($item_representation,$this->params('div_id',0),$this->currentSite());
+        $content = $basketHelper($item_representation,$this->currentSite());
         $response->setContent(['content' => $content ]);
         return new ApiJsonModel($response, []);
 
     }
     protected function getBasketLink($representation) {
         $basketHelper=$this->viewHelpers()->get('addToBasketLink');
-        return $basketHelper($representation,$this->params('div_id',0),$this->currentSite());
+        return $basketHelper($representation,$this->currentSite());
     }
 
 
@@ -174,7 +174,7 @@ class IndexController extends AbstractActionController
         $response = new Response;
         $response->setStatus(Response::SUCCESS);
         $basketHelper=$this->viewHelpers()->get('addToBasketLink');
-        $content = $basketHelper($item_representation,$this->params('div_id',0),$this->currentSite());
+        $content = $basketHelper($item_representation,$this->currentSite());
         $response->setContent(['content' => $content ]);
 
         return new ApiJsonModel($this->getSuccessResponse($content),[]);
