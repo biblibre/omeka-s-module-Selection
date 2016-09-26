@@ -41,7 +41,7 @@ class Module extends AbstractModule
                 `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                 `user_id` int(11) DEFAULT NULL,
                 `item_id` int(11) DEFAULT NULL,
-`media_id` int(11) DEFAULT NULL,
+                `media_id` int(11) DEFAULT NULL,
  `created` datetime NOT NULL,
                 PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
