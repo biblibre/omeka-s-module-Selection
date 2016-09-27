@@ -26,16 +26,6 @@ return  [
     ],
     'router' => [
         'routes' => [
-            'basket' => [
-                'type' => 'segment',
-                'options' => [
-                    'route' => '/basket/:action[/:id]',
-                    'defaults' => [
-                        '__NAMESPACE__' => 'Basket\Controller',
-                        'controller' => 'Index',
-                    ],
-                ],
-            ],
             'site' => [
                 'child_routes' => [
                     'basket' => [
@@ -46,6 +36,16 @@ return  [
                                 '__NAMESPACE__' => 'Basket\Controller',
                                 'controller' => 'Index',
                                 'action' => 'show',
+                            ],
+                        ],
+                    ],
+                    'basket-update' => [
+                        'type' => 'segment',
+                        'options' => [
+                            'route' => '/basket/:action[/:id]',
+                            'defaults' => [
+                                '__NAMESPACE__' => 'Basket\Controller',
+                                'controller' => 'Index',
                             ],
                         ],
                     ],

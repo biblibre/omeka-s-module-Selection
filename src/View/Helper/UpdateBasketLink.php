@@ -29,9 +29,12 @@ class UpdateBasketLink extends AbstractHelper
             $action = 'delete';
         }
 
+        $view->headScript()->appendFile($view->assetUrl('js/basket.js', 'Basket'));
+
         return $view->partial('basket/basket-button', [
             'action' => $action,
             'resource' => $resource,
+            'url' => $view->url('site/basket-update', ['action' => $action, 'id' => $resource->id()], true),
         ]);
     }
 

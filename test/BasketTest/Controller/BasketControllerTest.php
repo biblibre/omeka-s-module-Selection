@@ -37,7 +37,7 @@ class BasketControllerTest extends OmekaControllerTestCase
     /** @test */
     public function additemToBasketShouldStoreBasketForUser()
     {
-        $this->dispatch('/basket/add/' . $this->item->id());
+        $this->dispatch('/s/test/basket/add/' . $this->item->id());
 
         $basketItems = $this->api()->search('basket_items', [
             'user_id' => $this->user->id(),
@@ -51,7 +51,7 @@ class BasketControllerTest extends OmekaControllerTestCase
     public function addmediaToBasketShouldStoreBasketForUSer()
     {
         $media = $this->item->primaryMedia();
-        $this->dispatch('/basket/add/' . $media->id());
+        $this->dispatch('/s/test/basket/add/' . $media->id());
 
         $basketItems = $this->api()->search('basket_items', [
             'user_id' => $this->user->id(),
@@ -65,7 +65,7 @@ class BasketControllerTest extends OmekaControllerTestCase
     public function addExistingItemShouldNotUpdateBasket()
     {
         $this->addToBasket($this->item);
-        $this->dispatch('/basket/add/' . $this->item->id());
+        $this->dispatch('/s/test/basket/add/' . $this->item->id());
 
         $basketItems = $this->api()->search('basket_items', [
             'user_id' => $this->user->id(),
@@ -78,7 +78,7 @@ class BasketControllerTest extends OmekaControllerTestCase
     public function removeItemToBasketShouldRemoveBasketForUser()
     {
         $this->addToBasket($this->item);
-        $this->dispatch('/basket/delete/' . $this->item->id());
+        $this->dispatch('/s/test/basket/delete/' . $this->item->id());
         $this->assertResponseStatusCode(200);
 
         $basketItems = $this->api()->search('basket_items', [
