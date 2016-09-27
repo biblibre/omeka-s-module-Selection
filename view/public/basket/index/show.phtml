@@ -27,29 +27,37 @@
  */
 ?>
 
+<div id="content" role="main">
+    <h2><?php echo $this->translate('Basket'); ?></h2>
 
-<?php if (!empty($items)): ?>
-    <h3><?php echo count($items).' '. $this->translate('documents'); ?></h3>
-    <div class="resource-list">
-        <?php foreach ($items as $result): ?>
-            <?php $resource = $this->api()->read('items', $result->getId())->getContent(); ?>
-            <?php echo $this->partial('resource', ['resource' => $resource,
-                                                   'site' => $site,
-                                                   'tag' => 'div']); ?>
-        <?php endforeach; ?>
-    </div>
-<?php endif; ?>
+    <?php
+        foreach ($basketItems as $basketItem) {
+            $resource = $basketItem->resource();
+            $resources[$resource->resourceName()][] = $resource;
+        }
+
+        $items = isset($resources['items']) ? $resources['items'] : [];
+        $media = isset($resources['media']) ? $resources['media'] : [];
+    ?>
 
 
-<?php if (!empty($medias)): ?>
-    <h3><?php echo count($medias).' '. $this->translate('fichiers'); ?></h3>
-    <div class="resource-list">
-        <?php foreach ($medias as $result): ?>
-            <?php $resource = $this->api()->read('media', $result->getId())->getContent(); ?>
+    <?php if (!empty($items)): ?>
+        <h3><?php echo count($items) . ' ' . $this->translate('items'); ?></h3>
+        <div class="resource-list">
+            <?php foreach ($items as $item): ?>
+                <?php echo $this->partial('resource', ['resource' => $item]); ?>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
 
-            <?php echo  $resource->render()?>
-          <?php echo $resource->displayValues(); ?>
-          <?php echo $this->divBasketLink($resource); ?>
-        <?php endforeach; ?>
-    </div>
-<?php endif; ?>
+    <?php if (!empty($media)): ?>
+        <h3><?php echo count($media) . ' ' . $this->translate('files'); ?></h3>
+        <div class="resource-list">
+            <?php foreach ($media as $medium): ?>
+                <?php echo $medium->render(); ?>
+                <?php echo $medium->displayValues(); ?>
+                <?php echo $this->updateBasketLink($medium); ?>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+</div>

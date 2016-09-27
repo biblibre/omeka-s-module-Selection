@@ -1,11 +1,13 @@
-function updateBasket(link,id) {
-  idname = '#update_basket'+id;
-  $.ajax({
-    'url' : link,
-    'type': 'get',
-    'success': function(data) {
-      $(idname).html(data['content']);
-    }
-  });
-}
+(function() {
+    $(document).ready(function() {
+        $('body').on('click', '.basket-update', function(e) {
+            e.preventDefault();
 
+            var button = $(this);
+            var url = button.attr('data-url');
+            $.ajax(url).done(function(data) {
+                button.replaceWith(data.content);
+            });
+        });
+    });
+})();

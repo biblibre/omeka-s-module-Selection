@@ -1,49 +1,52 @@
 <?php
-return  [
-    'form_elements' => [
-        'factories' => [
 
-        ],
-    ],
+return  [
     'controllers' => [
         'factories' => [
             'Basket\Controller\Index' => 'Basket\Service\Controller\BasketIndexControllerFactory',
-        ]
+        ],
     ],
    'entity_manager' => [
         'mapping_classes_paths' => [
             __DIR__ . '/../src/Entity',
         ],
     ],
-
-
-    'view_helpers' => [
+    'api_adapters' => [
         'invokables' => [
-                         'showBasketLink' => 'Basket\View\Helper\ShowBasketLink'
-        ],
-        'factories' => [
-                        'addToBasketLink' => 'Basket\Service\Helper\AddToBasketLinkFactory',
-                         'divBasketLink' => 'Basket\Service\Helper\DivBasketLinkFactory'
+            'basket_items' => 'Basket\Api\Adapter\BasketItemAdapter',
         ],
     ],
-    'service_manager' => [
+    'view_helpers' => [
+        'invokables' => [
+            'showBasketLink' => 'Basket\View\Helper\ShowBasketLink',
+        ],
         'factories' => [
-
+            'updateBasketLink' => 'Basket\Service\ViewHelper\UpdateBasketLinkFactory',
         ],
     ],
     'router' => [
         'routes' => [
+            'basket' => [
+                'type' => 'segment',
+                'options' => [
+                    'route' => '/basket/:action[/:id]',
+                    'defaults' => [
+                        '__NAMESPACE__' => 'Basket\Controller',
+                        'controller' => 'Index',
+                    ],
+                ],
+            ],
             'site' => [
                 'child_routes' => [
                     'basket' => [
                         'type' => 'segment',
                         'options' => [
-                            'route' => '/basket/:action[/:id][/:div_id]',
+                            'route' => '/basket',
                             'defaults' => [
                                 '__NAMESPACE__' => 'Basket\Controller',
                                 'controller' => 'Index',
+                                'action' => 'show',
                             ],
-
                         ],
                     ],
                 ],
@@ -53,18 +56,9 @@ return  [
     'view_manager' => [
         'template_path_stack' => [
             __DIR__ . '/../view/public/',
-
-        ]
-    ],
-
-    'translator' => [
-        'translation_file_patterns' => [
-            [
-                'type' => 'gettext',
-                'base_dir' => __DIR__ . '/../language',
-                'pattern' => '%s.mo',
-                'text_domain' => null,
-            ],
+        ],
+        'strategies' => [
+            'ViewJsonStrategy',
         ],
     ],
 ];

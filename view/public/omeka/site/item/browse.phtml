@@ -31,7 +31,8 @@
             <?php endif; ?>
             <h4><?php echo $item->link($item->displayTitle()); ?></h4>
 
-            <?php echo $this->divBasketLink($item); ?>
+            <span><?php echo $this->updateBasketLink($item); ?></span>
+            <span><?php echo $this->showBasketLink(); ?></span>
 
             <?php if ($description = $item->displayDescription()): ?>
             <div class="description"><?php echo $description; ?></div>

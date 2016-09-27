@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright BibLibre, 2016
  *
@@ -25,23 +26,74 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-?>
 
-<?php $escape = $this->plugin('escapeHtml'); ?>
+namespace Basket\Entity;
 
-<div class="<?php echo $resource->resourceName(); ?> resource">
-    <?php if (method_exists($resource, 'primaryMedia') && $primaryMedia = $resource->primaryMedia()): ?>
-        <img
-            src="<?php echo $escape($primaryMedia->thumbnailUrl('medium')); ?>"
-            title="<?php echo $escape($primaryMedia->displayTitle()); ?>"
-            alt="<?php echo $escape($primaryMedia->mediaType()); ?> thumbnail"
-        />
-    <?php endif; ?>
-    <h4><?php echo $resource->link($resource->displayTitle()); ?></h4>
-<?php echo $this->updateBasketLink($resource); ?>
-    <?php if ($description = $resource->displayDescription()): ?>
-        <div class="description">
-            <?php echo $description; ?>
-        </div>
-    <?php endif; ?>
-</div>
+use DateTime;
+use Doctrine\ORM\Event\LifecycleEventArgs;
+use Omeka\Entity\AbstractEntity;
+use Omeka\Entity\User as User;
+
+/**
+ * @Entity
+ * @HasLifecycleCallbacks
+ */
+class BasketItem extends AbstractEntity
+{
+    /**
+     * @Id
+     * @Column(type="integer")
+     * @GeneratedValue
+     */
+    protected $id;
+
+    /**
+     * @ManyToOne(targetEntity="\Omeka\Entity\User")
+     * @JoinColumn(nullable=false, onDelete="CASCADE")
+     */
+    protected $user;
+
+    /**
+     * @ManyToOne(targetEntity="\Omeka\Entity\Resource")
+     * @JoinColumn(nullable=false, onDelete="CASCADE")
+     */
+    protected $resource;
+
+    /**
+     * @Column(type="datetime")
+     */
+    protected $created;
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function setUser($user)
+    {
+        $this->user = $user;
+    }
+
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    public function setResource($resource)
+    {
+        $this->resource = $resource;
+    }
+
+    public function getResource()
+    {
+        return $this->resource;
+    }
+
+    /**
+     * @PrePersist
+     */
+    public function prePersist(LifecycleEventArgs $eventArgs)
+    {
+        $this->created = new DateTime('now');
+    }
+}

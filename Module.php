@@ -1,71 +1,98 @@
 <?php
+
 namespace Basket;
 
 use Omeka\Module\AbstractModule;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\View\Renderer\PhpRenderer;
-use Zend\Mvc\Controller\AbstractController;
-use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Mvc\MvcEvent;
 
-use Omeka\Event\Event;
 /**
- * Basket
+ * Basket.
  *
  * Allow basket
  *
  * @copyright Biblibre, 2016
  * @license http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.txt
  */
-
 class Module extends AbstractModule
 {
     public function getConfig()
     {
         return include __DIR__ . '/config/module.config.php';
     }
+
     public function onBootstrap(MvcEvent $event)
     {
         parent::onBootstrap($event);
+
         $acl = $this->getServiceLocator()->get('Omeka\Acl');
-        $acl->allow(null, 'Basket\Controller\Index');
-
-
+        foreach ($acl->getRoles() as $role) {
+            $acl->allow($role, 'Basket\Controller\Index');
+        }
     }
 
     public function install(ServiceLocatorInterface $serviceLocator)
     {
         $connection = $serviceLocator->get('Omeka\Connection');
         $sql = '
-            CREATE TABLE IF NOT EXISTS `basket` (
-                `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-                `user_id` int(11) DEFAULT NULL,
-                `item_id` int(11) DEFAULT NULL,
-                `media_id` int(11) DEFAULT NULL,
- `created` datetime NOT NULL,
-                PRIMARY KEY (`id`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+            CREATE TABLE basket_item (
+                id INT AUTO_INCREMENT NOT NULL,
+                user_id INT NOT NULL,
+                resource_id INT NOT NULL,
+                created DATETIME NOT NULL,
+                PRIMARY KEY(id),
+                INDEX IDX_D4943C2BA76ED395 (user_id),
+                INDEX IDX_D4943C2B89329D25 (resource_id),
+                CONSTRAINT FK_D4943C2BA76ED395
+                  FOREIGN KEY (user_id) REFERENCES user (id)
+                  ON DELETE CASCADE,
+                CONSTRAINT FK_D4943C2B89329D25
+                  FOREIGN KEY (resource_id) REFERENCES resource (id)
+                  ON DELETE CASCADE
+            ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB;
         ';
         $connection->exec($sql);
+    }
 
+    public function upgrade($oldVersion, $newVersion, ServiceLocatorInterface $serviceLocator)
+    {
+        $connection = $serviceLocator->get('Omeka\Connection');
+
+        if (version_compare($oldVersion, '0.2.0', '<')) {
+            $connection->exec('
+                RENAME TABLE basket TO basket_item
+            ');
+            $connection->exec('
+                ALTER TABLE basket_item
+                ADD COLUMN resource_id INT NULL AFTER media_id
+            ');
+            $connection->exec('
+                UPDATE basket_item
+                SET resource_id = COALESCE(item_id, media_id)
+            ');
+            $connection->exec('
+                ALTER TABLE basket_item
+                MODIFY COLUMN resource_id INT NOT NULL
+            ');
+            $connection->exec('
+                ALTER TABLE basket_item
+                DROP COLUMN item_id,
+                DROP COLUMN media_id
+            ');
+            $connection->exec('
+                ALTER TABLE basket_item
+                MODIFY COLUMN user_id INT NOT NULL
+                ADD INDEX IDX_D4943C2BA76ED395 (user_id),
+                ADD INDEX IDX_D4943C2B89329D25 (resource_id),
+                ADD CONSTRAINT FK_D4943C2BA76ED395 FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+                ADD CONSTRAINT FK_D4943C2B89329D25 FOREIGN KEY (resource_id) REFERENCES resource (id) ON DELETE CASCADE
+            ');
+        }
     }
 
     public function uninstall(ServiceLocatorInterface $serviceLocator)
     {
         $connection = $serviceLocator->get('Omeka\Connection');
-        $sql = 'DROP TABLE IF EXISTS `basket`';
-        $connection->exec($sql);
-
+        $connection->exec('DROP TABLE IF EXISTS basket_item');
     }
-
-    public function appendJs(Event $event) {
-        $view = $event->getTarget();
-        $view->headScript()->appendFile($view->assetUrl('js/basket.js','Basket'));
-    }
-
-    public function attachListeners(SharedEventManagerInterface $sharedEventManager) {
-        $sharedEventManager->attach('*', 'view.layout', [$this, 'appendJs']);
-    }
-
-
 }

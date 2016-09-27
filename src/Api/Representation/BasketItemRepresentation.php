@@ -27,92 +27,52 @@
  * knowledge of the CeCILL license and that you accept its terms.
  */
 
-namespace Basket\Entity;
+namespace Basket\Api\Representation;
 
-use DateTime;
-use Doctrine\ORM\Event\LifecycleEventArgs;
-use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Omeka\Entity\AbstractEntity;
-use Omeka\Entity\User as User;
-/**
- * @Entity
- * @HasLifecycleCallbacks
- */
-class Basket extends AbstractEntity
+use Omeka\Api\Representation\AbstractEntityRepresentation;
+
+class BasketItemRepresentation extends AbstractEntityRepresentation
 {
     /**
-     * @Id
-     * @Column(type="integer")
-     * @GeneratedValue
+     * {@inheritdoc}
      */
-    protected $id;
-
-    /**
-     * @ManyToOne(targetEntity="\Omeka\Entity\User")
-     * @JoinColumn(nullable=false, onDelete="CASCADE")
-     */
-    protected $user;
-
-
-    /**
-     * @ManyToOne(targetEntity="\Omeka\Entity\Item")
-     * @JoinColumn(nullable=false, onDelete="CASCADE")
-     */
-    protected $item;
-
-    /**
-     * @ManyToOne(targetEntity="\Omeka\Entity\Media")
-     * @JoinColumn(nullable=false, onDelete="CASCADE")
-     */
-    protected $media;
-
-    /**
-     * @Column(type="datetime")
-     */
-    protected $created;
-
-    public function getId()
+    public function getJsonLdType()
     {
-        return $this->id;
+        return 'o:BasketItem';
     }
 
-    public function setUser($user)
+    public function getJsonLd()
     {
-        $this->user = $user;
+        $entity = $this->resource;
+
+        return [
+            'o:user_id' => $entity->getUser()->getId(),
+            'o:resource_id' => $entity->getResource()->getId(),
+            'o:created' => $this->getDateTime($entity->getCreated()),
+        ];
     }
 
-    public function getUser()
+    public function user()
     {
-        return $this->user;
+        $adapter = $this->getAdapter('users');
+
+        return $adapter->getRepresentation($this->resource->getUser());
     }
 
-    public function setItem($item)
+    public function resource()
     {
-        $this->item = $item;
+        $adapter = $this->getAdapter('resources');
+
+        return $adapter->getRepresentation($this->resource->getResource());
     }
 
-    public function getItem()
+    public function created()
     {
-        return $this->item;
+        return $this->resource->getCreated();
     }
 
-    public function setMedia($media)
+    public function getEntity()
     {
-        $this->media = $media;
+        return $this->resource;
     }
-
-    public function getMedia()
-    {
-        return $this->media;
-    }
-
-    /**
-     * @PrePersist
-     */
-    public function prePersist(LifecycleEventArgs $eventArgs)
-    {
-        $this->created = new DateTime('now');
-    }
-
-
 }

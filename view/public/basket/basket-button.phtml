@@ -1,0 +1,12 @@
+<?php
+    $text = $action === 'add' ? $this->translate('Add to basket') : $this->translate('Remove from basket');
+    $url = $this->url('basket', ['action' => $action, 'id' => $resource->id()]);
+    $class = "basket-$action";
+?>
+<button class="basket-update <?php echo $class; ?>" title="<?php echo $text ;?>" data-url="<?php echo $url ?>">
+    <i class="fa fa-shopping-cart"></i> <?php echo $text; ?>
+</button>
+
+<?php
+    $this->headScript()->appendFile($this->assetUrl('js/basket.js', 'Basket'));
+?>

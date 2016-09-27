@@ -3,7 +3,7 @@
 <phpunit bootstrap="./bootstrap.php" colors="true" backupGlobals="false">
     <testsuites>
         <testsuite name="Basket">
-            <directory>./Controller</directory>
+            <directory>./BasketTest</directory>
         </testsuite>
     </testsuites>
 </phpunit>

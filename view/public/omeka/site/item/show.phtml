@@ -20,7 +20,7 @@
             <a href="<?php echo $media->url(); ?>" class="media resource">
                 <img src="<?php echo $escape($media->thumbnailUrl('medium')); ?>" title="<?php echo $escape($media->displayTitle()); ?>">
             </a>
-            <?php echo $this->divBasketLink($media); ?>
+            <?php echo $this->updateBasketLink($media); ?>
         <?php endforeach; ?>
     </div>
     <?php endif; ?>

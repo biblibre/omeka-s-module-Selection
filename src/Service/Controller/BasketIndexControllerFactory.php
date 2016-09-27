@@ -1,4 +1,5 @@
 <?php
+
 namespace Basket\Service\Controller;
 
 use Basket\Controller\IndexController;
@@ -11,7 +12,6 @@ class BasketIndexControllerFactory implements FactoryInterface
     {
         $authenticationService = $services->get('Omeka\AuthenticationService');
         $entityManager = $services->get('Omeka\EntityManager');
-
 
         $controller = new IndexController;
         $controller->setAuthenticationService($authenticationService);

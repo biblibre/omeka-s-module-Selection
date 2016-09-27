@@ -28,189 +28,86 @@
  */
 
 namespace Basket\Controller;
-use Omeka\Api\Response;
+
 use Zend\View\Model\ViewModel;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
-use Omeka\Mvc\Exception\RuntimeException;
-use Omeka\Service\Paginator;
-use Basket\Entity\Basket;
-use Zend\Mvc\Controller\AbstractRestfulController;
-use Zend\View\Strategy\JsonStrategy;
-use Omeka\View\Model\ApiJsonModel;
+
 class IndexController extends AbstractActionController
 {
     protected $authenticationService;
 
-
-    public function additemAction() {
-        $response = new Response;
-        if (!$id_item = $this->params('id'))
-            return ;
-        if (!($user = $this->getAuthenticationService()->getIdentity())) {
-            return $this->redirect()->toUrl($this->currentSite()->url());
+    public function addAction()
+    {
+        $id = $this->params('id');
+        if (!$id) {
+            return $this->jsonErrorNotFound();
         }
 
-        if (!$item = $this->getEntityManager()->getRepository('Omeka\Entity\Item')->find($id_item))
-            return;
-        if ($this->basketExistsFor($user,$item))
-            return;
-        $basket = $this->createBasket($user,$item);
-
-        $response->setStatus(Response::SUCCESS);
-        $basketHelper=$this->viewHelpers()->get('addToBasketLink');
-        $item_representation = $this->api()->read('items',$item->getId())->getContent();
-        $content = $basketHelper($item_representation,$this->currentSite());
-        $response->setContent(['content' => $content ]);
-        return new ApiJsonModel($response, []);
-
-    }
-    protected function getBasketLink($representation) {
-        $basketHelper=$this->viewHelpers()->get('addToBasketLink');
-        return $basketHelper($representation,$this->currentSite());
-    }
-
-
-    protected function createBasket($user,$item,$media = null) {
-        $basket = new Basket;
-        $basket->setUser($user);
-        $basket->setItem($item);
-        $basket->setMedia($media);
-        $this->save($basket);
-        return $basket;
-    }
-
-    protected function getSuccessResponse($content) {
-        $response = new Response;
-        $response->setStatus(Response::SUCCESS);
-        $response->setContent(['content' => $content ]);
-        return $response;
-    }
-
-
-    public function addmediaAction() {
-        if (!$id_media = $this->params('id'))
-            return ;
-        if (!($user = $this->getAuthenticationService()->getIdentity())) {
-            return $this->redirect()->toUrl($this->currentSite()->url());
+        $resource = $this->api()->read('resources', $id)->getContent();
+        if (!$resource) {
+            return $this->jsonErrorNotFound();
         }
 
-        if (!$media = $this->getEntityManager()->getRepository('Omeka\Entity\Media')->find($id_media))
-            return;
+        $user = $this->getAuthenticationService()->getIdentity();
+        $basketItems = $this->api()->search('basket_items', [
+            'user_id' => $user->getId(),
+            'resource_id' => $resource->id(),
+        ])->getContent();
 
-        if ($this->basketExistsForMedia($user,$media))
-            return;
-        $media_representation = $this->api()->read('media',$media->getId())->getContent();
-
-        $this->createBasket($user,null,$media);
-        return new ApiJsonModel($this->getSuccessResponse($this->getBasketLink($media_representation)),
-                                []);
-
-    }
-
-
-    protected function basketExistsFor($user,$item) {
-        return $this->getEntityManager()
-                    ->getRepository('Basket\Entity\Basket')
-                    ->findOneBy(['item' => $item,
-                                 'user' => $user]);
-    }
-
-
-    protected function basketExistsForMedia($user,$media) {
-        return $this->getEntityManager()
-                    ->getRepository('Basket\Entity\Basket')
-                    ->findOneBy(['media' => $media,
-                                 'user' => $user]);
-    }
-
-    public function removeitemAction() {
-        if (!$id_item = $this->params('id'))
-            return ;
-
-        if (!($user = $this->getAuthenticationService()->getIdentity())) {
-            return $this->redirect()->toUrl($this->currentSite()->url());
+        if (!empty($basketItems)) {
+            return new JsonModel(['error' => 'alreadyIn']);
         }
 
-        if (!$item = $this->getEntityManager()->getRepository('Omeka\Entity\Item')->find($id_item))
-            return;
-        if (!$basket = $this->basketExistsFor($user,$item))
-            return;
-        $this->getEntityManager()->remove($basket);
-        $this->getEntityManager()->flush();
+        $this->createBasketItem($user->getId(), $resource->id());
 
-        $result = new JsonModel(array(
-                                      'div' => 'true',
-                                      'success'=>true,
-                                      ));
-        return $result;
+        $updateBasketLink = $this->viewHelpers()->get('updateBasketLink');
 
+        return new JsonModel(['content' => $updateBasketLink($resource)]);
     }
 
-    protected function jsonError() {
-        $response = new Response;
-        $response->setStatus(Response::ERROR);
-        return new  ApiJsonModel($response);
-    }
-
-    public function deleteAction() {
-        $response = new Response;
-
-        if (!$id_basket = $this->params('id'))
-            return $this->jsonError();
-
-        if (!$basket = $this->getEntityManager()
-            ->getRepository('Basket\Entity\Basket')
-            ->find($id_basket))
-            return $this->jsonError();
-
-        if ($basket->getItem())
-            $item_representation = $this->api()->read('items',$basket->getItem()->getId())->getContent();
-        if ($basket->getMedia())
-            $item_representation = $this->api()->read('media',$basket->getMedia()->getId())->getContent();
-
-        $this->getEntityManager()->remove($basket);
-        $this->getEntityManager()->flush();
-        $response = new Response;
-        $response->setStatus(Response::SUCCESS);
-        $basketHelper=$this->viewHelpers()->get('addToBasketLink');
-        $content = $basketHelper($item_representation,$this->currentSite());
-        $response->setContent(['content' => $content ]);
-
-        return new ApiJsonModel($this->getSuccessResponse($content),[]);
-
-    }
-
-    public function showAction() {
-        if (!($user = $this->getAuthenticationService()->getIdentity())) {
-            return $this->redirect()->toUrl($this->currentSite()->url());
+    public function deleteAction()
+    {
+        $id = $this->params('id');
+        if (!$id) {
+            return $this->jsonErrorNotFound();
         }
 
-        $baskets = $this->getEntityManager()
-                        ->getRepository('Basket\Entity\Basket')
-                        ->findBy(['user' => $user ]);
-        $items = [];
-        $medias = [];
+        $user = $this->getAuthenticationService()->getIdentity();
 
-        foreach ($baskets as $basket) {
-            if ($item = $basket->getItem())
-                $items[]=$item;
-            if ($media = $basket->getMedia())
-                $medias[]=$media;
+        $basketItems = $this->api()->search('basket_items', [
+            'user_id' => $user->getId(),
+            'resource_id' => $id,
+        ])->getContent();
 
-
+        if (empty($basketItems)) {
+            return $this->jsonErrorNotFound();
         }
+
+        $basketItem = $basketItems[0];
+        $resource = $basketItem->resource();
+
+        $this->api()->delete('basket_items', $basketItem->id());
+
+        $updateBasketLink = $this->viewHelpers()->get('updateBasketLink');
+        $content = $updateBasketLink($resource);
+
+        return new JsonModel(['content' => $content]);
+    }
+
+    public function showAction()
+    {
+        $user = $this->getAuthenticationService()->getIdentity();
+
+        $basketItems = $this->api()->search('basket_items', [
+            'user_id' => $user->getId(),
+        ])->getContent();
+
         $view = new ViewModel;
-        $site = $this->currentSite();
-        $view->setVariable('site', $site);
-        $view->setVariable('items', $items);
-        $view->setVariable('medias', $medias);
-        $view->setVariable('resourceName', 'media');
-        $view->setVariable('title', 'Panier');
+        $view->setVariable('basketItems', $basketItems);
+
         return $view;
-
     }
-
 
     public function setAuthenticationService($authenticationService)
     {
@@ -232,13 +129,19 @@ class IndexController extends AbstractActionController
         return $this->entityManager;
     }
 
-    protected function save($entity)
+    protected function jsonErrorNotFound()
     {
-        $em = $this->getEntityManager();
-        $em->persist($entity);
-        $em->flush();
+        $response = $this->getResponse();
+        $response->setStatus(Response::STATUS_CODE_404);
+
+        return new JsonModel(['error' => 'NotFound']);
     }
 
-
-
+    protected function createBasketItem($userId, $resourceId)
+    {
+        $response = $this->api()->create('basket_items', [
+            'o:user_id' => $userId,
+            'o:resource_id' => $resourceId,
+        ]);
+    }
 }
