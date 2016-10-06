@@ -45,7 +45,7 @@
         <h3><?php echo count($items) . ' ' . $this->translate('items'); ?></h3>
         <div class="resource-list">
             <?php foreach ($items as $item): ?>
-                <?php echo $this->partial('resource', ['resource' => $item]); ?>
+                <?php echo $this->partial('basket/index/resource', ['resource' => $item]); ?>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>

@@ -99,9 +99,10 @@ class IndexController extends AbstractActionController
     {
         $user = $this->getAuthenticationService()->getIdentity();
 
-        $basketItems = $this->api()->search('basket_items', [
-            'user_id' => $user->getId(),
-        ])->getContent();
+        $query = $this->params()->fromQuery();
+        $query['user_id'] = $user->getId();
+
+        $basketItems = $this->api()->search('basket_items', $query)->getContent();
 
         $view = new ViewModel;
         $view->setVariable('basketItems', $basketItems);

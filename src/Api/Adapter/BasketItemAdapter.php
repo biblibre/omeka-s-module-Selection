@@ -111,4 +111,58 @@ class BasketItemAdapter extends AbstractEntityAdapter
             );
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function sortQuery(QueryBuilder $qb, array $query)
+    {
+        if (is_string($query['sort_by'])) {
+            $property = $this->getPropertyByTerm($query['sort_by']);
+            $entityClass = $this->getEntityClass();
+            if ($property) {
+                $resourceAlias = $this->createAlias();
+                $qb->leftJoin("$entityClass.resource", $resourceAlias);
+                $valuesAlias = $this->createAlias();
+                $qb->leftJoin(
+                    "$resourceAlias.values", $valuesAlias,
+                    'WITH', $qb->expr()->eq("$valuesAlias.property", $property->getId())
+                );
+                $qb->addOrderBy(
+                    "GROUP_CONCAT($valuesAlias.value ORDER BY $valuesAlias.id)",
+                    $query['sort_order']
+                );
+            } else {
+                parent::sortQuery($qb, $query);
+            }
+        }
+    }
+
+    /**
+     * Get a property entity by JSON-LD term.
+     *
+     * @param string $term
+     * @return EntityInterface
+     */
+    protected function getPropertyByTerm($term)
+    {
+        if (!$this->isTerm($term)) {
+            return null;
+        }
+
+        list($prefix, $localName) = explode(':', $term);
+        $dql = '
+            SELECT p
+            FROM Omeka\Entity\Property p
+            JOIN p.vocabulary v WHERE p.localName = :localName
+                AND v.prefix = :prefix
+        ';
+
+        return $this->getEntityManager()
+            ->createQuery($dql)
+            ->setParameters([
+                'localName' => $localName,
+                'prefix' => $prefix
+            ])->getOneOrNullResult();
+    }
 }
