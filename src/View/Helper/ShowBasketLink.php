@@ -8,7 +8,7 @@ class ShowBasketLink extends AbstractHelper
 {
     protected $button;
 
-    public function __invoke($content)
+    public function __invoke()
     {
         $view = $this->getView();
 
