@@ -1,27 +1,39 @@
 <?php
+namespace Basket;
 
 return  [
-    'controllers' => [
-        'factories' => [
-            'Basket\Controller\Index' => 'Basket\Service\Controller\BasketIndexControllerFactory',
-        ],
-    ],
-   'entity_manager' => [
-        'mapping_classes_paths' => [
-            __DIR__ . '/../src/Entity',
-        ],
-    ],
     'api_adapters' => [
         'invokables' => [
-            'basket_items' => 'Basket\Api\Adapter\BasketItemAdapter',
+            'basket_items' => Api\Adapter\BasketItemAdapter::class,
+        ],
+    ],
+    'entity_manager' => [
+        'mapping_classes_paths' => [
+            dirname(__DIR__) . '/src/Entity',
+        ],
+        'proxy_paths' => [
+            dirname(__DIR__) . '/data/doctrine-proxies',
+        ],
+    ],
+    'view_manager' => [
+        'template_path_stack' => [
+            dirname(__DIR__) . '/view/public/',
+        ],
+        'strategies' => [
+            'ViewJsonStrategy',
         ],
     ],
     'view_helpers' => [
         'invokables' => [
-            'showBasketLink' => 'Basket\View\Helper\ShowBasketLink',
+            'showBasketLink' => View\Helper\ShowBasketLink::class,
         ],
         'factories' => [
-            'updateBasketLink' => 'Basket\Service\ViewHelper\UpdateBasketLinkFactory',
+            'updateBasketLink' => Service\ViewHelper\UpdateBasketLinkFactory::class,
+        ],
+    ],
+    'controllers' => [
+        'factories' => [
+            'Basket\Controller\Index' => Service\Controller\BasketIndexControllerFactory::class,
         ],
     ],
     'router' => [
@@ -53,20 +65,12 @@ return  [
             ],
         ],
     ],
-    'view_manager' => [
-        'template_path_stack' => [
-            __DIR__ . '/../view/public/',
-        ],
-        'strategies' => [
-            'ViewJsonStrategy',
-        ],
-    ],
     'translator' => [
         'translation_file_patterns' => [
             [
-                'type'        => 'gettext',
-                'base_dir'    => __DIR__ . '/../language',
-                'pattern'     => '%s.mo',
+                'type' => 'gettext',
+                'base_dir' => dirname(__DIR__) . '/language',
+                'pattern' => '%s.mo',
                 'text_domain' => null,
             ],
         ],
