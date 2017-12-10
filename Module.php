@@ -26,9 +26,10 @@ class Module extends AbstractModule
         parent::onBootstrap($event);
 
         $acl = $this->getServiceLocator()->get('Omeka\Acl');
-        foreach ($acl->getRoles() as $role) {
-            $acl->allow($role, 'Basket\Controller\Index');
-        }
+        $roles = $acl->getRoles();
+        $acl->allow($roles, Entity\BasketItem::class);
+        $acl->allow($roles, Api\Adapter\BasketItemAdapter::class);
+        $acl->allow($roles , 'Basket\Controller\Index');
     }
 
     public function install(ServiceLocatorInterface $serviceLocator)
