@@ -1,6 +1,6 @@
 <?php
 
-$loader = require __DIR__ . '/../vendor/autoload.php';
+$loader = require dirname(__DIR__) . '/vendor/autoload.php';
 $loader->addPsr4('BasketTest\\', __DIR__ . '/BasketTest/');
 
 use OmekaTestHelper\Bootstrap;

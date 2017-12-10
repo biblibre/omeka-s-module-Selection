@@ -33,9 +33,6 @@ use Omeka\Api\Representation\AbstractEntityRepresentation;
 
 class BasketItemRepresentation extends AbstractEntityRepresentation
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getJsonLdType()
     {
         return 'o:BasketItem';

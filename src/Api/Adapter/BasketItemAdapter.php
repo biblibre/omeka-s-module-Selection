@@ -37,41 +37,26 @@ use Omeka\Stdlib\ErrorStore;
 
 class BasketItemAdapter extends AbstractEntityAdapter
 {
-    /**
-     * {@inheritdoc}
-     */
     protected $sortFields = [
         'id' => 'id',
         'created' => 'created',
     ];
 
-    /**
-     * {@inheritdoc}
-     */
     public function getResourceName()
     {
         return 'basket_items';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRepresentationClass()
     {
         return 'Basket\Api\Representation\BasketItemRepresentation';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getEntityClass()
     {
         return 'Basket\Entity\BasketItem';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hydrate(Request $request, EntityInterface $entity,
         ErrorStore $errorStore
     ) {
@@ -112,9 +97,6 @@ class BasketItemAdapter extends AbstractEntityAdapter
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function sortQuery(QueryBuilder $qb, array $query)
     {
         if (is_string($query['sort_by'])) {
@@ -162,7 +144,7 @@ class BasketItemAdapter extends AbstractEntityAdapter
             ->createQuery($dql)
             ->setParameters([
                 'localName' => $localName,
-                'prefix' => $prefix
+                'prefix' => $prefix,
             ])->getOneOrNullResult();
     }
 }

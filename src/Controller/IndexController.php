@@ -29,6 +29,7 @@
 
 namespace Basket\Controller;
 
+use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;

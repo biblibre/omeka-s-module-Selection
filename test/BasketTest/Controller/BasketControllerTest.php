@@ -3,7 +3,6 @@
 namespace BasketTest\Controller;
 
 use OmekaTestHelper\Controller\OmekaControllerTestCase;
-use Omeka\Entity\User;
 
 class BasketControllerTest extends OmekaControllerTestCase
 {
