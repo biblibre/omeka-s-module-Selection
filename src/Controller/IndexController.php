@@ -134,7 +134,7 @@ class IndexController extends AbstractActionController
     protected function jsonErrorNotFound()
     {
         $response = $this->getResponse();
-        $response->setStatus(Response::STATUS_CODE_404);
+        $response->setStatusCode(Response::STATUS_CODE_404);
 
         return new JsonModel(['error' => 'NotFound']);
     }
