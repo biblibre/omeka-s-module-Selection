@@ -26,9 +26,7 @@ return  [
     'view_helpers' => [
         'invokables' => [
             'showBasketLink' => View\Helper\ShowBasketLink::class,
-        ],
-        'factories' => [
-            'updateBasketLink' => Service\ViewHelper\UpdateBasketLinkFactory::class,
+            'updateBasketLink' => View\Helper\UpdateBasketLink::class,
         ],
     ],
     'controllers' => [
