@@ -77,24 +77,58 @@ class BasketItem extends AbstractEntity
         return $this->id;
     }
 
+    /**
+     * @param User $user
+     * @return \Basket\Entity\BasketItem
+     */
     public function setUser(User $user)
     {
         $this->user = $user;
+        return $this;
     }
 
+    /**
+     * @return \Omeka\Entity\User
+     */
     public function getUser()
     {
         return $this->user;
     }
 
+    /**
+     * @param AbstractEntity $resource
+     * @return \Basket\Entity\BasketItem
+     */
     public function setResource(AbstractEntity $resource)
     {
         $this->resource = $resource;
+        return $this;
     }
 
+    /**
+     * @return \Omeka\Entity\Resource
+     */
     public function getResource()
     {
         return $this->resource;
+    }
+
+    /**
+     * @param DateTime $dateTime
+     * @return \Basket\Entity\BasketItem
+     */
+    public function setCreated(DateTime $dateTime)
+    {
+        $this->created = $dateTime;
+        return $this;
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getCreated()
+    {
+        return $this->created;
     }
 
     /**
@@ -103,5 +137,6 @@ class BasketItem extends AbstractEntity
     public function prePersist(LifecycleEventArgs $eventArgs)
     {
         $this->created = new DateTime('now');
+        return $this;
     }
 }
