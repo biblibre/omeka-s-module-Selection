@@ -32,7 +32,7 @@ namespace Basket\Entity;
 use DateTime;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Omeka\Entity\AbstractEntity;
-use Omeka\Entity\User as User;
+use Omeka\Entity\User;
 
 /**
  * @Entity
@@ -41,6 +41,8 @@ use Omeka\Entity\User as User;
 class BasketItem extends AbstractEntity
 {
     /**
+     * @var int
+     *
      * @Id
      * @Column(type="integer")
      * @GeneratedValue
@@ -48,18 +50,24 @@ class BasketItem extends AbstractEntity
     protected $id;
 
     /**
+     * @var User
+     *
      * @ManyToOne(targetEntity="\Omeka\Entity\User")
      * @JoinColumn(nullable=false, onDelete="CASCADE")
      */
     protected $user;
 
     /**
+     * @var \Omeka\Entity\Resource
+     *
      * @ManyToOne(targetEntity="\Omeka\Entity\Resource")
      * @JoinColumn(nullable=false, onDelete="CASCADE")
      */
     protected $resource;
 
     /**
+     * @var DateTime
+     *
      * @Column(type="datetime")
      */
     protected $created;
@@ -69,7 +77,7 @@ class BasketItem extends AbstractEntity
         return $this->id;
     }
 
-    public function setUser($user)
+    public function setUser(User $user)
     {
         $this->user = $user;
     }
@@ -79,7 +87,7 @@ class BasketItem extends AbstractEntity
         return $this->user;
     }
 
-    public function setResource($resource)
+    public function setResource(AbstractEntity $resource)
     {
         $this->resource = $resource;
     }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="PslSearchForm" basedir=".">
+<project name="Basket" basedir=".">
     <property name="module.dir" location="."/>
     <property name="omeka.dir" location="../.."/>
     <property name="lang.dir" location="language" />

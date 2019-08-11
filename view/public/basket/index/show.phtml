@@ -29,6 +29,7 @@
 
 /**
  * @var \Zend\View\Renderer\PhpRenderer $this
+ * @var \Basket\Api\Representation\BasketItemRepresentation[] $basketItems
  */
 
 $translate = $this->plugin('translate');
@@ -37,6 +38,7 @@ $translate = $this->plugin('translate');
     <h2><?php echo $translate('Basket'); ?></h2>
 
     <?php
+        $resources = [];
         foreach ($basketItems as $basketItem) {
             $resource = $basketItem->resource();
             $resources[$resource->resourceName()][] = $resource;

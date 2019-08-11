@@ -27,9 +27,15 @@ class Module extends AbstractModule
 
         $acl = $this->getServiceLocator()->get('Omeka\Acl');
         $roles = $acl->getRoles();
-        $acl->allow($roles, Entity\BasketItem::class);
-        $acl->allow($roles, Api\Adapter\BasketItemAdapter::class);
-        $acl->allow($roles , 'Basket\Controller\Index');
+        $acl
+            ->allow(
+                $roles,
+                [
+                    Entity\BasketItem::class,
+                    Api\Adapter\BasketItemAdapter::class,
+                    'Basket\Controller\Index',
+                ]
+        );
     }
 
     public function install(ServiceLocatorInterface $serviceLocator)

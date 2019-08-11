@@ -141,7 +141,7 @@ class IndexController extends AbstractActionController
 
     protected function createBasketItem($userId, $resourceId)
     {
-        $response = $this->api()->create('basket_items', [
+        $this->api()->create('basket_items', [
             'o:user_id' => $userId,
             'o:resource_id' => $resourceId,
         ]);

@@ -49,12 +49,12 @@ class BasketItemAdapter extends AbstractEntityAdapter
 
     public function getRepresentationClass()
     {
-        return 'Basket\Api\Representation\BasketItemRepresentation';
+        return \Basket\Api\Representation\BasketItemRepresentation::class;
     }
 
     public function getEntityClass()
     {
-        return 'Basket\Entity\BasketItem';
+        return \Basket\Entity\BasketItem::class;
     }
 
     public function hydrate(Request $request, EntityInterface $entity,
@@ -99,7 +99,7 @@ class BasketItemAdapter extends AbstractEntityAdapter
 
     public function sortQuery(QueryBuilder $qb, array $query)
     {
-        if (is_string($query['sort_by'])) {
+        if (!empty($query['sort_by'])) {
             $property = $this->getPropertyByTerm($query['sort_by']);
             $entityClass = $this->getEntityClass();
             if ($property) {
@@ -123,6 +123,8 @@ class BasketItemAdapter extends AbstractEntityAdapter
     /**
      * Get a property entity by JSON-LD term.
      *
+     * @see \Omeka\Api\Adapter\AbstractResourceEntityAdapter::getPropertyByTerm()
+     *
      * @param string $term
      * @return EntityInterface
      */
@@ -131,15 +133,10 @@ class BasketItemAdapter extends AbstractEntityAdapter
         if (!$this->isTerm($term)) {
             return null;
         }
-
         list($prefix, $localName) = explode(':', $term);
-        $dql = '
-            SELECT p
-            FROM Omeka\Entity\Property p
-            JOIN p.vocabulary v WHERE p.localName = :localName
-                AND v.prefix = :prefix
-        ';
-
+        $dql = 'SELECT p FROM Omeka\Entity\Property p
+        JOIN p.vocabulary v WHERE p.localName = :localName
+        AND v.prefix = :prefix';
         return $this->getEntityManager()
             ->createQuery($dql)
             ->setParameters([

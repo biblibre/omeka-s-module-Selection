@@ -41,7 +41,7 @@ return  [
             'site' => [
                 'child_routes' => [
                     'basket' => [
-                        'type' => 'segment',
+                        'type' => \Zend\Router\Http\Segment::class,
                         'options' => [
                             'route' => '/basket',
                             'defaults' => [
@@ -52,7 +52,7 @@ return  [
                         ],
                     ],
                     'basket-update' => [
-                        'type' => 'segment',
+                        'type' => \Zend\Router\Http\Segment::class,
                         'options' => [
                             'route' => '/basket/:action[/:id]',
                             'defaults' => [
