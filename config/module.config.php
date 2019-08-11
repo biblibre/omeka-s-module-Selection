@@ -34,6 +34,23 @@ return  [
             'Basket\Controller\Index' => Controller\IndexController::class,
         ],
     ],
+    'navigation_links' => [
+        'invokables' => [
+            'basket' => Site\Navigation\Link\Basket::class,
+        ],
+    ],
+    'navigation' => [
+        'site' => [
+            [
+                'label' => 'Basket', // @translate
+                'route' => 'site/basket',
+                'controller' => 'Basket\Controller\Index',
+                'action' => 'basket',
+                'useRouteMatch' => true,
+                'visible' => false,
+            ],
+        ],
+    ],
     'router' => [
         'routes' => [
             'site' => [
