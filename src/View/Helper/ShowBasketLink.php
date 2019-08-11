@@ -6,12 +6,14 @@ use Zend\View\Helper\AbstractHelper;
 
 class ShowBasketLink extends AbstractHelper
 {
-    protected $button;
-
+    /**
+     * Get the link to the user basket.
+     *
+     * @return string
+     */
     public function __invoke()
     {
         $view = $this->getView();
-
         return $view->partial('basket/basket-link');
     }
 }

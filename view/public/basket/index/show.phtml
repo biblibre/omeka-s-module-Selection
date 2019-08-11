@@ -32,39 +32,42 @@
  * @var \Basket\Api\Representation\BasketItemRepresentation[] $basketItems
  */
 
-$translate = $this->plugin('translate');
+$plugins = $this->getHelperPluginManager();
+$translate = $plugins->get('translate');
+$partial = $plugins->get('partial');
+$updateBasketLink = $this->plugin('updateBasketLink');
+
+$this->htmlElement('body')->appendAttribute('class', 'basket');
 ?>
+
 <div id="content" role="main">
-    <h2><?php echo $translate('Basket'); ?></h2>
+    <h2><?= $translate('Basket') ?></h2>
 
     <?php
-        $resources = [];
-        foreach ($basketItems as $basketItem) {
-            $resource = $basketItem->resource();
-            $resources[$resource->resourceName()][] = $resource;
-        }
-
-        $items = isset($resources['items']) ? $resources['items'] : [];
-        $media = isset($resources['media']) ? $resources['media'] : [];
+    $resources = ['items' => [], 'media' => []];
+    foreach ($basketItems as $basketItem):
+        $resource = $basketItem->resource();
+        $resources[$resource->resourceName()][] = $resource;
+    endforeach;
     ?>
 
-
-    <?php if (!empty($items)): ?>
-        <h3><?php echo sprintf($translate('%d items'), count($items)); ?></h3>
+    <?php if (count($resources['items'])): ?>
+        <h3><?= sprintf($translate('%d items'), count($resources['items'])) ?></h3>
         <div class="resource-list">
-            <?php foreach ($items as $item): ?>
-                <?php echo $this->partial('basket/index/resource', ['resource' => $item]); ?>
+            <?php foreach ($resources['items'] as $item): ?>
+                <?= $partial('basket/index/resource', ['resource' => $item]) ?>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
 
-    <?php if (!empty($media)): ?>
-        <h3><?php echo sprintf($translate('%d files'), count($media)); ?></h3>
+    <?php // TODO Create the layout for basket for media. ?>
+    <?php if (count($resources['media'])): ?>
+        <h3><?= sprintf($translate('%d media'), count($resources['media'])) ?></h3>
         <div class="resource-list">
-            <?php foreach ($media as $medium): ?>
-                <?php echo $medium->render(); ?>
-                <?php echo $medium->displayValues(); ?>
-                <?php echo $this->updateBasketLink($medium); ?>
+            <?php foreach ($resource['media'] as $medium): ?>
+                <?= $medium->render() ?>
+                <?= $medium->displayValues() ?>
+                <?= $updateBasketLink($medium) ?>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>

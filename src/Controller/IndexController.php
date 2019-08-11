@@ -114,7 +114,7 @@ class IndexController extends AbstractActionController
         $response = $this->getResponse();
         $response->setStatusCode(Response::STATUS_CODE_404);
 
-        return new JsonModel(['error' => 'NotFound']);
+        return new JsonModel(['error' => 'Not found']); // @translate
     }
 
     protected function createBasketItem($userId, $resourceId)

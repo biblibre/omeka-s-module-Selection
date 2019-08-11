@@ -4,5 +4,7 @@
  */
 
 $translate = $this->plugin('translate');
+$url = $this->plugin('url');
 ?>
-<a class="show_basket" href="<?php echo $this->url('site/basket', [], true); ?>"><?php echo $translate('Basket'); ?></a>
+
+<a class="show_basket" href="<?= $url('site/basket', [], true) ?>"><?= $translate('Basket') ?></a>

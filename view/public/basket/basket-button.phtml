@@ -1,14 +1,17 @@
 <?php
 /**
  * @var \Zend\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
  * @var string $action
  * @var string $url
  */
 
 $translate = $this->plugin('translate');
+
 $text = $action === 'add' ? $translate('Add to basket') : $translate('Remove from basket');
 $class = "basket-$action";
 ?>
+
 <button class="basket-update <?php echo $class; ?>" title="<?php echo $text ;?>" data-url="<?php echo $url ?>">
     <?php
         echo $this->partial('basket/basket-button-content', [

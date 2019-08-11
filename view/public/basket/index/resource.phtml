@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright BibLibre, 2016
- * Copyright Daniel Berthereau, 2018
+ * Copyright Daniel Berthereau, 2018-2019
  *
  * This software is governed by the CeCILL license under French law and abiding
  * by the rules of distribution of free software.  You can use, modify and/ or
@@ -34,19 +34,20 @@
 
 $escape = $this->plugin('escapeHtml');
 ?>
-<div class="<?php echo $resource->resourceName(); ?> resource">
+
+<div class="<?= $resource->resourceName() ?> resource">
     <?php if (method_exists($resource, 'primaryMedia') && $primaryMedia = $resource->primaryMedia()): ?>
-        <img
-            src="<?php echo $escape($primaryMedia->thumbnailUrl('medium')); ?>"
-            title="<?php echo $escape($primaryMedia->displayTitle()); ?>"
-            alt="<?php echo $escape($primaryMedia->mediaType()); ?> thumbnail"
-        />
+    <img
+        src="<?= $escape($primaryMedia->thumbnailUrl('medium')) ?>"
+        title="<?= $escape($primaryMedia->displayTitle()) ?>"
+        alt="<?= $escape($primaryMedia->mediaType()) ?> thumbnail"
+    />
     <?php endif; ?>
-    <h4><?php echo $resource->link($resource->displayTitle()); ?></h4>
-<?php echo $this->updateBasketLink($resource); ?>
+    <h4><?= $resource->link($resource->displayTitle()) ?></h4>
+    <?= $this->updateBasketLink($resource) ?>
     <?php if ($description = $resource->displayDescription()): ?>
-        <div class="description">
-            <?php echo $description; ?>
-        </div>
+    <div class="description">
+        <?= $description ?>
+    </div>
     <?php endif; ?>
 </div>
