@@ -14,6 +14,6 @@ class ShowBasketLink extends AbstractHelper
     public function __invoke()
     {
         $view = $this->getView();
-        return $view->partial('basket/basket-link');
+        return $view->partial('common/basket-link');
     }
 }

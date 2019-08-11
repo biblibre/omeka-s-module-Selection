@@ -13,5 +13,5 @@ $class = "basket-$action";
 ?>
 
 <button class="basket-update <?= $class ?>" title="<?= $text ?>" data-url="<?= $url ?>">
-    <?= $this->partial('basket/basket-button-content', ['action' => $action, 'text' => $text]) ?>
+    <?= $this->partial('common/basket-button-content', ['action' => $action, 'text' => $text]) ?>
 </button>

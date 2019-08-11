@@ -17,7 +17,7 @@ return  [
     ],
     'view_manager' => [
         'template_path_stack' => [
-            dirname(__DIR__) . '/view/public/',
+            dirname(__DIR__) . '/view',
         ],
         'strategies' => [
             'ViewJsonStrategy',
