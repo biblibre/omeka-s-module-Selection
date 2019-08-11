@@ -32,8 +32,8 @@ return  [
         ],
     ],
     'controllers' => [
-        'factories' => [
-            'Basket\Controller\Index' => Service\Controller\BasketIndexControllerFactory::class,
+        'invokables' => [
+            'Basket\Controller\Index' => Controller\IndexController::class,
         ],
     ],
     'router' => [

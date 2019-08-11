@@ -36,8 +36,6 @@ use Zend\View\Model\JsonModel;
 
 class IndexController extends AbstractActionController
 {
-    protected $authenticationService;
-
     public function addAction()
     {
         $id = $this->params('id');
@@ -50,7 +48,7 @@ class IndexController extends AbstractActionController
             return $this->jsonErrorNotFound();
         }
 
-        $user = $this->getAuthenticationService()->getIdentity();
+        $user = $this->identity();
         $basketItems = $this->api()->search('basket_items', [
             'user_id' => $user->getId(),
             'resource_id' => $resource->id(),
@@ -74,7 +72,7 @@ class IndexController extends AbstractActionController
             return $this->jsonErrorNotFound();
         }
 
-        $user = $this->getAuthenticationService()->getIdentity();
+        $user = $this->identity();
 
         $basketItems = $this->api()->search('basket_items', [
             'user_id' => $user->getId(),
@@ -98,7 +96,7 @@ class IndexController extends AbstractActionController
 
     public function showAction()
     {
-        $user = $this->getAuthenticationService()->getIdentity();
+        $user = $this->identity();
 
         $query = $this->params()->fromQuery();
         $query['user_id'] = $user->getId();
@@ -109,26 +107,6 @@ class IndexController extends AbstractActionController
         $view->setVariable('basketItems', $basketItems);
 
         return $view;
-    }
-
-    public function setAuthenticationService($authenticationService)
-    {
-        $this->authenticationService = $authenticationService;
-    }
-
-    public function getAuthenticationService()
-    {
-        return $this->authenticationService;
-    }
-
-    public function setEntityManager($entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
-    public function getEntityManager()
-    {
-        return $this->entityManager;
     }
 
     protected function jsonErrorNotFound()
