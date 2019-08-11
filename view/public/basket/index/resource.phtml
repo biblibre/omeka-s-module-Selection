@@ -36,18 +36,11 @@ $escape = $this->plugin('escapeHtml');
 ?>
 
 <div class="<?= $resource->resourceName() ?> resource">
-    <?php if (method_exists($resource, 'primaryMedia') && $primaryMedia = $resource->primaryMedia()): ?>
-    <img
-        src="<?= $escape($primaryMedia->thumbnailUrl('medium')) ?>"
-        title="<?= $escape($primaryMedia->displayTitle()) ?>"
-        alt="<?= $escape($primaryMedia->mediaType()) ?> thumbnail"
-    />
-    <?php endif; ?>
-    <h4><?= $resource->link($resource->displayTitle()) ?></h4>
+    <?= $resource->linkPretty('medium') ?>
     <?= $this->updateBasketLink($resource) ?>
     <?php if ($description = $resource->displayDescription()): ?>
     <div class="description">
-        <?= $description ?>
+        <?= $escape($description) ?>
     </div>
     <?php endif; ?>
 </div>

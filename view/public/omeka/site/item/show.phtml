@@ -5,30 +5,35 @@
  */
 
 $translate = $this->plugin('translate');
-$escape = $this->plugin('escapeHtml');
+$hyperlink = $this->plugin('hyperlink');
+$updateBasketLink = $this->plugin('updateBasketLink');
+
+$this->htmlElement('body')->appendAttribute('class', 'item resource show');
 ?>
-<?php $this->htmlElement('body')->appendAttribute('class', 'item resource show'); ?>
 
 <div id="content" role="navigation">
-    <?php echo $this->pageTitle($item->displayTitle(), 2); ?>
-    <h3><?php echo $translate('Item'); ?></h3>
-    <?php echo $item->displayValues(); ?>
+    <?= $this->pageTitle($item->displayTitle(), 2) ?>
+    <h3><?= $translate('Item') ?></h3>
+    <?= $item->displayValues() ?>
     <div class="property">
         <?php $itemSets = $item->itemSets(); ?>
-        <?php if (count($itemSets) > 0): ?>
-        <h4><?php echo $translate('Item Sets'); ?></h4>
-        <?php foreach ($item->itemSets() as $itemSet): ?>
-        <div class="value"><a href="<?php echo $escape($itemSet->url()); ?>"><?php echo $itemSet->displayTitle(); ?></a></div>
+        <?php if (count($itemSets)): ?>
+        <h4><?= $translate('Item Sets') ?></h4>
+        <?php /** @var \Omeka\Api\Representation\ItemSetRepresentation $itemSet */ ?>
+        <?php foreach ($itemSets as $itemSet): ?>
+        <div class="value">
+            <?= $hyperlink($itemSet->displayTitle(), $itemSet->siteUrl()) ?>
+        </div>
         <?php endforeach; ?>
         <?php endif; ?>
     </div>
-    <?php if ($item->media()): ?>
+        <?php /** @var \Omeka\Api\Representation\MediaRepresentation $media */ ?>
+    <?php $medias = $item->media(); ?>
+    <?php if ($medias): ?>
     <div class="media-list">
-        <?php foreach ($item->media() as $media): ?>
-            <a href="<?php echo $media->url(); ?>" class="media resource">
-                <img src="<?php echo $escape($media->thumbnailUrl('medium')); ?>" title="<?php echo $escape($media->displayTitle()); ?>">
-            </a>
-            <?php echo $this->updateBasketLink($media); ?>
+        <?php foreach ($medias as $media): ?>
+            <?= $media->linkPretty('medium', null, null, ['class' => 'media resource']) ?>
+            <?= $updateBasketLink($media) ?>
         <?php endforeach; ?>
     </div>
     <?php endif; ?>

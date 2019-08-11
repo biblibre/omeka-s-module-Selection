@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright BibLibre, 2016
- * Copyright Daniel Berthereau 2018
+ * Copyright Daniel Berthereau 2018-2019
  *
  * This software is governed by the CeCILL license under French law and abiding
  * by the rules of distribution of free software.  You can use, modify and/ or
@@ -64,10 +64,10 @@ $this->htmlElement('body')->appendAttribute('class', 'basket');
     <?php if (count($resources['media'])): ?>
         <h3><?= sprintf($translate('%d media'), count($resources['media'])) ?></h3>
         <div class="resource-list">
-            <?php foreach ($resource['media'] as $medium): ?>
-                <?= $medium->render() ?>
-                <?= $medium->displayValues() ?>
-                <?= $updateBasketLink($medium) ?>
+            <?php foreach ($resources['media'] as $media): ?>
+                <?= $media->render() ?>
+                <?= $media->displayValues() ?>
+                <?= $updateBasketLink($media) ?>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
