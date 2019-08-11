@@ -1,6 +1,7 @@
 <?php
 /*
  * Copyright BibLibre, 2016
+ * Copyright Daniel Berthereau 2018
  *
  * This software is governed by the CeCILL license under French law and abiding
  * by the rules of distribution of free software.  You can use, modify and/ or
@@ -25,10 +26,15 @@
  * The fact that you are presently reading this means that you have had
  * knowledge of the CeCILL license and that you accept its terms.
  */
-?>
 
+/**
+ * @var \Zend\View\Renderer\PhpRenderer $this
+ */
+
+$translate = $this->plugin('translate');
+?>
 <div id="content" role="main">
-    <h2><?php echo $this->translate('Basket'); ?></h2>
+    <h2><?php echo $translate('Basket'); ?></h2>
 
     <?php
         foreach ($basketItems as $basketItem) {
@@ -42,7 +48,7 @@
 
 
     <?php if (!empty($items)): ?>
-        <h3><?php echo count($items) . ' ' . $this->translate('items'); ?></h3>
+        <h3><?php echo sprintf($translate('%d items'), count($items)); ?></h3>
         <div class="resource-list">
             <?php foreach ($items as $item): ?>
                 <?php echo $this->partial('basket/index/resource', ['resource' => $item]); ?>
@@ -51,7 +57,7 @@
     <?php endif; ?>
 
     <?php if (!empty($media)): ?>
-        <h3><?php echo count($media) . ' ' . $this->translate('files'); ?></h3>
+        <h3><?php echo sprintf($translate('%d files'), count($media)); ?></h3>
         <div class="resource-list">
             <?php foreach ($media as $medium): ?>
                 <?php echo $medium->render(); ?>

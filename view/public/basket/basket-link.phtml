@@ -1,1 +1,8 @@
-<a class="show_basket" href="<?php echo $this->url('site/basket', [], true); ?>"><?php echo $this->translate('Basket'); ?></a>
+<?php
+/**
+ * @var \Zend\View\Renderer\PhpRenderer $this
+ */
+
+$translate = $this->plugin('translate');
+?>
+<a class="show_basket" href="<?php echo $this->url('site/basket', [], true); ?>"><?php echo $translate('Basket'); ?></a>

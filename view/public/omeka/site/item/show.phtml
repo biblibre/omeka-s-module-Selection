@@ -1,14 +1,21 @@
-<?php $escape = $this->plugin('escapeHtml'); ?>
+<?php
+/**
+ * @var \Zend\View\Renderer\PhpRenderer $this
+ */
+
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
+?>
 <?php $this->htmlElement('body')->appendAttribute('class', 'item resource show'); ?>
 
 <div id="content" role="navigation">
     <?php echo $this->pageTitle($item->displayTitle(), 2); ?>
-    <h3><?php echo $this->translate('Item'); ?></h3>
+    <h3><?php echo $translate('Item'); ?></h3>
     <?php echo $item->displayValues(); ?>
     <div class="property">
         <?php $itemSets = $item->itemSets(); ?>
         <?php if (count($itemSets) > 0): ?>
-        <h4><?php echo $this->translate('Item Sets'); ?></h4>
+        <h4><?php echo $translate('Item Sets'); ?></h4>
         <?php foreach ($item->itemSets() as $itemSet): ?>
         <div class="value"><a href="<?php echo $escape($itemSet->url()); ?>"><?php echo $itemSet->displayTitle(); ?></a></div>
         <?php endforeach; ?>

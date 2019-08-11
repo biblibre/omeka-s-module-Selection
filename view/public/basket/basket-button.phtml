@@ -1,6 +1,11 @@
 <?php
-    $text = $action === 'add' ? $this->translate('Add to basket') : $this->translate('Remove from basket');
-    $class = "basket-$action";
+/**
+ * @var \Zend\View\Renderer\PhpRenderer $this
+ */
+
+$translate = $this->plugin('translate');
+$text = $action === 'add' ? $translate('Add to basket') : $translate('Remove from basket');
+$class = "basket-$action";
 ?>
 <button class="basket-update <?php echo $class; ?>" title="<?php echo $text ;?>" data-url="<?php echo $url ?>">
     <?php
