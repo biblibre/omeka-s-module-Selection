@@ -1,0 +1,44 @@
+<?php
+/**
+ * @var \Zend\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Omeka\Api\Representation\ItemRepresentation $item
+ * @var \Omeka\Api\Representation\ItemRepresentation $resource
+ */
+
+// For a better display, it is recommended to edit the original item/show
+// template, and any other one, to include the link to update the basket and to
+// skip this partial. This partial can be skipped automatically with module
+// BlockDisposition.
+
+$translate = $this->plugin('translate');
+$updateBasketLink = $this->plugin('updateBasketLink');
+
+$medias = $item->media();
+?>
+
+<style>
+#content .basket .media.resource { text-align: inherit; }
+</style>
+
+<div class="basket">
+    <h2><?= $translate('Basket') ?></h2>
+    <?php if (count($medias)): ?>
+    <h3><?= $translate('Item') ?></h3>
+    <?php endif; ?>
+    <div class="item resource">
+        <?= $updateBasketLink($item) ?>
+        <?= $item->linkPretty() ?>
+    </div>
+    <?php if (count($medias)): ?>
+    <h3><?= $translate('Media') ?></h3>
+    <div class="media-list">
+        <?php foreach ($medias as $media): ?>
+        <div class="media resource">
+            <?= $updateBasketLink($media) ?>
+            <?= $media->linkPretty() ?>
+        </div>
+        <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
+</div>

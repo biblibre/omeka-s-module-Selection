@@ -8,6 +8,8 @@ if (!class_exists(\Generic\AbstractModule::class)) {
 }
 
 use Generic\AbstractModule;
+use Zend\EventManager\Event;
+use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Mvc\MvcEvent;
 
 /**
@@ -36,5 +38,20 @@ class Module extends AbstractModule
                     'Basket\Controller\Index',
                 ]
         );
+    }
+
+    public function attachListeners(SharedEventManagerInterface $sharedEventManager)
+    {
+        $sharedEventManager->attach(
+            'Omeka\Controller\Site\Item',
+            'view.show.after',
+            [$this, 'handleViewShowAfter']
+        );
+    }
+
+    public function handleViewShowAfter(Event $event)
+    {
+        $view = $event->getTarget();
+        echo $view->partial('common/basket-item', $view->vars());
     }
 }
