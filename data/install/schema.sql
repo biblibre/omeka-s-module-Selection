@@ -1,0 +1,15 @@
+CREATE TABLE basket_item (
+    id INT AUTO_INCREMENT NOT NULL,
+    user_id INT NOT NULL,
+    resource_id INT NOT NULL,
+    created DATETIME NOT NULL,
+    PRIMARY KEY(id),
+    INDEX IDX_D4943C2BA76ED395 (user_id),
+    INDEX IDX_D4943C2B89329D25 (resource_id),
+    CONSTRAINT FK_D4943C2BA76ED395
+        FOREIGN KEY (user_id) REFERENCES user (id)
+        ON DELETE CASCADE,
+    CONSTRAINT FK_D4943C2B89329D25
+        FOREIGN KEY (resource_id) REFERENCES resource (id)
+        ON DELETE CASCADE
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB;
