@@ -8,7 +8,24 @@ and to save them in a basket instantly, and to keep through sessions.
 Installation
 ------------
 
+Install the optional module [Guest] if wanted.
+
 Uncompress files in the module directory and rename module folder `Basket`.
+Then install it like any other Omeka module and follow the config instructions.
+
+See general end user documentation for [Installing a module].
+
+
+Usage
+-----
+
+The user can see a basket in the item page. On a click, the item is added to the
+basket, or removed. The full list of resources in the basket is available at
+"/s/my-site/guest/basket". This page is available for guest users, but for any
+other registered user too.
+
+It is recommended to edit the theme directly to include the basket besides the
+item and the media, in particular in the item/show and the item/browse views.
 
 
 Warning
@@ -73,6 +90,8 @@ Copyright
 
 [Basket]: https://github.com/biblibre/omeka-s-module-Basket
 [Omeka S]: https://omeka.org/s
+[Guest]: https://github.com/Daniel-KM/Omeka-S-module-Guest
+[Installing a module]: http://dev.omeka.org/docs/s/user-manual/modules/#installing-modules
 [module issues]: https://github.com/biblibre/omeka-s-module-Basket/issues
 [CeCILL v2.1]: https://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
 [GNU/GPL]: https://www.gnu.org/licenses/gpl-3.0.html

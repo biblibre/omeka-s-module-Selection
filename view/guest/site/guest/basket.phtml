@@ -55,7 +55,7 @@ $this->htmlElement('body')->appendAttribute('class', 'basket');
         <h3><?= sprintf($translate('%d items'), count($resources['items'])) ?></h3>
         <div class="resource-list">
             <?php foreach ($resources['items'] as $item): ?>
-                <?= $partial('basket/index/resource', ['resource' => $item]) ?>
+                <?= $partial('guest/site/guest/basket-resource', ['resource' => $item]) ?>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>

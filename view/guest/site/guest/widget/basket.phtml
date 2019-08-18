@@ -1,0 +1,15 @@
+<?php
+/**
+ * @var \Zend\View\Renderer\PhpRenderer $this
+ */
+
+$translate = $this->plugin('translate');
+$urlHelper = $this->plugin('url');
+?>
+
+<ul>
+    <li>
+        <?php $url = $urlHelper('site/guest/basket', [], true); ?>
+        <?= $this->hyperlink($translate('My basket'), $url) ?>
+    </li>
+</ul>

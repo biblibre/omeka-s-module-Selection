@@ -2,11 +2,12 @@
 
 namespace Basket\View\Helper;
 
+use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use Zend\View\Helper\AbstractHelper;
 
 class UpdateBasketLink extends AbstractHelper
 {
-    public function __invoke($resource)
+    public function __invoke(AbstractResourceEntityRepresentation $resource)
     {
         $view = $this->getView();
 
@@ -25,7 +26,7 @@ class UpdateBasketLink extends AbstractHelper
         return $view->partial('common/basket-button', [
             'action' => $action,
             'resource' => $resource,
-            'url' => $view->url('site/basket-update', ['action' => $action, 'id' => $resource->id()], true),
+            'url' => $view->url('site/basket-id', ['action' => $action, 'id' => $resource->id()], true),
         ]);
     }
 

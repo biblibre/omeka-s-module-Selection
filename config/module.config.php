@@ -31,7 +31,8 @@ return  [
     ],
     'controllers' => [
         'invokables' => [
-            'Basket\Controller\Index' => Controller\IndexController::class,
+            'Basket\Controller\Site\Basket' => Controller\Site\BasketController::class,
+            'Basket\Controller\Site\GuestBoard' => Controller\Site\GuestBoardController::class,
         ],
     ],
     'navigation_links' => [
@@ -43,8 +44,8 @@ return  [
         'site' => [
             [
                 'label' => 'Basket', // @translate
-                'route' => 'site/basket',
-                'controller' => 'Basket\Controller\Index',
+                'route' => 'site/guest/basket',
+                'controller' => 'Basket\Controller\Site\GuestBoard',
                 'action' => 'basket',
                 'useRouteMatch' => true,
                 'visible' => false,
@@ -55,24 +56,41 @@ return  [
         'routes' => [
             'site' => [
                 'child_routes' => [
-                    'basket' => [
+                    'basket-id' => [
                         'type' => \Zend\Router\Http\Segment::class,
                         'options' => [
-                            'route' => '/basket',
+                            'route' => '/basket/:id[/:action]',
+                            'constraints' => [
+                                'action' => 'add|delete',
+                                'id' => '\d+',
+                            ],
                             'defaults' => [
-                                '__NAMESPACE__' => 'Basket\Controller',
-                                'controller' => 'Index',
-                                'action' => 'show',
+                                '__NAMESPACE__' => 'Basket\Controller\Site',
+                                'controller' => 'Basket',
+                                'action' => 'update',
                             ],
                         ],
                     ],
-                    'basket-update' => [
-                        'type' => \Zend\Router\Http\Segment::class,
+                    'guest' => [
+                        // The default values for the guest user route are kept
+                        // to avoid issues for visitors when an upgrade of
+                        // module Guest occurs or when it is disabled.
+                        'type' => \Zend\Router\Http\Literal::class,
                         'options' => [
-                            'route' => '/basket/:action[/:id]',
-                            'defaults' => [
-                                '__NAMESPACE__' => 'Basket\Controller',
-                                'controller' => 'Index',
+                            'route' => '/guest',
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'basket' => [
+                                'type' => \Zend\Router\Http\Literal::class,
+                                'options' => [
+                                    'route' => '/basket',
+                                    'defaults' => [
+                                        '__NAMESPACE__' => 'Basket\Controller\Site',
+                                        'controller' => 'GuestBoard',
+                                        'action' => 'show',
+                                    ],
+                                ],
                             ],
                         ],
                     ],

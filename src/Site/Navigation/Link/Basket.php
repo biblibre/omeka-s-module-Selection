@@ -37,7 +37,7 @@ class Basket implements LinkInterface
     {
         return [
             'label' => $data['label'],
-            'route' => 'site/basket',
+            'route' => 'site/guest/basket',
             'class' => 'basket-link',
             'params' => [
                 'site-slug' => $site->slug(),

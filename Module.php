@@ -23,11 +23,21 @@ class Module extends AbstractModule
 {
     const NAMESPACE = __NAMESPACE__;
 
+    // Guest is an optional dependency, not a required one.
+    // protected $dependency = 'Guest';
+
     public function onBootstrap(MvcEvent $event)
     {
         parent::onBootstrap($event);
 
         $acl = $this->getServiceLocator()->get('Omeka\Acl');
+
+        // Since Omeka 1.4, modules are ordered, so Guest come after Basket.
+        // See \Guest\Module::onBootstrap().
+        if (!$acl->hasRole('guest')) {
+            $acl->addRole('guest');
+        }
+
         $roles = $acl->getRoles();
         $acl
             ->allow(
@@ -35,7 +45,8 @@ class Module extends AbstractModule
                 [
                     Entity\BasketItem::class,
                     Api\Adapter\BasketItemAdapter::class,
-                    'Basket\Controller\Index',
+                    'Basket\Controller\Site\Basket',
+                    'Basket\Controller\Site\GuestBoard',
                 ]
         );
     }
@@ -47,11 +58,33 @@ class Module extends AbstractModule
             'view.show.after',
             [$this, 'handleViewShowAfter']
         );
+
+        // Guest integration.
+        $sharedEventManager->attach(
+            \Guest\Controller\Site\GuestController::class,
+            'guest.widgets',
+            [$this, 'handleGuestWidgets']
+        );
     }
 
     public function handleViewShowAfter(Event $event)
     {
         $view = $event->getTarget();
         echo $view->partial('common/basket-item', $view->vars());
+    }
+
+    public function handleGuestWidgets(Event $event)
+    {
+        $widgets = $event->getParam('widgets');
+        $helpers = $this->getServiceLocator()->get('ViewHelperManager');
+        $translate = $helpers->get('translate');
+        $partial = $helpers->get('partial');
+
+        $widget = [];
+        $widget['label'] = $translate('Basket'); // @translate
+        $widget['content'] = $partial('guest/site/guest/widget/basket');
+        $widgets['basket'] = $widget;
+
+        $event->setParam('widgets', $widgets);
     }
 }

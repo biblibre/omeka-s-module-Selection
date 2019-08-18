@@ -73,13 +73,14 @@ class BasketItemAdapter extends AbstractEntityAdapter
 
     public function buildQuery(QueryBuilder $qb, array $query)
     {
+        $expr = $qb->expr();
         if (isset($query['user_id'])) {
             $userAlias = $this->createAlias();
             $qb->innerJoin(
                 $this->getEntityClass() . '.user',
                 $userAlias
             );
-            $qb->andWhere($qb->expr()->eq(
+            $qb->andWhere($expr->eq(
                 "$userAlias.id",
                 $this->createNamedParameter($qb, $query['user_id']))
             );
@@ -90,7 +91,7 @@ class BasketItemAdapter extends AbstractEntityAdapter
                 $this->getEntityClass() . '.resource',
                 $resourceAlias
             );
-            $qb->andWhere($qb->expr()->eq(
+            $qb->andWhere($expr->eq(
                 "$resourceAlias.id",
                 $this->createNamedParameter($qb, $query['resource_id']))
             );

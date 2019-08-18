@@ -2,6 +2,7 @@
 
 /*
  * Copyright BibLibre, 2016
+ * Copyright Daniel Berthereau, 2019
  *
  * This software is governed by the CeCILL license under French law and abiding
  * by the rules of distribution of free software.  You can use, modify and/ or
@@ -27,17 +28,20 @@
  * knowledge of the CeCILL license and that you accept its terms.
  */
 
-namespace Basket\Controller;
+namespace Basket\Controller\Site;
 
 use Zend\Http\Response;
-use Zend\View\Model\ViewModel;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
 
-class IndexController extends AbstractActionController
+class BasketController extends AbstractActionController
 {
     public function addAction()
     {
+        if (!$this->getRequest()->isXmlHttpRequest()) {
+            return $this->jsonErrorNotFound();
+        }
+
         $id = $this->params('id');
         if (!$id) {
             return $this->jsonErrorNotFound();
@@ -49,24 +53,35 @@ class IndexController extends AbstractActionController
         }
 
         $user = $this->identity();
-        $basketItems = $this->api()->search('basket_items', [
+
+        $basketItem = $this->api()->searchOne('basket_items', [
             'user_id' => $user->getId(),
             'resource_id' => $resource->id(),
         ])->getContent();
 
-        if (!empty($basketItems)) {
-            return new JsonModel(['error' => 'alreadyIn']);
+        if (!empty($basketItem)) {
+            return new JsonModel(['error' => 'Already in']); // @translate
         }
 
-        $this->createBasketItem($user->getId(), $resource->id());
+        $this->api()->create('basket_items', [
+            'o:user_id' => $user->getId(),
+            'o:resource_id' => $resource->id(),
+        ]);
 
         $updateBasketLink = $this->viewHelpers()->get('updateBasketLink');
 
-        return new JsonModel(['content' => $updateBasketLink($resource)]);
+        return new JsonModel([
+            'status' => Response::STATUS_CODE_200,
+            'content' => $updateBasketLink($resource),
+        ]);
     }
 
     public function deleteAction()
     {
+        if (!$this->getRequest()->isXmlHttpRequest()) {
+            return $this->jsonErrorNotFound();
+        }
+
         $id = $this->params('id');
         if (!$id) {
             return $this->jsonErrorNotFound();
@@ -74,39 +89,25 @@ class IndexController extends AbstractActionController
 
         $user = $this->identity();
 
-        $basketItems = $this->api()->search('basket_items', [
+        $basketItem = $this->api()->searchOne('basket_items', [
             'user_id' => $user->getId(),
             'resource_id' => $id,
         ])->getContent();
 
-        if (empty($basketItems)) {
+        if (empty($basketItem)) {
             return $this->jsonErrorNotFound();
         }
 
-        $basketItem = $basketItems[0];
         $resource = $basketItem->resource();
 
         $this->api()->delete('basket_items', $basketItem->id());
 
         $updateBasketLink = $this->viewHelpers()->get('updateBasketLink');
-        $content = $updateBasketLink($resource);
 
-        return new JsonModel(['content' => $content]);
-    }
-
-    public function showAction()
-    {
-        $user = $this->identity();
-
-        $query = $this->params()->fromQuery();
-        $query['user_id'] = $user->getId();
-
-        $basketItems = $this->api()->search('basket_items', $query)->getContent();
-
-        $view = new ViewModel;
-        $view->setVariable('basketItems', $basketItems);
-
-        return $view;
+        return new JsonModel([
+            'status' => Response::STATUS_CODE_200,
+            'content' => $updateBasketLink($resource),
+        ]);
     }
 
     protected function jsonErrorNotFound()
@@ -114,14 +115,9 @@ class IndexController extends AbstractActionController
         $response = $this->getResponse();
         $response->setStatusCode(Response::STATUS_CODE_404);
 
-        return new JsonModel(['error' => 'Not found']); // @translate
-    }
-
-    protected function createBasketItem($userId, $resourceId)
-    {
-        $this->api()->create('basket_items', [
-            'o:user_id' => $userId,
-            'o:resource_id' => $resourceId,
+        return new JsonModel([
+            'status' => Response::STATUS_CODE_404,
+            'message' => $this->translate('Not found'), // @translate
         ]);
     }
 }
