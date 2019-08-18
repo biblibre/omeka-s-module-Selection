@@ -73,28 +73,21 @@ The fact that you are presently reading this means that you have had knowledge
 of the CeCILL license and that you accept its terms.
 
 
-Contact
--------
-
-Current maintainers:
-
-* Biblibre
-
-
 Copyright
 ---------
 
-* Copyright Biblibre, 2016-2017
-* Copyright Daniel Berthereau, 2017
+* Copyright Biblibre, 2016-2017 (see [Biblibre])
+* Copyright Daniel Berthereau, 2017-2019 (see [Daniel-KM] on GitHub)
 
 
-[Basket]: https://github.com/biblibre/omeka-s-module-Basket
+[Basket]: https://github.com/Daniel-KM/Omeka-S-module-Basket
 [Omeka S]: https://omeka.org/s
 [Guest]: https://github.com/Daniel-KM/Omeka-S-module-Guest
 [Installing a module]: http://dev.omeka.org/docs/s/user-manual/modules/#installing-modules
-[module issues]: https://github.com/biblibre/omeka-s-module-Basket/issues
+[module issues]: https://github.com/Daniel-KM/Omeka-S-module-Basket/issues
 [CeCILL v2.1]: https://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
 [GNU/GPL]: https://www.gnu.org/licenses/gpl-3.0.html
 [FSF]: https://www.fsf.org
 [OSI]: http://opensource.org
+[Biblibre]: https://github.com/biblibre
 [Daniel-KM]: https://github.com/Daniel-KM "Daniel Berthereau"
