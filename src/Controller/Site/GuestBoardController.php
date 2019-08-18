@@ -52,6 +52,7 @@ class GuestBoardController extends AbstractActionController
         $view = new ViewModel;
         $view
             ->setTemplate('guest/site/guest/basket')
+            ->setVariable('site', $this->currentSite())
             ->setVariable('basketItems', $basketItems);
         return $view;
     }

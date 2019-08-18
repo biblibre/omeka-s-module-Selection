@@ -29,46 +29,88 @@
 
 /**
  * @var \Zend\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
  * @var \Basket\Api\Representation\BasketItemRepresentation[] $basketItems
  */
 
 $plugins = $this->getHelperPluginManager();
 $translate = $plugins->get('translate');
-$partial = $plugins->get('partial');
+$thumbnail = $plugins->get('thumbnail');
 $updateBasketLink = $this->plugin('updateBasketLink');
 
-$this->htmlElement('body')->appendAttribute('class', 'basket');
+$this->htmlElement('body')->appendAttribute('class', 'basket resource browse');
+
+$headingTerm = $this->siteSetting('browse_heading_property_term', 'dcterms:title');
+$bodyTerm = $this->siteSetting('browse_body_property_term', 'dcterms:description');
+
+// Order resources by type.
+$resourceNameToType = [
+    'item_sets' => 'item-set',
+    'items' => 'item',
+    'media' => 'media',
+];
+$resources = ['item' => [], 'media' => []];
+foreach ($basketItems as $basketItem):
+    $resource = $basketItem->resource();
+    $resources[$resourceNameToType[$resource->resourceName()]][] = $resource;
+endforeach;
 ?>
 
-<div id="content" role="main">
-    <h2><?= $translate('Basket') ?></h2>
+<style>
+#content .media.resource:hover { border-bottom: 1px solid transparent; }
+</style>
 
+<?= $this->pageTitle($translate('Basket'), 2); ?>
+
+<?php if (count($basketItems)): ?>
+<h3><?= sprintf($translate('%d items, %d media'), count($resources['item']), count($resources['media'])) ?></h3>
+
+<?php $this->trigger('view.browse.before'); ?>
+<ul class="resource-list">
     <?php
-    $resources = ['items' => [], 'media' => []];
-    foreach ($basketItems as $basketItem):
-        $resource = $basketItem->resource();
-        $resources[$resource->resourceName()][] = $resource;
-    endforeach;
+    $defaultHeading = ['default' => $translate('[Untitled]')];
+    foreach ($resources as $resourceType => $resourceList):
+        foreach ($resourceList as $resource):
+        if ($resourceType === 'item') {
+            $heading = $resource->value($headingTerm, $defaultHeading);
+        } else {
+            $heading = $resource->value($headingTerm);
+            if (!$heading):
+                // There is no media->position().
+                $mediaId = $resource->id();
+                $position = 0;
+                foreach ($resource->item()->media() as $media):
+                    ++$position;
+                    if ($media->id() === $mediaId):
+                        break;
+                    endif;
+                endforeach;
+                $heading = sprintf(
+                    '%s (%d)',
+                    $resource->item()->value($headingTerm, $defaultHeading),
+                    $position
+                );
+            endif;
+        }
+        $body = $resource->value($bodyTerm);
     ?>
-
-    <?php if (count($resources['items'])): ?>
-        <h3><?= sprintf($translate('%d items'), count($resources['items'])) ?></h3>
-        <div class="resource-list">
-            <?php foreach ($resources['items'] as $item): ?>
-                <?= $partial('guest/site/guest/basket-resource', ['resource' => $item]) ?>
-            <?php endforeach; ?>
+    <li class="<?= $resourceType ?> resource">
+        <?= $resource->linkRaw($thumbnail($resource, 'medium')) ?>
+        <h4><?= $resource->link($heading) ?></h4>
+        <?php if ($body): ?>
+        <div class="description">
+            <?= $body ?>
         </div>
-    <?php endif; ?>
+        <?php endif; ?>
+        <?= $updateBasketLink($resource) ?>
+    </li>
+        <?php endforeach; ?>
+    <?php endforeach; ?>
+</ul>
+<?php $this->trigger('view.browse.after'); ?>
 
-    <?php // TODO Create the layout for basket for media. ?>
-    <?php if (count($resources['media'])): ?>
-        <h3><?= sprintf($translate('%d media'), count($resources['media'])) ?></h3>
-        <div class="resource-list">
-            <?php foreach ($resources['media'] as $media): ?>
-                <?= $media->render() ?>
-                <?= $media->displayValues() ?>
-                <?= $updateBasketLink($media) ?>
-            <?php endforeach; ?>
-        </div>
-    <?php endif; ?>
-</div>
+<?php else: ?>
+<p>
+    <?= $translate('The basket is empty.') ?>
+</p>
+<?php endif; ?>
