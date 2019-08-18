@@ -1,14 +1,14 @@
-# Translation template for module Solr.
-# Copyright (C) 2016 BibLibre
-# This file is distributed under the same license as the Solr package.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Solr\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-29 15:13+0100\n"
+"POT-Creation-Date: 2019-08-19 00:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,44 +17,54 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: view/public/basket/basket-button.phtml:2
-msgid "Add to basket"
-msgstr ""
-
-#: view/public/basket/basket-button.phtml:2
-msgid "Remove from basket"
-msgstr ""
-
-#: view/public/basket/basket-link.phtml:1
-#: view/public/basket/index/show.phtml:31
+#: Module.php:84 view/common/basket-item.phtml:25
+#: view/common/basket-link.phtml:10 view/guest/site/guest/basket.phtml:63
 msgid "Basket"
 msgstr ""
 
-#: view/public/basket/index/show.phtml:45
-msgid "items"
+#: src/Generic/AbstractModule.php:486
+#, php-format
+msgid "This module requires the module \"%s\"."
 msgstr ""
 
-#: view/public/basket/index/show.phtml:54
-msgid "files"
+#: src/Generic/AbstractModule.php:506
+#, php-format
+msgid "This module requires modules \"%s\"."
 msgstr ""
 
-#: view/public/omeka/site/item/browse.phtml:10
-msgid "Item Set"
+#: src/Generic/AbstractModule.php:574
+#, php-format
+msgid ""
+"The module \"%s\" was automatically deactivated because the dependencies are "
+"unavailable."
 msgstr ""
 
-#: view/public/omeka/site/item/browse.phtml:14
-#: view/public/omeka/site/item/browse.phtml:16
-msgid "Items"
+#: view/common/basket-button.phtml:12
+msgid "Add to basket"
 msgstr ""
 
-#: view/public/omeka/site/item/browse.phtml:20
-msgid "Advanced search"
+#: view/common/basket-button.phtml:12
+msgid "Remove from basket"
 msgstr ""
 
-#: view/public/omeka/site/item/show.phtml:6
-msgid "Item"
+#: view/guest/site/guest/basket.phtml:66
+#, php-format
+msgid "%d items, %d media"
 msgstr ""
 
-#: view/public/omeka/site/item/show.phtml:11
-msgid "Item Sets"
+#: view/guest/site/guest/basket.phtml:114
+msgid "The basket is empty."
+msgstr ""
+
+#: view/guest/site/guest/widget/basket.phtml:13
+msgid "My basket"
+msgstr ""
+
+#: src/Controller/Site/BasketController.php:63
+msgid "Already in"
+msgstr ""
+
+#: src/Site/Navigation/Link/Basket.php:23
+#, php-format
+msgid "Invalid navigation: link without label (%s)"
 msgstr ""
