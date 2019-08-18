@@ -58,13 +58,12 @@ class BasketItemRepresentation extends AbstractEntityRepresentation
     }
 
     /**
-     *
      * @return \Omeka\Api\Representation\AbstractResourceEntityRepresentation
      */
     public function resource()
     {
         $adapter = $this->getAdapter('resources');
-         return $adapter->getRepresentation($this->resource->getResource());
+        return $adapter->getRepresentation($this->resource->getResource());
     }
 
     /**
