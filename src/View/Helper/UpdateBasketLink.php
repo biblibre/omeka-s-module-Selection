@@ -30,8 +30,8 @@ class UpdateBasketLink extends AbstractHelper
 
         $view->headScript()->appendFile($view->assetUrl('js/basket.js', 'Basket'));
 
-        $partial = isset($options['partial']) ? $options['partial'] : 'common/basket-button';
-        unset($options['partial']);
+        $template = isset($options['template']) ? $options['template'] : 'common/basket-button';
+        unset($options['template']);
 
         $params = [
             'action' => $action,
@@ -39,7 +39,7 @@ class UpdateBasketLink extends AbstractHelper
             'url' => $view->url('site/basket-id', ['action' => $action, 'id' => $resource->id()], true),
         ];
 
-        return $view->partial($partial, $params + $options);
+        return $view->partial($template, $params + $options);
     }
 
     protected function basketExistsFor($userId, $resourceId)
