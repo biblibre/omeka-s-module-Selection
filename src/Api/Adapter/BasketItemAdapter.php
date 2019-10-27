@@ -2,6 +2,7 @@
 
 /*
  * Copyright BibLibre, 2016
+ * Copyright Daniel Berthereau, 2019
  *
  * This software is governed by the CeCILL license under French law and abiding
  * by the rules of distribution of free software.  You can use, modify and/ or
@@ -73,11 +74,14 @@ class BasketItemAdapter extends AbstractEntityAdapter
 
     public function buildQuery(QueryBuilder $qb, array $query)
     {
+        $isOldOmeka = \Omeka\Module::VERSION < 2;
+        $alias = $isOldOmeka ? $this->getEntityClass() : 'omeka_root';
+
         $expr = $qb->expr();
         if (isset($query['user_id'])) {
             $userAlias = $this->createAlias();
             $qb->innerJoin(
-                $this->getEntityClass() . '.user',
+                $alias . '.user',
                 $userAlias
             );
             $qb->andWhere($expr->eq(
@@ -88,7 +92,7 @@ class BasketItemAdapter extends AbstractEntityAdapter
         if (isset($query['resource_id'])) {
             $resourceAlias = $this->createAlias();
             $qb->innerJoin(
-                $this->getEntityClass() . '.resource',
+                $alias . '.resource',
                 $resourceAlias
             );
             $qb->andWhere($expr->eq(
@@ -102,10 +106,11 @@ class BasketItemAdapter extends AbstractEntityAdapter
     {
         if (!empty($query['sort_by'])) {
             $property = $this->getPropertyByTerm($query['sort_by']);
-            $entityClass = $this->getEntityClass();
             if ($property) {
+                $isOldOmeka = \Omeka\Module::VERSION < 2;
+                $alias = $isOldOmeka ? $this->getEntityClass() : 'omeka_root';
                 $resourceAlias = $this->createAlias();
-                $qb->leftJoin("$entityClass.resource", $resourceAlias);
+                $qb->leftJoin("$alias.resource", $resourceAlias);
                 $valuesAlias = $this->createAlias();
                 $qb->leftJoin(
                     "$resourceAlias.values", $valuesAlias,
