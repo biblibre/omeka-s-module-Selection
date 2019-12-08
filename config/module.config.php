@@ -56,6 +56,20 @@ return  [
         'routes' => [
             'site' => [
                 'child_routes' => [
+                    'basket' => [
+                        'type' => \Zend\Router\Http\Segment::class,
+                        'options' => [
+                            'route' => '/basket[/:action]',
+                            'constraints' => [
+                                'action' => 'add|delete',
+                            ],
+                            'defaults' => [
+                                '__NAMESPACE__' => 'Basket\Controller\Site',
+                                'controller' => 'Basket',
+                                'action' => 'add',
+                            ],
+                        ],
+                    ],
                     'basket-id' => [
                         'type' => \Zend\Router\Http\Segment::class,
                         'options' => [

@@ -42,38 +42,55 @@ class BasketController extends AbstractActionController
             return $this->jsonErrorNotFound();
         }
 
-        $id = $this->params('id');
+        $params = $this->params();
+        $id = $params->fromRoute('id') ?: $params->fromQuery('id');
         if (!$id) {
             return $this->jsonErrorNotFound();
         }
 
-        $resource = $this->api()->read('resources', $id)->getContent();
-        if (!$resource) {
-            return $this->jsonErrorNotFound();
+        $isMultiple = is_array($id);
+        $ids = $isMultiple ? $id : [$id];
+
+        $api = $this->api();
+
+        // Check resources.
+        $resources = [];
+        foreach ($ids as $id) {
+            try {
+                $resource = $api->read('resources', ['id' => $id])->getContent();
+            } catch (\Omeka\Api\Exception\NotFoundException $e) {
+                return $this->jsonErrorNotFound();
+            }
+            $resources[$id] = $resource;
         }
 
         $user = $this->identity();
+        $userId = $user->getId();
+        $updateBasketLink = $this->viewHelpers()->get('updateBasketLink');
+        $results = [];
 
-        $basketItem = $this->api()->searchOne('basket_items', [
-            'user_id' => $user->getId(),
-            'resource_id' => $resource->id(),
-        ])->getContent();
-
-        if (!empty($basketItem)) {
-            return new JsonModel(['error' => 'Already in']); // @translate
+        foreach ($resources as $resourceId => $resource) {
+            $hasBasket = $api->search('basket_items', ['user_id' => $userId, 'resource_id' => $resourceId])
+                ->getTotalResults();
+            if ($hasBasket) {
+                $results[$resourceId] = [
+                    'status' => Response::STATUS_CODE_400,
+                    'message' => 'Already in', // @translate
+                ];
+            } else {
+                $api()->create('basket_items', ['o:user_id' => $userId, 'o:resource_id' => $resourceId]);
+                $results[$resourceId] = [
+                    'status' => Response::STATUS_CODE_200,
+                    'content' => $updateBasketLink($resource),
+                ];
+            }
         }
 
-        $this->api()->create('basket_items', [
-            'o:user_id' => $user->getId(),
-            'o:resource_id' => $resource->id(),
-        ]);
+        if (!$isMultiple) {
+            $results = reset($results);
+        }
 
-        $updateBasketLink = $this->viewHelpers()->get('updateBasketLink');
-
-        return new JsonModel([
-            'status' => Response::STATUS_CODE_200,
-            'content' => $updateBasketLink($resource),
-        ]);
+        return new JsonModel($results);
     }
 
     public function deleteAction()
@@ -82,39 +99,54 @@ class BasketController extends AbstractActionController
             return $this->jsonErrorNotFound();
         }
 
-        $id = $this->params('id');
+        $params = $this->params();
+        $id = $params->fromRoute('id') ?: $params->fromQuery('id');
         if (!$id) {
             return $this->jsonErrorNotFound();
         }
 
+        $isMultiple = is_array($id);
+        $ids = $isMultiple ? $id : [$id];
+
+        $api = $this->api();
+
         $user = $this->identity();
+        $userId = $user->getId();
+        $updateBasketLink = $this->viewHelpers()->get('updateBasketLink');
+        $results = [];
 
-        $basketItem = $this->api()->searchOne('basket_items', [
-            'user_id' => $user->getId(),
-            'resource_id' => $id,
-        ])->getContent();
-
-        if (empty($basketItem)) {
-            return $this->jsonErrorNotFound();
+        foreach ($ids as $resourceId) {
+            $data = [
+                'user_id' => $userId,
+                'resource_id' => $resourceId,
+            ];
+            $basketItem = $api->searchOne('basket_items', $data)->getContent();
+            if ($basketItem) {
+                $resource = $basketItem->resource();
+                $api->delete('basket_items', $basketItem->id());
+                $results[$resourceId] = [
+                    'status' => Response::STATUS_CODE_200,
+                    'content' => $updateBasketLink($resource),
+                ];
+            } else {
+                $results[$resourceId] = [
+                    'status' => Response::STATUS_CODE_404,
+                    'message' => 'Not found', // @translate
+                ];
+            }
         }
 
-        $resource = $basketItem->resource();
+        if (!$isMultiple) {
+            $results = reset($results);
+        }
 
-        $this->api()->delete('basket_items', $basketItem->id());
-
-        $updateBasketLink = $this->viewHelpers()->get('updateBasketLink');
-
-        return new JsonModel([
-            'status' => Response::STATUS_CODE_200,
-            'content' => $updateBasketLink($resource),
-        ]);
+        return new JsonModel($results);
     }
 
     protected function jsonErrorNotFound()
     {
         $response = $this->getResponse();
         $response->setStatusCode(Response::STATUS_CODE_404);
-
         return new JsonModel([
             'status' => Response::STATUS_CODE_404,
             'message' => $this->translate('Not found'), // @translate
