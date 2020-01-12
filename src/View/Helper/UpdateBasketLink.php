@@ -28,7 +28,7 @@ class UpdateBasketLink extends AbstractHelper
             ? 'delete'
             : 'add';
 
-        $view->headScript()->appendFile($view->assetUrl('js/basket.js', 'Basket'));
+        $view->headScript()->appendFile($view->assetUrl('js/basket.js', 'Basket'), 'text/javascript', ['defer' => 'defer']);
 
         $template = isset($options['template']) ? $options['template'] : 'common/basket-button';
         unset($options['template']);
