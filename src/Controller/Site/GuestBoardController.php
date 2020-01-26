@@ -37,7 +37,9 @@ class GuestBoardController extends AbstractActionController
 {
     public function indexAction()
     {
-        return $this->forward('show');
+        $params = $this->params()->fromRoute();
+        $params['action'] = 'show';
+        return $this->forward()->dispatch(__CLASS__, $params);
     }
 
     public function showAction()
