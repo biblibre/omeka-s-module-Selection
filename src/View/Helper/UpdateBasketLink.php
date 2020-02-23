@@ -1,5 +1,4 @@
 <?php
-
 namespace Basket\View\Helper;
 
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
@@ -7,6 +6,11 @@ use Zend\View\Helper\AbstractHelper;
 
 class UpdateBasketLink extends AbstractHelper
 {
+    /**
+     * The default partial view script.
+     */
+    const PARTIAL_NAME = 'common/basket-button';
+
     /**
      * Create a button to add or remove a resource to/from the basket.
      *
@@ -23,14 +27,18 @@ class UpdateBasketLink extends AbstractHelper
             return '';
         }
 
+        $defaultOptions = [
+            'template' => self::PARTIAL_NAME,
+        ];
+        $options += $defaultOptions;
+
         $basket = $this->basketExistsFor($user->getId(), $resource->id());
-        $action = $basket
-            ? 'delete'
-            : 'add';
+        $action = $basket ? 'delete' : 'add';
 
-        $view->headScript()->appendFile($view->assetUrl('js/basket.js', 'Basket'), 'text/javascript', ['defer' => 'defer']);
+        $view->headScript()
+            ->appendFile($view->assetUrl('js/basket.js', 'Basket'), 'text/javascript', ['defer' => 'defer']);
 
-        $template = isset($options['template']) ? $options['template'] : 'common/basket-button';
+        $template = $options['template'];
         unset($options['template']);
 
         $params = [
@@ -42,6 +50,13 @@ class UpdateBasketLink extends AbstractHelper
         return $view->partial($template, $params + $options);
     }
 
+    /**
+     * Check if a resource is in the user basket.
+     *
+     * @param int $userId
+     * @param int $resourceId
+     * @return bool
+     */
     protected function basketExistsFor($userId, $resourceId)
     {
         return (bool) $this->getView()->api()
