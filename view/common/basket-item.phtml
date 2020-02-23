@@ -11,6 +11,11 @@
 // skip this partial. This partial can be skipped automatically with module
 // BlockDisposition.
 
+// Don't display for anonymous visitors (or display a login link, or for future visitor session).
+if (!$this->identity()):
+    return;
+endif;
+
 $translate = $this->plugin('translate');
 $updateBasketLink = $this->plugin('updateBasketLink');
 
