@@ -16,7 +16,7 @@ use Zend\Mvc\MvcEvent;
  * Basket.
  *
  * @copyright Biblibre, 2016
- * @copyright Daniel Berthereau 2019
+ * @copyright Daniel Berthereau 2019-2020
  * @license http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.txt
  */
 class Module extends AbstractModule
@@ -70,7 +70,7 @@ class Module extends AbstractModule
     public function handleViewShowAfter(Event $event)
     {
         $view = $event->getTarget();
-        echo $view->partial('common/basket-item', $view->vars());
+        echo $view->partial('common/basket-item');
     }
 
     public function handleGuestWidgets(Event $event)
