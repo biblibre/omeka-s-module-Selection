@@ -15,7 +15,8 @@ class UpdateBasketLink extends AbstractHelper
      * Create a button to add or remove a resource to/from the basket.
      *
      * @param AbstractResourceEntityRepresentation $resource
-     * @param array $options Options for the partial.
+     * @param array $options Options for the partial. Managed key:
+     * - action: "add" or "delete". If not specified, the action is "toggle".
      * @return string
      */
     public function __invoke(AbstractResourceEntityRepresentation $resource, array $options = [])
@@ -27,13 +28,21 @@ class UpdateBasketLink extends AbstractHelper
             return '';
         }
 
+        if (!array_key_exists('basketItem', $options)) {
+            $options['basketItem'] = $this->getView()->api()->searchOne(
+                'basket_items',
+                [
+                    'user_id' => $user->getId(),
+                    'resource_id' => $resource->id(),
+                ])
+                ->getContent();
+        }
+
         $defaultOptions = [
             'template' => self::PARTIAL_NAME,
+            'action' => 'toggle',
         ];
         $options += $defaultOptions;
-
-        $basket = $this->basketExistsFor($user->getId(), $resource->id());
-        $action = $basket ? 'delete' : 'add';
 
         $view->headScript()
             ->appendFile($view->assetUrl('js/basket.js', 'Basket'), 'text/javascript', ['defer' => 'defer']);
@@ -42,28 +51,12 @@ class UpdateBasketLink extends AbstractHelper
         unset($options['template']);
 
         $params = [
-            'action' => $action,
             'resource' => $resource,
-            'url' => $view->url('site/basket-id', ['action' => $action, 'id' => $resource->id()], true),
+            'url' => $view->url('site/basket-id', ['action' => $options['action'], 'id' => $resource->id()], true),
+            // @deprecated Kept for old themes.
+            'action' => $options['basketItem'] ? 'delete' : 'add',
         ];
 
         return $view->partial($template, $params + $options);
-    }
-
-    /**
-     * Check if a resource is in the user basket.
-     *
-     * @param int $userId
-     * @param int $resourceId
-     * @return bool
-     */
-    protected function basketExistsFor($userId, $resourceId)
-    {
-        return (bool) $this->getView()->api()
-            ->searchOne('basket_items', [
-                'user_id' => $userId,
-                'resource_id' => $resourceId,
-            ])
-            ->getTotalResults();
     }
 }

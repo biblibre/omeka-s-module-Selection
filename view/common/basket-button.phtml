@@ -2,17 +2,24 @@
 /**
  * @var \Zend\View\Renderer\PhpRenderer $this
  * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
- * @var string $action
+ * @var \Basket\Api\Representation\BasketItemRepresentation|null $basketItem
  * @var string $url
+ * @var string $action deprecated "add" or "delete". Check basket item instead.
  * and options passed from the caller.
  */
 
 $translate = $this->plugin('translate');
 
-$text = $action === 'add' ? $translate('Add to basket') : $translate('Remove from basket');
-$class = "basket-$action";
+if (empty($basketItem)):
+    $text = $translate('Add to basket');
+    $class = 'basket-add btn-primary';
+else:
+    $text = $translate('Remove from basket');
+    $class = 'basket-delete btn-danger';
+endif;
+$this->vars()->offsetSet('text', $text);
 ?>
 
 <button class="basket-update <?= $class ?>" title="<?= $text ?>" data-url="<?= $url ?>">
-    <?= $this->partial('common/basket-button-content', ['action' => $action, 'text' => $text]) ?>
+    <?= $this->partial('common/basket-button-content') ?>
 </button>

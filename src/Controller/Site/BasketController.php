@@ -2,7 +2,7 @@
 
 /*
  * Copyright BibLibre, 2016
- * Copyright Daniel Berthereau, 2019
+ * Copyright Daniel Berthereau, 2019-2020
  *
  * This software is governed by the CeCILL license under French law and abiding
  * by the rules of distribution of free software.  You can use, modify and/ or
@@ -70,18 +70,17 @@ class BasketController extends AbstractActionController
         $results = [];
 
         foreach ($resources as $resourceId => $resource) {
-            $hasBasket = $api->search('basket_items', ['user_id' => $userId, 'resource_id' => $resourceId])
-                ->getTotalResults();
-            if ($hasBasket) {
+            $basketItem = $api->searchOne('basket_items', ['user_id' => $userId, 'resource_id' => $resourceId])->getContent();
+            if ($basketItem) {
                 $results[$resourceId] = [
                     'status' => Response::STATUS_CODE_400,
                     'message' => 'Already in', // @translate
                 ];
             } else {
-                $api()->create('basket_items', ['o:user_id' => $userId, 'o:resource_id' => $resourceId]);
+                $basketItem = $api->create('basket_items', ['o:user_id' => $userId, 'o:resource_id' => $resourceId])->getContent();
                 $results[$resourceId] = [
                     'status' => Response::STATUS_CODE_200,
-                    'content' => $updateBasketLink($resource),
+                    'content' => $updateBasketLink($resource, ['basketItem' => $basketItem, 'action' => 'delete']),
                 ];
             }
         }
@@ -126,12 +125,88 @@ class BasketController extends AbstractActionController
                 $api->delete('basket_items', $basketItem->id());
                 $results[$resourceId] = [
                     'status' => Response::STATUS_CODE_200,
-                    'content' => $updateBasketLink($resource),
+                    'content' => $updateBasketLink($resource, ['basketItem' => null, 'action' => 'add']),
                 ];
             } else {
                 $results[$resourceId] = [
                     'status' => Response::STATUS_CODE_404,
                     'message' => 'Not found', // @translate
+                ];
+            }
+        }
+
+        if (!$isMultiple) {
+            $results = reset($results);
+        }
+
+        return new JsonModel($results);
+    }
+
+    public function toggleAction()
+    {
+        if (!$this->getRequest()->isXmlHttpRequest()) {
+            return $this->jsonErrorNotFound();
+        }
+
+        $params = $this->params();
+        $id = $params->fromRoute('id') ?: $params->fromQuery('id');
+        if (!$id) {
+            return $this->jsonErrorNotFound();
+        }
+
+        $isMultiple = is_array($id);
+        $ids = $isMultiple ? $id : [$id];
+
+        $api = $this->api();
+
+        // Check resources.
+        $resources = [];
+        foreach ($ids as $id) {
+            try {
+                $resource = $api->read('resources', ['id' => $id])->getContent();
+                $resources[$id] = $resource;
+            } catch (\Omeka\Api\Exception\NotFoundException $e) {
+            }
+        }
+
+        if (!count($resources)) {
+            return $this->jsonErrorNotFound();
+        }
+
+        $user = $this->identity();
+        $userId = $user->getId();
+        $updateBasketLink = $this->viewHelpers()->get('updateBasketLink');
+
+        $results = [];
+        $add = [];
+        /** @var \Basket\Api\Representation\BasketItemRepresentation[] $delete */
+        $delete = [];
+        foreach ($resources as $resourceId => $resource) {
+            $data = ['user_id' => $userId, 'resource_id' => $resourceId];
+            $response = $api->searchOne('basket_items', $data);
+            if ($response->getTotalResults()) {
+                $delete[$resourceId] = $response->getContent();
+            } else {
+                $add[$resourceId] = $resourceId;
+            }
+        }
+
+        if ($add) {
+            foreach ($add as $resourceId) {
+                $basketItem = $api->create('basket_items', ['o:user_id' => $userId, 'o:resource_id' => $resourceId])->getContent();
+                $results[$resourceId] = [
+                    'status' => Response::STATUS_CODE_200,
+                    'content' => $updateBasketLink($resource, ['basketItem' => $basketItem, 'action' => 'toggle']),
+                ];
+            }
+        }
+
+        if ($delete) {
+            foreach ($delete as $resourceId => $basketItem) {
+                $api->delete('basket_items', $basketItem->id());
+                $results[$resourceId] = [
+                    'status' => Response::STATUS_CODE_200,
+                    'content' => $updateBasketLink($resources[$resourceId], ['basketItem' => null, 'action' => 'toggle']),
                 ];
             }
         }

@@ -61,7 +61,7 @@ return  [
                         'options' => [
                             'route' => '/basket[/:action]',
                             'constraints' => [
-                                'action' => 'add|delete',
+                                'action' => 'add|delete|toggle',
                             ],
                             'defaults' => [
                                 '__NAMESPACE__' => 'Basket\Controller\Site',
@@ -75,13 +75,13 @@ return  [
                         'options' => [
                             'route' => '/basket/:id[/:action]',
                             'constraints' => [
-                                'action' => 'add|delete',
+                                'action' => 'add|delete|toggle',
                                 'id' => '\d+',
                             ],
                             'defaults' => [
                                 '__NAMESPACE__' => 'Basket\Controller\Site',
                                 'controller' => 'Basket',
-                                'action' => 'update',
+                                'action' => 'toggle',
                             ],
                         ],
                     ],
