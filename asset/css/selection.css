@@ -15,6 +15,9 @@ a.selection-list-toggle:visited {
 .selection-list-toggle.active:after {
     content:" ⊟";
 }
+span.selection-delete:after {
+    content:"X";
+}
 .selection-empty,
 .selection-list {
     display: none;

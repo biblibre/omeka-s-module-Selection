@@ -57,7 +57,6 @@
                                     .attr('data-url', selectionItem.url_remove)
                                     .attr('title', selectionList.attr('data-text-remove'))
                                     .attr('aria-label', selectionList.attr('data-text-remove'))
-                                    .append('X')
                             )
                     );
                 }
