@@ -2,7 +2,6 @@
 /**
  * @var \Zend\View\Renderer\PhpRenderer $this
  * @var \Omeka\Api\Representation\SiteRepresentation $site
- * @var \Omeka\Api\Representation\ItemRepresentation $item
  * @var \Omeka\Api\Representation\ItemRepresentation $resource
  */
 
@@ -20,7 +19,7 @@ $this->headLink()
 $this->headScript()
     ->appendFile($this->assetUrl('js/selection.js', 'Selection'), 'text/javascript', ['defer' => 'defer']);
 
-$medias = $item->media();
+$medias = $resource->getControllerName() === 'item' ? $resource->media() : [];
 ?>
 
 <div class="selection">
@@ -29,8 +28,8 @@ $medias = $item->media();
     <h3><?= $translate('Item') ?></h3>
     <?php endif; ?>
     <div class="item resource">
-        <?= $updateSelectionLink($item) ?>
-        <?= $item->linkPretty() ?>
+        <?= $updateSelectionLink($resource) ?>
+        <?= $resource->linkPretty() ?>
     </div>
     <?php if (count($medias)): ?>
     <h3><?= $translate('Media') ?></h3>

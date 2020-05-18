@@ -87,11 +87,18 @@ class Module extends AbstractModule
 
     public function attachListeners(SharedEventManagerInterface $sharedEventManager)
     {
-        $sharedEventManager->attach(
+        $controllers = [
             'Omeka\Controller\Site\Item',
-            'view.show.after',
-            [$this, 'handleViewShowAfter']
-        );
+            'Omeka\Controller\Site\ItemSet',
+            'Omeka\Controller\Site\Media',
+        ];
+        foreach ($controllers as $controller) {
+            $sharedEventManager->attach(
+                $controller,
+                'view.show.after',
+                [$this, 'handleViewShowAfter']
+            );
+        }
 
         // Guest integration.
         $sharedEventManager->attach(
