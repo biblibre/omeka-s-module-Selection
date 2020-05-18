@@ -2,7 +2,7 @@
 
 /*
  * Copyright BibLibre, 2016
- * Copyright Daniel Berthereau, 2019
+ * Copyright Daniel Berthereau, 2019-2020
  *
  * This software is governed by the CeCILL license under French law and abiding
  * by the rules of distribution of free software.  You can use, modify and/ or
@@ -46,16 +46,17 @@ class GuestBoardController extends AbstractActionController
     {
         $user = $this->identity();
 
-        $query = $this->params()->fromQuery();
-        $query['user_id'] = $user->getId();
+        if (isset($user)) {
+            $query = $this->params()->fromQuery();
+            $query['user_id'] = $user->getId();
 
-        $selectionItems = $this->api()->search('selection_items', $query)->getContent();
+            $selectionItems = $this->api()->search('selection_items', $query)->getContent();
 
-        $view = new ViewModel;
-        $view
-            ->setTemplate('guest/site/guest/selection')
-            ->setVariable('site', $this->currentSite())
-            ->setVariable('selectionItems', $selectionItems);
-        return $view;
+            $view = new ViewModel;
+            return $view
+                ->setTemplate('guest/site/guest/selection')
+                ->setVariable('site', $this->currentSite())
+                ->setVariable('selectionItems', $selectionItems);
+        }
     }
 }

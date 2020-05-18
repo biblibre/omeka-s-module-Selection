@@ -4,12 +4,12 @@
  */
 
 $translate = $this->plugin('translate');
-$urlHelper = $this->plugin('url');
+$url = $this->plugin('url');
+$hyperlink = $this->plugin('hyperlink');
 ?>
 
 <ul>
     <li>
-        <?php $url = $urlHelper('site/guest/selection', [], true); ?>
-        <?= $this->hyperlink($translate('My selection'), $url) ?>
+        <?= $hyperlink($translate('See selection'), $url('site/guest/selection', [], true)) // @translate ?>
     </li>
 </ul>

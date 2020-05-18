@@ -11,6 +11,7 @@ use Generic\AbstractModule;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Mvc\MvcEvent;
+use Zend\Session\Container;
 
 /**
  * Selection.
@@ -30,7 +31,8 @@ class Module extends AbstractModule
     {
         parent::onBootstrap($event);
 
-        $acl = $this->getServiceLocator()->get('Omeka\Acl');
+        $services = $this->getServiceLocator();
+        $acl = $services->get('Omeka\Acl');
 
         // Since Omeka 1.4, modules are ordered, so Guest come after Selection.
         // See \Guest\Module::onBootstrap().
@@ -39,6 +41,7 @@ class Module extends AbstractModule
         }
 
         $roles = $acl->getRoles();
+
         $acl
             ->allow(
                 $roles,
@@ -48,7 +51,14 @@ class Module extends AbstractModule
                     'Selection\Controller\Site\Selection',
                     'Selection\Controller\Site\GuestBoard',
                 ]
-        );
+            )
+            // This right is checked in controller in order to avoid to check
+            // the site here.
+            ->allow(
+                null,
+                'Selection\Controller\Site\Selection'
+            )
+        ;
     }
 
     protected function postInstall()
@@ -89,11 +99,37 @@ class Module extends AbstractModule
             'guest.widgets',
             [$this, 'handleGuestWidgets']
         );
+
+        $sharedEventManager->attach(
+            \Omeka\Form\SiteSettingsForm::class,
+            'form.add_elements',
+            [$this, 'handleSiteSettings']
+        );
     }
 
     public function handleViewShowAfter(Event $event)
     {
         $view = $event->getTarget();
+        $siteSetting = $view->getHelperPluginManager()->get('siteSetting');
+
+        $user = $view->identity();
+        $allowVisitor = $siteSetting('selection_visitor_allow', true);
+        if (!$user && !$allowVisitor) {
+            return;
+        }
+
+        $records = [];
+
+        // Check if the container is ready for the current user.
+        $container = new Container('Selection');
+        if (empty($container->init)) {
+            $container->user = sha1(microtime() . random_bytes(20));
+            $container->records = $records;
+            $container->init = true;
+        } elseif (!isset($container->records)) {
+            $container->records = $records;
+        }
+
         echo $view->partial('common/selection-item');
     }
 

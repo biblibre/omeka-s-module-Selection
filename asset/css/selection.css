@@ -1,0 +1,29 @@
+#content .selection .media.resource {
+    text-align: inherit;
+}
+#content .media.resource:hover {
+    border-bottom: 1px solid transparent;
+}
+a.selection-list-toggle:link,
+a.selection-list-toggle:visited {
+    color: #000;
+    text-decoration: none;
+}
+.selection-list-toggle:after {
+    content:" ⊞";
+}
+.selection-list-toggle.active:after {
+    content:" ⊟";
+}
+.selection-empty,
+.selection-list {
+    display: none;
+}
+.selection-empty.active,
+.selection-list.active {
+    display: block;
+}
+span.selection-delete {
+    cursor: pointer;
+    margin-left: 12px;
+}

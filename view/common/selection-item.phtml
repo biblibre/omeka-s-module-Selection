@@ -7,27 +7,33 @@
  */
 
 // For a better display, it is recommended to edit the original item/show
-// template, and any other one, to include the link to update the selection and to
-// skip this partial. This partial can be skipped automatically with module
-// BlockDisposition.
+// template of the theme, and any other one, to include the link to update the
+// selection and to skip this partial. This partial can be skipped automatically
+// with module BlocksDisposition.
 
-// Don't display for anonymous visitors (or display a login link, or for future visitor session).
-if (!$this->identity()):
-    return;
-endif;
+$plugins = $this->getHelperPluginManager();
+$translate = $plugins->get('translate');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+$url = $plugins->get('url');
+$updateSelectionLink = $plugins->get('updateSelectionLink');
+$siteSetting = $plugins->get('siteSetting');
 
-$translate = $this->plugin('translate');
-$updateSelectionLink = $this->plugin('updateSelectionLink');
+$user = $this->identity();
+$allowVisitor = !$user && $siteSetting('selection_visitor_allow', true);
+$userFillSession = $user && !$siteSetting('selection_user_fill_main');
+
+$container = new \Zend\Session\Container('Selection');
+
+$this->headLink()
+    ->appendStylesheet($this->assetUrl('css/selection.css', 'Selection'));
+$this->headScript()
+    ->appendFile($this->assetUrl('js/selection.js', 'Selection'), 'text/javascript', ['defer' => 'defer']);
 
 $medias = $item->media();
 ?>
 
-<style>
-#content .selection .media.resource { text-align: inherit; }
-</style>
-
 <div class="selection">
-    <h2><?= $translate('Selection') ?></h2>
+    <h2><?= $translate('Selection') // @translate ?></h2>
     <?php if (count($medias)): ?>
     <h3><?= $translate('Item') ?></h3>
     <?php endif; ?>
@@ -44,6 +50,22 @@ $medias = $item->media();
             <?= $media->linkPretty() ?>
         </div>
         <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
+
+    <?php if ($allowVisitor || $userFillSession): // Don't display the selection for a user, except if the session is used. ?>
+    <?php $removeText = $escapeAttr($translate('Remove from selection')); // @translate ?>
+    <h3><a href="#" class="selection-list-toggle"><?= $translate('Selected resources') // @translate ?></a></h3>
+    <div class="selection-list" style="display:none;">
+        <ul class="selection-items" data-text-remove="<?= $removeText ?>">
+            <?php foreach ($container->records as $record): ?>
+            <li data-id="<?= $record['id'] ?>">
+                <a href="<?= $url('site/resource-id', ['controller' => $record['type'], 'id' => $record['id'], 'action' => 'show'], true) ?>"><?= $record['title'] ?></a>
+                <span class="selection-delete" data-id="<?= $record['id'] ?>" data-url="<?= $url('site/selection-id', ['action' => 'delete', 'id' => $record['id']], true) ?>" title="<?= $removeText ?>" aria-label="<?= $removeText ?>">X</span>
+            </li>
+            <?php endforeach; ?>
+        </ul>
+        <p class="selection-empty<?= empty($container->records) ? ' active' : '' ?>"><?= $translate('No selection') // @translate ?></p>
     </div>
     <?php endif; ?>
 </div>

@@ -21,29 +21,26 @@ class UpdateSelectionLink extends AbstractHelper
      */
     public function __invoke(AbstractResourceEntityRepresentation $resource, array $options = [])
     {
-        static $first;
-
         $view = $this->getView();
+        $siteSetting = $view->plugin('siteSetting');
 
         $user = $view->identity();
-        if (!$user) {
+        $allowVisitor = $siteSetting('selection_visitor_allow', true);
+        if (!$allowVisitor && !$user) {
             return '';
         }
 
-        if (is_null($first)) {
-            $view->headScript()
-                ->appendFile($view->assetUrl('js/selection.js', 'Selection'), 'text/javascript', ['defer' => 'defer']);
-            $first = false;
-        }
-
-        if (!array_key_exists('selectionItem', $options)) {
-            $options['selectionItem'] = $this->getView()->api()->searchOne(
-                'selection_items',
-                [
-                    'user_id' => $user->getId(),
-                    'resource_id' => $resource->id(),
-                ])
-                ->getContent();
+        $userFillMain = $user && $siteSetting('selection_user_fill_main');
+        // User selection.
+        if ($userFillMain) {
+            if (!array_key_exists('selectionItem', $options)) {
+                $options['selectionItem'] = $view->api()
+                    ->searchOne('selection_items', ['user_id' => $user->getId(), 'resource_id' => $resource->id()])
+                    ->getContent();
+            }
+        } else {
+            $container = new \Zend\Session\Container('Selection');
+            $options['selectionItem'] = isset($container->records[$resource->id()]);
         }
 
         $defaultOptions = [
@@ -58,8 +55,6 @@ class UpdateSelectionLink extends AbstractHelper
         $params = [
             'resource' => $resource,
             'url' => $view->url('site/selection-id', ['action' => $options['action'], 'id' => $resource->id()], true),
-            // @deprecated Kept for old themes.
-            'action' => $options['selectionItem'] ? 'delete' : 'add',
         ];
 
         return $view->partial($template, $params + $options);
