@@ -1,14 +1,15 @@
 Selection (module for Omeka S)
 ==============================
 
-[Selection] is a module for [Omeka S] that allows user to select items and medias
-and to save them in a selection instantly, and to keep through sessions.
+[Selection] is a module for [Omeka S] that allows any visitor to store selected
+resources through sessions and, when module [Bulk Export] is installed, to
+export them instantly to common formats, included common spreadsheet formats.
 
 
 Installation
 ------------
 
-Install the optional module [Guest] if wanted.
+Install the optional modules [Generic], [Guest], and [Bulk Export], if wanted.
 
 Uncompress files in the module directory and rename module folder `Selection`.
 Then install it like any other Omeka module and follow the config instructions.
@@ -26,6 +27,12 @@ other registered user too.
 
 It is recommended to edit the theme directly to include the selection besides the
 item and the media, in particular in the item/show and the item/browse views.
+
+
+TODO
+----
+
+- Multiple selections with a title for each.
 
 
 Warning
@@ -79,12 +86,14 @@ Copyright
 * Copyright Biblibre, 2016-2017 (see [Biblibre])
 * Copyright Daniel Berthereau, 2017-2020 (see [Daniel-KM] on GitHub)
 
-This module was initially based on of fork of the module [Basket] from BibLibre.
+This module was initially based on the fork of the module [Basket] from BibLibre.
 
 
 [Selection]: https://github.com/Daniel-KM/Omeka-S-module-Selection
 [Omeka S]: https://omeka.org/s
+[Generic]: https://github.com/Daniel-KM/Omeka-S-module-Generic
 [Guest]: https://github.com/Daniel-KM/Omeka-S-module-Guest
+[Bulk Export]: https://github.com/Daniel-KM/Omeka-S-module-BulkExport
 [Installing a module]: http://dev.omeka.org/docs/s/user-manual/modules/#installing-modules
 [module issues]: https://github.com/Daniel-KM/Omeka-S-module-Selection/issues
 [CeCILL v2.1]: https://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
