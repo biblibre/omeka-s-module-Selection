@@ -30,18 +30,8 @@ class UpdateSelectionLink extends AbstractHelper
             return '';
         }
 
-        $userFillMain = $user && $siteSetting('selection_user_fill_main');
-        // User selection.
-        if ($userFillMain) {
-            if (!array_key_exists('selectionItem', $options)) {
-                $options['selectionItem'] = $view->api()
-                    ->searchOne('selection_items', ['user_id' => $user->getId(), 'resource_id' => $resource->id()])
-                    ->getContent();
-            }
-        } else {
-            $container = new \Zend\Session\Container('Selection');
-            $options['selectionItem'] = isset($container->records[$resource->id()]);
-        }
+        $container = new \Zend\Session\Container('Selection');
+        $options['selectionItem'] = isset($container->records[$resource->id()]);
 
         $defaultOptions = [
             'template' => self::PARTIAL_NAME,

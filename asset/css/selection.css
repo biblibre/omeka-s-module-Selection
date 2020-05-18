@@ -37,3 +37,10 @@ span.selection-delete {
     vertical-align: inherit;
     margin-right: inherit;
 }
+/* Note: regular font awesome icons are no more free. */
+.selection-update.selected {
+     color:black;
+}
+.selection-update.unselected {
+     color:gray;
+}

@@ -314,7 +314,7 @@ class SelectionController extends AbstractActionController
         ];
     }
 
-    protected function selectionItemForResource(AbstractResourceEntityRepresentation $resource, $inside)
+    protected function selectionItemForResource(AbstractResourceEntityRepresentation $resource, $isSelected)
     {
         static $siteSlug;
         static $url;
@@ -327,10 +327,10 @@ class SelectionController extends AbstractActionController
             'type' => $resource->getControllerName(),
             'url' => $resource->siteUrl($siteSlug, true),
             'url_remove' => $url->fromRoute('site/selection-id', ['site-slug' => $siteSlug, 'action' => 'delete', 'id' => $resource->id()]),
-            // String is required to avoid error in container when the
-            // title is a resource.
+            // String is required to avoid error in container when the title is
+            // a resource.
             'title' => (string) $resource->displayTitle(),
-            'inside' => $inside,
+            'value' => $isSelected ? 'selected' : 'unselected',
         ];
     }
 

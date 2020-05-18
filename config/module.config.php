@@ -127,10 +127,6 @@ return  [
             ],
         ],
     ],
-    'js_translate_strings' => [
-        'Select', // @translate
-        'Unselect', // @translate
-    ],
     'selection' => [
         'site_settings' => [
             'selection_visitor_allow' => true,

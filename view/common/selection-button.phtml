@@ -2,24 +2,19 @@
 /**
  * @var \Zend\View\Renderer\PhpRenderer $this
  * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
- * @var \Selection\Api\Representation\SelectionItemRepresentation|null $selectionItem
+ * @var bool $selectionItem
  * @var string $url
- * @var string $action deprecated "add" or "delete". Check selection item instead.
  * and options passed from the caller.
  */
 
 $translate = $this->plugin('translate');
 
-if (empty($selectionItem)):
-    $text = $translate('Add to selection');
-    $class = 'selection-add btn-primary';
-else:
-    $text = $translate('Remove from selection');
-    $class = 'selection-delete btn-danger';
-endif;
-$this->vars()->offsetSet('text', $text);
+$textSelect['unselected'] = $translate('Add to selection');
+$textSelect['selected'] = $translate('Remove from selection');
+$class = empty($selectionItem) ? 'unselected' : 'selected';
+$text = $textSelect[$class];
 ?>
 
-<button class="selection-update <?= $class ?>" title="<?= $text ?>" data-url="<?= $url ?>">
-    <span class="fas fa-bookmark"></span> <?= $text ?>
+<button class="selection-update <?= $class ?>" data-id="<?= $resource->id() ?>" title="<?= $text ?>" data-title-selected="<?= $textSelect['selected'] ?>" data-title-unselected="<?= $textSelect['unselected'] ?>" data-url="<?= $url ?>">
+    <span class="fas fa-bookmark"></span >
 </button>

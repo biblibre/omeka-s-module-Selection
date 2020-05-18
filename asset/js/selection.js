@@ -25,28 +25,24 @@
         });
 
         var updateSelectionButton = function(selectionItem) {
-            let selectionButton = $('.selection-update[data-id=' + selectionItem.id + ']');
-            if (!selectionButton.length) {
+            let button = $('.selection-update[data-id=' + selectionItem.id + ']');
+            if (!button.length) {
                 return;
             }
-            // Check if the main omeka js is loaded to get translations.
-            var isOmeka = typeof Omeka !== 'undefined' && typeof Omeka.jsTranslate !== 'undefined';
-            // See template selection-button.phtml.
-            let selectionText = selectionItem.inside ? 'Unselect' : 'Select';
-            selectionText = isOmeka ? Omeka.jsTranslate(selectionText) : selectionText;
-            selectionButton
-                .prop('class', 'selection-update ' + (selectionItem.inside ? 'selection-delete btn-danger' : 'selection-add btn-primary'))
-                .html('<span class="fas fa-bookmark"></span> ' + selectionText);
+            button
+                .prop('title', button.attr('data-title-' + selectionItem.value))
+                .removeClass('selected unselected')
+                .addClass(selectionItem.value);
         }
 
         var updateSelectionList = function(selectionItem) {
-            let selectionList = $('.selection-list .selection-items');
-            if (!selectionList.length) {
+            let list = $('.selection-list .selection-items');
+            if (!list.length) {
                 return;
             }
-            if (selectionItem.inside) {
-                if (!selectionList.find('li[data-id=' + selectionItem.id + ']').length) {
-                    selectionList.append(
+            if (selectionItem.value === 'selected') {
+                if (!list.find('li[data-id=' + selectionItem.id + ']').length) {
+                    list.append(
                         $('<li>').attr('data-id', selectionItem.id)
                             .append(
                                 $('<a>').prop('href', selectionItem.url).append(selectionItem.title)
@@ -55,15 +51,15 @@
                                 $('<span class="selection-delete">')
                                     .attr('data-id', selectionItem.id)
                                     .attr('data-url', selectionItem.url_remove)
-                                    .attr('title', selectionList.attr('data-text-remove'))
-                                    .attr('aria-label', selectionList.attr('data-text-remove'))
+                                    .attr('title', list.attr('data-text-remove'))
+                                    .attr('aria-label', list.attr('data-text-remove'))
                             )
                     );
                 }
             } else {
-                selectionList.find('li[data-id=' + selectionItem.id + ']').remove();
+                list.find('li[data-id=' + selectionItem.id + ']').remove();
             }
-            if (selectionList.find('li').length) {
+            if (list.find('li').length) {
                 $('.selection-empty').removeClass('active');
             } else {
                 $('.selection-empty').addClass('active');
