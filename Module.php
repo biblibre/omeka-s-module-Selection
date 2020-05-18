@@ -51,20 +51,6 @@ class Module extends AbstractModule
         );
     }
 
-    protected function preInstall()
-    {
-        $services = $this->getServiceLocator();
-        $translator = $services->get('MvcTranslator');
-        $messenger = new Messenger;
-
-        $message = new Message(sprintf(
-            $translator->translate('This module is deprecated and will not receive new improvements any more. The module %1$sSelection%2$s replaces it.'), // @translate
-            '<a href="https://github.com/Daniel-KM/Omeka-S-module-Selection" target="_blank">', '</a>'
-        ));
-        $message->setEscapeHtml(false);
-        $messenger->addWarning($message);
-    }
-
     public function attachListeners(SharedEventManagerInterface $sharedEventManager)
     {
         $sharedEventManager->attach(

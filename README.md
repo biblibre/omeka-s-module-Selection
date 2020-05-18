@@ -1,12 +1,8 @@
-Selection (module for Omeka S) [deprecated]
-===========================
+Selection (module for Omeka S)
+==============================
 
 [Selection] is a module for [Omeka S] that allows user to select items and medias
 and to save them in a selection instantly, and to keep through sessions.
-
-**IMPORTANT**
-This fork of the module [Selection of BibLibre] is deprecated and replaced by the
-module [Selection] in order to manage improvements.
 
 
 Installation
@@ -83,17 +79,18 @@ Copyright
 * Copyright Biblibre, 2016-2017 (see [Biblibre])
 * Copyright Daniel Berthereau, 2017-2020 (see [Daniel-KM] on GitHub)
 
+This module was initially based on of fork of the module [Basket] from BibLibre.
+
 
 [Selection]: https://github.com/Daniel-KM/Omeka-S-module-Selection
 [Omeka S]: https://omeka.org/s
 [Guest]: https://github.com/Daniel-KM/Omeka-S-module-Guest
-[Selection of BibLibre]: https://github.com/BibLibre/Omeka-S-module-Selection
-[Selection]: https://github.com/Daniel-KM/Omeka-S-module-Selection
 [Installing a module]: http://dev.omeka.org/docs/s/user-manual/modules/#installing-modules
 [module issues]: https://github.com/Daniel-KM/Omeka-S-module-Selection/issues
 [CeCILL v2.1]: https://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
 [GNU/GPL]: https://www.gnu.org/licenses/gpl-3.0.html
 [FSF]: https://www.fsf.org
 [OSI]: http://opensource.org
+[Basket]: https://github.com/BibLibre/Omeka-S-module-Basket
 [Biblibre]: https://github.com/biblibre
 [Daniel-KM]: https://github.com/Daniel-KM "Daniel Berthereau"
