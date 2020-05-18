@@ -40,6 +40,11 @@ return  [
             'Selection\Controller\Site\GuestBoard' => Controller\Site\GuestBoardController::class,
         ],
     ],
+    'controller_plugins' => [
+        'invokables' => [
+            'containerSelection' => Mvc\Controller\Plugin\ContainerSelection::class,
+        ],
+    ],
     'navigation_links' => [
         'invokables' => [
             'selection' => Site\Navigation\Link\Selection::class,
@@ -130,8 +135,6 @@ return  [
     'selection' => [
         'site_settings' => [
             'selection_visitor_allow' => true,
-            //  TODO Move this option to user settings.
-            'selection_user_fill_main' => false,
         ],
     ],
 ];

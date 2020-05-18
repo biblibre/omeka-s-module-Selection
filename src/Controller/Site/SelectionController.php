@@ -33,7 +33,6 @@ namespace Selection\Controller\Site;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use Zend\Http\Response;
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Session\Container;
 use Zend\View\Model\JsonModel;
 
 class SelectionController extends AbstractActionController
@@ -60,38 +59,27 @@ class SelectionController extends AbstractActionController
 
         $api = $this->api();
         $results = [];
+        $userId = $user ? $user->getId() : false;
 
-        $userFillMain = $user && $siteSettings->get('selection_user_fill_main');
-        // User selection.
-        if ($userFillMain) {
-            $userId = $user->getId();
-            foreach ($resources as $resourceId => $resource) {
-                $selectionItem = $api->searchOne('selection_items', ['user_id' => $userId, 'resource_id' => $resourceId])->getContent();
-                $data = $this->selectionItemForResource($resource, true);
-                if ($selectionItem) {
-                    $data['status'] = 'fail';
-                    $data['message'] = $this->translate('Already in'); // @translate
-                } else {
-                    $api->create('selection_items', ['o:user_id' => $userId, 'o:resource_id' => $resourceId])->getContent();
-                    $data['status'] = 'success';
+        // When a user is set, the session and the database are sync.
+        $container = $this->containerSelection();
+
+        foreach ($resources as $resourceId => $resource) {
+            $data = $this->selectionItemForResource($resource, true);
+            if (isset($container->records[$resourceId])) {
+                $data['status'] = 'fail';
+                $data['message'] = $this->translate('Already in'); // @translate
+            } else {
+                $container->records[$resourceId] = $data;
+                $data['status'] = 'success';
+                if ($userId) {
+                    try {
+                        $api->create('selection_items', ['o:user_id' => $userId, 'o:resource_id' => $resourceId])->getContent();
+                    } catch (\Exception $e) {
+                    }
                 }
-                $results[$resourceId] = $data;
             }
-        }
-        // Session selection.
-        else {
-            $container = $this->containerSession();
-            foreach ($resources as $resourceId => $resource) {
-                $data = $this->selectionItemForResource($resource, true);
-                if (isset($container->records[$resourceId])) {
-                    $data['status'] = 'fail';
-                    $data['message'] = $this->translate('Already in'); // @translate
-                } else {
-                    $container->records[$resourceId] = $data;
-                    $data['status'] = 'success';
-                }
-                $results[$resourceId] = $data;
-            }
+            $results[$resourceId] = $data;
         }
 
         if ($isMultiple) {
@@ -132,30 +120,22 @@ class SelectionController extends AbstractActionController
 
         $api = $this->api();
         $results = [];
+        $userId = $user ? $user->getId() : false;
 
-        $userFillMain = $user && $siteSettings->get('selection_user_fill_main');
-        // User selection.
-        if ($userFillMain) {
-            $userId = $user->getId();
-            foreach ($resources as $resourceId => $resource) {
-                $selectionItem = $api->searchOne('selection_items', ['user_id' => $userId, 'resource_id' => $resourceId])->getContent();
-                $data = $this->selectionItemForResource($resource, false);
-                $data['status'] = 'success';
-                if ($selectionItem) {
-                    $api->delete('selection_items', $selectionItem->id());
+        // When a user is set, the session and the database are sync.
+        $container = $this->containerSelection();
+
+        foreach ($resources as $resourceId => $resource) {
+            $data = $this->selectionItemForResource($resource, false);
+            $data['status'] = 'success';
+            unset($container->records[$resourceId]);
+            if ($userId) {
+                try {
+                    $api->delete('selection_items', ['user' => $userId, 'resource' => $resourceId]);
+                } catch (\Exception $e) {
                 }
-                $results[$resourceId] = $data;
             }
-        }
-        // Session selection.
-        else {
-            $container = $this->containerSession();
-            foreach ($resources as $resourceId => $resource) {
-                $data = $this->selectionItemForResource($resource, false);
-                $data['status'] = 'success';
-                unset($container->records[$resourceId]);
-                $results[$resourceId] = $data;
-            }
+            $results[$resourceId] = $data;
         }
 
         if ($isMultiple) {
@@ -192,61 +172,44 @@ class SelectionController extends AbstractActionController
 
         $api = $this->api();
         $results = [];
+        $userId = $user ? $user->getId() : false;
 
-        $userFillMain = $user && $siteSettings->get('selection_user_fill_main');
-        // User selection.
-        if ($userFillMain) {
-            $userId = $user->getId();
-            $add = [];
-            $delete = [];
-            foreach ($resources as $resourceId => $resource) {
-                $selectionItem = $api->searchOne('selection_items', ['user_id' => $userId, 'resource_id' => $resourceId])->getContent();
-                if ($selectionItem) {
-                    $delete[$resourceId] = $selectionItem;
-                } else {
-                    $add[$resourceId] = $resource;
-                }
-            }
-            /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $add */
-            foreach ($add as $resourceId => $resource) {
-                $api->create('selection_items', ['o:user_id' => $userId, 'o:resource_id' => $resourceId])->getContent();
-                $data = $this->selectionItemForResource($resource, true);
-                $data['status'] = 'success';
-                $results[$resourceId] = $data;
-            }
-            /** @var \Selection\Api\Representation\SelectionItemRepresentation[] $delete */
-            foreach ($delete as $resourceId => $selectionItem) {
-                $data = $this->selectionItemForResource($resources[$resourceId], false);
-                $api->delete('selection_items', $selectionItem->id());
-                $data['status'] = 'success';
-                $results[$resourceId] = $data;
+        // When a user is set, the session and the database are sync.
+        $container = $this->containerSelection();
+
+        $add = [];
+        $delete = [];
+        foreach ($resources as $resourceId => $resource) {
+            if (isset($container->records[$resourceId])) {
+                $delete[$resourceId] = $resource;
+            } else {
+                $add[$resourceId] = $resource;
             }
         }
-        // Session selection.
-        else {
-            $container = $this->containerSession();
-            $add = [];
-            $delete = [];
-            foreach ($resources as $resourceId => $resource) {
-                if (isset($container->records[$resourceId])) {
-                    $delete[$resourceId] = $resource;
-                } else {
-                    $add[$resourceId] = $resource;
+        /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $add */
+        foreach ($add as $resourceId => $resource) {
+            $data = $this->selectionItemForResource($resource, true);
+            $data['status'] = 'success';
+            $container->records[$resourceId] = $data;
+            $results[$resourceId] = $data;
+            if ($userId) {
+                try {
+                    $api->create('selection_items', ['o:user_id' => $userId, 'o:resource_id' => $resourceId])->getContent();
+                } catch (\Exception $e) {
                 }
             }
-            /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $add */
-            foreach ($add as $resourceId => $resource) {
-                $data = $this->selectionItemForResource($resource, true);
-                $data['status'] = 'success';
-                $container->records[$resourceId] = $data;
-                $results[$resourceId] = $data;
-            }
-            /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $delete */
-            foreach ($delete as $resourceId => $selectionItem) {
-                $data = $this->selectionItemForResource($resource, false);
-                $data['status'] = 'success';
-                unset($container->records[$resourceId]);
-                $results[$resourceId] = $data;
+        }
+        /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $delete */
+        foreach ($delete as $resourceId => $resource) {
+            $data = $this->selectionItemForResource($resource, false);
+            $data['status'] = 'success';
+            unset($container->records[$resourceId]);
+            $results[$resourceId] = $data;
+            if ($userId) {
+                try {
+                    $api->delete('selection_items', ['user' => $userId, 'resource' => $resourceId]);
+                } catch (\Exception $e) {
+                }
             }
         }
 
@@ -264,23 +227,6 @@ class SelectionController extends AbstractActionController
             'status' => 'success',
             'data' => $data,
         ]);
-    }
-
-    /**
-     * @return \Zend\Session\Container
-     */
-    protected function containerSession()
-    {
-        // Check if the container is ready for the current user.
-        $container = new Container('Selection');
-        if (empty($container->init)) {
-            $container->user = sha1(microtime() . random_bytes(20));
-            $container->records = [];
-            $container->init = true;
-        } elseif (!isset($container->records)) {
-            $container->records = [];
-        }
-        return $container;
     }
 
     protected function requestedResources()
@@ -314,6 +260,15 @@ class SelectionController extends AbstractActionController
         ];
     }
 
+    /**
+     * Format a resource for the container.
+     *
+     * Copy in \Selection\Mvc\Controller\Plugin\ContainerSelection::selectionItemForResource()
+     *
+     * @param AbstractResourceEntityRepresentation $resource
+     * @param bool $isSelected
+     * @return array
+     */
     protected function selectionItemForResource(AbstractResourceEntityRepresentation $resource, $isSelected)
     {
         static $siteSlug;

@@ -19,19 +19,10 @@ class SiteSettingsFieldset extends Fieldset
                 'type' => Element\Checkbox::class,
                 'options' => [
                     'label' => 'Enable session selection for visitors', // @translate
+                    'info' => 'The selection is automatically saved for logged users.', // @translate
                 ],
                 'attributes' => [
                     'id' => 'selection_visitor_allow',
-                ],
-            ])
-            ->add([
-                'name' => 'selection_user_fill_main',
-                'type' => Element\Checkbox::class,
-                'options' => [
-                    'label' => 'For authenticated users, fill the main selection directly', // @translate
-                ],
-                'attributes' => [
-                    'id' => 'selection_user_fill_main',
                 ],
             ])
         ;

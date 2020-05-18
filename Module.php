@@ -125,17 +125,8 @@ class Module extends AbstractModule
             return;
         }
 
-        $records = [];
-
-        // Check if the container is ready for the current user.
-        $container = new Container('Selection');
-        if (empty($container->init)) {
-            $container->user = sha1(microtime() . random_bytes(20));
-            $container->records = $records;
-            $container->init = true;
-        } elseif (!isset($container->records)) {
-            $container->records = $records;
-        }
+        $containerSelection = $this->getServiceLocator()->get('ControllerPluginManager')->get('containerSelection');
+        $containerSelection();
 
         echo $view->partial('common/selection-item');
     }
