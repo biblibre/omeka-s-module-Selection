@@ -30,3 +30,10 @@ span.selection-delete {
     cursor: pointer;
     margin-left: 12px;
 }
+.selection #content .media.resource,
+#content .selection .media.resource {
+    display: inherit;
+    text-align: inherit;
+    vertical-align: inherit;
+    margin-right: inherit;
+}

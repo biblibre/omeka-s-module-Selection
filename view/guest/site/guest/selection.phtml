@@ -31,6 +31,7 @@
  * @var \Zend\View\Renderer\PhpRenderer $this
  * @var \Omeka\Api\Representation\SiteRepresentation $site
  * @var \Selection\Api\Representation\SelectionItemRepresentation[] $selectionItems
+ * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $resources
  */
 
 $plugins = $this->getHelperPluginManager();
@@ -49,28 +50,22 @@ $headingTerm = $this->siteSetting('browse_heading_property_term', 'dcterms:title
 $bodyTerm = $this->siteSetting('browse_body_property_term', 'dcterms:description');
 
 // Order resources by type.
-$resourceNameToType = [
-    'item_sets' => 'item-set',
-    'items' => 'item',
-    'media' => 'media',
-];
-$resources = ['item' => [], 'media' => []];
-foreach ($selectionItems as $selectionItem):
-    $resource = $selectionItem->resource();
-    $resources[$resourceNameToType[$resource->resourceName()]][] = $resource;
+$resourcesByType = ['item-set' => [], 'item' => [], 'media' => [], 'annotation' => []];
+foreach ($resources as $resource):
+    $resourcesByType[$resource->getControllerName()][] = $resource;
 endforeach;
 ?>
 
 <?= $this->pageTitle($translate('Selection'), 2) // @translate ?>
 
 <?php if (count($selectionItems)): ?>
-<h3><?= sprintf($translate('%d items, %d media'), count($resources['item']), count($resources['media'])) // @translate ?></h3>
+<h3><?= sprintf($translate('%d items, %d media'), count($resourcesByType['item']), count($resourcesByType['media'])) // @translate ?></h3>
 
 <?php $this->trigger('view.browse.before'); ?>
 <ul class="resource-list">
     <?php
     $defaultHeading = ['default' => $translate('[Untitled]')];
-    foreach ($resources as $resourceType => $resourceList):
+    foreach ($resourcesByType as $resourceType => $resourceList):
         foreach ($resourceList as $resource):
         if ($resourceType === 'item') {
             $heading = $resource->value($headingTerm, $defaultHeading);

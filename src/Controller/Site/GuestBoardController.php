@@ -52,11 +52,17 @@ class GuestBoardController extends AbstractActionController
 
             $selectionItems = $this->api()->search('selection_items', $query)->getContent();
 
+            $resources = [];
+            foreach ($selectionItems as $selectionItem) {
+                $resources[] = $selectionItem->resource();
+            }
+
             $view = new ViewModel;
             return $view
                 ->setTemplate('guest/site/guest/selection')
                 ->setVariable('site', $this->currentSite())
-                ->setVariable('selectionItems', $selectionItems);
+                ->setVariable('selectionItems', $selectionItems)
+                ->setVariable('resources', $resources);
         }
     }
 }
