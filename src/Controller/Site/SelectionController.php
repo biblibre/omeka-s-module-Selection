@@ -71,25 +71,33 @@ class SelectionController extends AbstractActionController
 
         foreach ($resources as $resourceId => $resource) {
             $selectionItem = $api->searchOne('selection_items', ['user_id' => $userId, 'resource_id' => $resourceId])->getContent();
+            $data = [
+                'content' => $updateSelectionLink($resource, ['selectionItem' => $selectionItem, 'action' => 'delete']),
+            ];
             if ($selectionItem) {
-                $results[$resourceId] = [
-                    'status' => Response::STATUS_CODE_400,
-                    'message' => 'Already in', // @translate
-                ];
+                $data['status'] = 'fail';
+                $data['message'] = $this->translate('Already in'); // @translate
             } else {
+                $data['status'] = 'success';
                 $selectionItem = $api->create('selection_items', ['o:user_id' => $userId, 'o:resource_id' => $resourceId])->getContent();
-                $results[$resourceId] = [
-                    'status' => Response::STATUS_CODE_200,
-                    'content' => $updateSelectionLink($resource, ['selectionItem' => $selectionItem, 'action' => 'delete']),
-                ];
             }
+            $results[$resourceId] = $data;
         }
 
-        if (!$isMultiple) {
-            $results = reset($results);
+        if ($isMultiple) {
+            $data = [
+                'selection_items' => $results,
+            ];
+        } else {
+            $data = [
+                'selection_item' => reset($results),
+            ];
         }
 
-        return new JsonModel($results);
+        return new JsonModel([
+            'status' => 'success',
+            'data' => $data,
+        ]);
     }
 
     public function deleteAction()
@@ -124,22 +132,31 @@ class SelectionController extends AbstractActionController
                 $resource = $selectionItem->resource();
                 $api->delete('selection_items', $selectionItem->id());
                 $results[$resourceId] = [
-                    'status' => Response::STATUS_CODE_200,
+                    'status' => 'success',
                     'content' => $updateSelectionLink($resource, ['selectionItem' => null, 'action' => 'add']),
                 ];
             } else {
                 $results[$resourceId] = [
-                    'status' => Response::STATUS_CODE_404,
-                    'message' => 'Not found', // @translate
+                    'status' => 'error',
+                    'message' => $this->translate('Not found'), // @translate
                 ];
             }
         }
 
-        if (!$isMultiple) {
-            $results = reset($results);
+        if ($isMultiple) {
+            $data = [
+                'selection_items' => $results,
+            ];
+        } else {
+            $data = [
+                'selection_item' => reset($results),
+            ];
         }
 
-        return new JsonModel($results);
+        return new JsonModel([
+            'status' => 'success',
+            'data' => $data,
+        ]);
     }
 
     public function toggleAction()
@@ -195,7 +212,7 @@ class SelectionController extends AbstractActionController
             foreach ($add as $resourceId) {
                 $selectionItem = $api->create('selection_items', ['o:user_id' => $userId, 'o:resource_id' => $resourceId])->getContent();
                 $results[$resourceId] = [
-                    'status' => Response::STATUS_CODE_200,
+                    'status' => 'success',
                     'content' => $updateSelectionLink($resource, ['selectionItem' => $selectionItem, 'action' => 'toggle']),
                 ];
             }
@@ -205,17 +222,26 @@ class SelectionController extends AbstractActionController
             foreach ($delete as $resourceId => $selectionItem) {
                 $api->delete('selection_items', $selectionItem->id());
                 $results[$resourceId] = [
-                    'status' => Response::STATUS_CODE_200,
+                    'status' => 'success',
                     'content' => $updateSelectionLink($resources[$resourceId], ['selectionItem' => null, 'action' => 'toggle']),
                 ];
             }
         }
 
-        if (!$isMultiple) {
-            $results = reset($results);
+        if ($isMultiple) {
+            $data = [
+                'selection_items' => $results,
+            ];
+        } else {
+            $data = [
+                'selection_item' => reset($results),
+            ];
         }
 
-        return new JsonModel($results);
+        return new JsonModel([
+            'status' => 'success',
+            'data' => $data,
+        ]);
     }
 
     protected function jsonErrorNotFound()
@@ -223,7 +249,7 @@ class SelectionController extends AbstractActionController
         $response = $this->getResponse();
         $response->setStatusCode(Response::STATUS_CODE_404);
         return new JsonModel([
-            'status' => Response::STATUS_CODE_404,
+            'status' => 'error',
             'message' => $this->translate('Not found'), // @translate
         ]);
     }
