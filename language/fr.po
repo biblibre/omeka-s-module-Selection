@@ -17,24 +17,24 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: view/public/basket/basket-button.phtml:2
-msgid "Add to basket"
+#: view/public/selection/selection-button.phtml:2
+msgid "Add to selection"
 msgstr "Ajouter au panier"
 
-#: view/public/basket/basket-button.phtml:2
-msgid "Remove from basket"
+#: view/public/selection/selection-button.phtml:2
+msgid "Remove from selection"
 msgstr "Supprimer du panier"
 
-#: view/public/basket/basket-link.phtml:1
-#: view/public/basket/index/show.phtml:31
-msgid "Basket"
+#: view/public/selection/selection-link.phtml:1
+#: view/public/selection/index/show.phtml:31
+msgid "Selection"
 msgstr "Panier"
 
-#: view/public/basket/index/show.phtml:45
+#: view/public/selection/index/show.phtml:45
 msgid "items"
 msgstr "contenus"
 
-#: view/public/basket/index/show.phtml:54
+#: view/public/selection/index/show.phtml:54
 msgid "files"
 msgstr "fichiers"
 

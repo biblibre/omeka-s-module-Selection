@@ -27,7 +27,7 @@
  * knowledge of the CeCILL license and that you accept its terms.
  */
 
-namespace Basket\Entity;
+namespace Selection\Entity;
 
 use DateTime;
 use Doctrine\ORM\Event\LifecycleEventArgs;
@@ -38,7 +38,7 @@ use Omeka\Entity\User;
  * @Entity
  * @HasLifecycleCallbacks
  */
-class BasketItem extends AbstractEntity
+class SelectionItem extends AbstractEntity
 {
     /**
      * @var int
@@ -79,7 +79,7 @@ class BasketItem extends AbstractEntity
 
     /**
      * @param User $user
-     * @return \Basket\Entity\BasketItem
+     * @return \Selection\Entity\SelectionItem
      */
     public function setUser(User $user)
     {
@@ -97,7 +97,7 @@ class BasketItem extends AbstractEntity
 
     /**
      * @param AbstractEntity $resource
-     * @return \Basket\Entity\BasketItem
+     * @return \Selection\Entity\SelectionItem
      */
     public function setResource(AbstractEntity $resource)
     {
@@ -115,7 +115,7 @@ class BasketItem extends AbstractEntity
 
     /**
      * @param DateTime $dateTime
-     * @return \Basket\Entity\BasketItem
+     * @return \Selection\Entity\SelectionItem
      */
     public function setCreated(DateTime $dateTime)
     {

@@ -1,5 +1,5 @@
 <?php
-namespace Basket;
+namespace Selection;
 
 if (!class_exists(\Generic\AbstractModule::class)) {
     require file_exists(dirname(__DIR__) . '/Generic/AbstractModule.php')
@@ -13,7 +13,7 @@ use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Mvc\MvcEvent;
 
 /**
- * Basket.
+ * Selection.
  *
  * @copyright Biblibre, 2016
  * @copyright Daniel Berthereau 2019-2020
@@ -32,7 +32,7 @@ class Module extends AbstractModule
 
         $acl = $this->getServiceLocator()->get('Omeka\Acl');
 
-        // Since Omeka 1.4, modules are ordered, so Guest come after Basket.
+        // Since Omeka 1.4, modules are ordered, so Guest come after Selection.
         // See \Guest\Module::onBootstrap().
         if (!$acl->hasRole('guest')) {
             $acl->addRole('guest');
@@ -43,10 +43,10 @@ class Module extends AbstractModule
             ->allow(
                 $roles,
                 [
-                    Entity\BasketItem::class,
-                    Api\Adapter\BasketItemAdapter::class,
-                    'Basket\Controller\Site\Basket',
-                    'Basket\Controller\Site\GuestBoard',
+                    Entity\SelectionItem::class,
+                    Api\Adapter\SelectionItemAdapter::class,
+                    'Selection\Controller\Site\Selection',
+                    'Selection\Controller\Site\GuestBoard',
                 ]
         );
     }
@@ -84,7 +84,7 @@ class Module extends AbstractModule
     public function handleViewShowAfter(Event $event)
     {
         $view = $event->getTarget();
-        echo $view->partial('common/basket-item');
+        echo $view->partial('common/selection-item');
     }
 
     public function handleGuestWidgets(Event $event)
@@ -95,9 +95,9 @@ class Module extends AbstractModule
         $partial = $helpers->get('partial');
 
         $widget = [];
-        $widget['label'] = $translate('Basket'); // @translate
-        $widget['content'] = $partial('guest/site/guest/widget/basket');
-        $widgets['basket'] = $widget;
+        $widget['label'] = $translate('Selection'); // @translate
+        $widget['content'] = $partial('guest/site/guest/widget/selection');
+        $widgets['selection'] = $widget;
 
         $event->setParam('widgets', $widgets);
     }

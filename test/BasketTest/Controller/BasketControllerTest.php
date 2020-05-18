@@ -1,10 +1,10 @@
 <?php
 
-namespace BasketTest\Controller;
+namespace SelectionTest\Controller;
 
 use OmekaTestHelper\Controller\OmekaControllerTestCase;
 
-class BasketControllerTest extends OmekaControllerTestCase
+class SelectionControllerTest extends OmekaControllerTestCase
 {
     protected $user;
     protected $item;
@@ -24,9 +24,9 @@ class BasketControllerTest extends OmekaControllerTestCase
     public function tearDown()
     {
         $this->loginAsAdmin();
-        $basketItems = $this->api()->search('basket_items')->getContent();
-        foreach ($basketItems as $basketItem) {
-            $this->api()->delete('basket_items', $basketItem->id());
+        $selectionItems = $this->api()->search('selection_items')->getContent();
+        foreach ($selectionItems as $selectionItem) {
+            $this->api()->delete('selection_items', $selectionItem->id());
         }
         $this->api()->delete('items', $this->item->id());
         $this->api()->delete('sites', $this->site->id());
@@ -34,73 +34,73 @@ class BasketControllerTest extends OmekaControllerTestCase
     }
 
     /** @test */
-    public function additemToBasketShouldStoreBasketForUser()
+    public function additemToSelectionShouldStoreSelectionForUser()
     {
-        $this->dispatch('/s/test/basket/add/' . $this->item->id());
+        $this->dispatch('/s/test/selection/add/' . $this->item->id());
 
-        $basketItems = $this->api()->search('basket_items', [
+        $selectionItems = $this->api()->search('selection_items', [
             'user_id' => $this->user->id(),
             'resource_id' => $this->item->id(),
         ])->getContent();
 
-        $this->assertCount(1, $basketItems);
+        $this->assertCount(1, $selectionItems);
     }
 
     /** @test */
-    public function addmediaToBasketShouldStoreBasketForUSer()
+    public function addmediaToSelectionShouldStoreSelectionForUSer()
     {
         $media = $this->item->primaryMedia();
-        $this->dispatch('/s/test/basket/add/' . $media->id());
+        $this->dispatch('/s/test/selection/add/' . $media->id());
 
-        $basketItems = $this->api()->search('basket_items', [
+        $selectionItems = $this->api()->search('selection_items', [
             'user_id' => $this->user->id(),
             'resource_id' => $media->id(),
         ])->getContent();
 
-        $this->assertCount(1, $basketItems);
+        $this->assertCount(1, $selectionItems);
     }
 
     /** @test */
-    public function addExistingItemShouldNotUpdateBasket()
+    public function addExistingItemShouldNotUpdateSelection()
     {
-        $this->addToBasket($this->item);
-        $this->dispatch('/s/test/basket/add/' . $this->item->id());
+        $this->addToSelection($this->item);
+        $this->dispatch('/s/test/selection/add/' . $this->item->id());
 
-        $basketItems = $this->api()->search('basket_items', [
+        $selectionItems = $this->api()->search('selection_items', [
             'user_id' => $this->user->id(),
         ])->getContent();
 
-        $this->assertCount(1, $basketItems);
+        $this->assertCount(1, $selectionItems);
     }
 
     /** @test */
-    public function removeItemToBasketShouldRemoveBasketForUser()
+    public function removeItemToSelectionShouldRemoveSelectionForUser()
     {
-        $this->addToBasket($this->item);
-        $this->dispatch('/s/test/basket/delete/' . $this->item->id());
+        $this->addToSelection($this->item);
+        $this->dispatch('/s/test/selection/delete/' . $this->item->id());
         $this->assertResponseStatusCode(200);
 
-        $basketItems = $this->api()->search('basket_items', [
+        $selectionItems = $this->api()->search('selection_items', [
             'user_id' => $this->user->id(),
         ])->getContent();
 
-        $this->assertEmpty($basketItems);
+        $this->assertEmpty($selectionItems);
     }
 
     /** @test */
-    public function displayBasketShouldDisplayItems()
+    public function displaySelectionShouldDisplayItems()
     {
-        $this->addToBasket($this->item);
-        $this->dispatch('/s/test/basket');
+        $this->addToSelection($this->item);
+        $this->dispatch('/s/test/selection');
         $this->assertXPathQueryContentContains('//h4', 'First Item');
     }
 
     /** @test */
-    public function displayBasketShouldDisplayMedia()
+    public function displaySelectionShouldDisplayMedia()
     {
         $media = $this->item->primaryMedia();
-        $this->addToBasket($media);
-        $this->dispatch('/s/test/basket');
+        $this->addToSelection($media);
+        $this->dispatch('/s/test/selection');
         $this->assertResponseStatusCode(200);
         $this->assertQueryContentRegex('.property .value', '/media1/');
     }
@@ -170,9 +170,9 @@ class BasketControllerTest extends OmekaControllerTestCase
         return $user;
     }
 
-    protected function addToBasket($resource)
+    protected function addToSelection($resource)
     {
-        $this->api()->create('basket_items', [
+        $this->api()->create('selection_items', [
             'o:user_id' => $this->user->id(),
             'o:resource_id' => $resource->id(),
         ]);

@@ -1,5 +1,5 @@
 <?php
-namespace Basket;
+namespace Selection;
 
 /**
  * @var Module $this
@@ -22,27 +22,27 @@ $space = strtolower(__NAMESPACE__);
 
 if (version_compare($oldVersion, '0.2.0', '<')) {
     $connection->exec('
-        RENAME TABLE basket TO basket_item
+        RENAME TABLE selection TO selection_item
     ');
     $connection->exec('
-        ALTER TABLE basket_item
+        ALTER TABLE selection_item
         ADD COLUMN resource_id INT NULL AFTER media_id
     ');
     $connection->exec('
-        UPDATE basket_item
+        UPDATE selection_item
         SET resource_id = COALESCE(item_id, media_id)
     ');
     $connection->exec('
-        ALTER TABLE basket_item
+        ALTER TABLE selection_item
         MODIFY COLUMN resource_id INT NOT NULL
     ');
     $connection->exec('
-        ALTER TABLE basket_item
+        ALTER TABLE selection_item
         DROP COLUMN item_id,
         DROP COLUMN media_id
     ');
     $connection->exec('
-        ALTER TABLE basket_item
+        ALTER TABLE selection_item
         MODIFY COLUMN user_id INT NOT NULL
         ADD INDEX IDX_D4943C2BA76ED395 (user_id),
         ADD INDEX IDX_D4943C2B89329D25 (resource_id),

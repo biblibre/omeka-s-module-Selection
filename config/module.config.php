@@ -1,10 +1,10 @@
 <?php
-namespace Basket;
+namespace Selection;
 
 return  [
     'api_adapters' => [
         'invokables' => [
-            'basket_items' => Api\Adapter\BasketItemAdapter::class,
+            'selection_items' => Api\Adapter\SelectionItemAdapter::class,
         ],
     ],
     'entity_manager' => [
@@ -25,28 +25,28 @@ return  [
     ],
     'view_helpers' => [
         'invokables' => [
-            'showBasketLink' => View\Helper\ShowBasketLink::class,
-            'updateBasketLink' => View\Helper\UpdateBasketLink::class,
+            'showSelectionLink' => View\Helper\ShowSelectionLink::class,
+            'updateSelectionLink' => View\Helper\UpdateSelectionLink::class,
         ],
     ],
     'controllers' => [
         'invokables' => [
-            'Basket\Controller\Site\Basket' => Controller\Site\BasketController::class,
-            'Basket\Controller\Site\GuestBoard' => Controller\Site\GuestBoardController::class,
+            'Selection\Controller\Site\Selection' => Controller\Site\SelectionController::class,
+            'Selection\Controller\Site\GuestBoard' => Controller\Site\GuestBoardController::class,
         ],
     ],
     'navigation_links' => [
         'invokables' => [
-            'basket' => Site\Navigation\Link\Basket::class,
+            'selection' => Site\Navigation\Link\Selection::class,
         ],
     ],
     'navigation' => [
         'site' => [
             [
-                'label' => 'Basket', // @translate
-                'route' => 'site/guest/basket',
-                'controller' => 'Basket\Controller\Site\GuestBoard',
-                'action' => 'basket',
+                'label' => 'Selection', // @translate
+                'route' => 'site/guest/selection',
+                'controller' => 'Selection\Controller\Site\GuestBoard',
+                'action' => 'selection',
                 'useRouteMatch' => true,
                 'visible' => false,
             ],
@@ -56,31 +56,31 @@ return  [
         'routes' => [
             'site' => [
                 'child_routes' => [
-                    'basket' => [
+                    'selection' => [
                         'type' => \Zend\Router\Http\Segment::class,
                         'options' => [
-                            'route' => '/basket[/:action]',
+                            'route' => '/selection[/:action]',
                             'constraints' => [
                                 'action' => 'add|delete|toggle',
                             ],
                             'defaults' => [
-                                '__NAMESPACE__' => 'Basket\Controller\Site',
-                                'controller' => 'Basket',
+                                '__NAMESPACE__' => 'Selection\Controller\Site',
+                                'controller' => 'Selection',
                                 'action' => 'add',
                             ],
                         ],
                     ],
-                    'basket-id' => [
+                    'selection-id' => [
                         'type' => \Zend\Router\Http\Segment::class,
                         'options' => [
-                            'route' => '/basket/:id[/:action]',
+                            'route' => '/selection/:id[/:action]',
                             'constraints' => [
                                 'action' => 'add|delete|toggle',
                                 'id' => '\d+',
                             ],
                             'defaults' => [
-                                '__NAMESPACE__' => 'Basket\Controller\Site',
-                                'controller' => 'Basket',
+                                '__NAMESPACE__' => 'Selection\Controller\Site',
+                                'controller' => 'Selection',
                                 'action' => 'toggle',
                             ],
                         ],
@@ -95,12 +95,12 @@ return  [
                         ],
                         'may_terminate' => true,
                         'child_routes' => [
-                            'basket' => [
+                            'selection' => [
                                 'type' => \Zend\Router\Http\Literal::class,
                                 'options' => [
-                                    'route' => '/basket',
+                                    'route' => '/selection',
                                     'defaults' => [
-                                        '__NAMESPACE__' => 'Basket\Controller\Site',
+                                        '__NAMESPACE__' => 'Selection\Controller\Site',
                                         'controller' => 'GuestBoard',
                                         'action' => 'show',
                                     ],

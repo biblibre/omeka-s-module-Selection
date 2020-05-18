@@ -27,15 +27,15 @@
  * knowledge of the CeCILL license and that you accept its terms.
  */
 
-namespace Basket\Api\Representation;
+namespace Selection\Api\Representation;
 
 use Omeka\Api\Representation\AbstractEntityRepresentation;
 
-class BasketItemRepresentation extends AbstractEntityRepresentation
+class SelectionItemRepresentation extends AbstractEntityRepresentation
 {
     public function getJsonLdType()
     {
-        return 'o:BasketItem';
+        return 'o:SelectionItem';
     }
 
     public function getJsonLd()
@@ -75,7 +75,7 @@ class BasketItemRepresentation extends AbstractEntityRepresentation
     }
 
     /**
-     * @return \Basket\Entity\BasketItem
+     * @return \Selection\Entity\SelectionItem
      */
     public function getEntity()
     {

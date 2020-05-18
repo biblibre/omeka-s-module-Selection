@@ -17,9 +17,9 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: Module.php:84 view/common/basket-item.phtml:25
-#: view/common/basket-link.phtml:10 view/guest/site/guest/basket.phtml:63
-msgid "Basket"
+#: Module.php:84 view/common/selection-item.phtml:25
+#: view/common/selection-link.phtml:10 view/guest/site/guest/selection.phtml:63
+msgid "Selection"
 msgstr ""
 
 #: src/Generic/AbstractModule.php:498
@@ -39,32 +39,32 @@ msgid ""
 "unavailable."
 msgstr ""
 
-#: view/common/basket-button.phtml:12
-msgid "Add to basket"
+#: view/common/selection-button.phtml:12
+msgid "Add to selection"
 msgstr ""
 
-#: view/common/basket-button.phtml:12
-msgid "Remove from basket"
+#: view/common/selection-button.phtml:12
+msgid "Remove from selection"
 msgstr ""
 
-#: view/guest/site/guest/basket.phtml:66
+#: view/guest/site/guest/selection.phtml:66
 #, php-format
 msgid "%d items, %d media"
 msgstr ""
 
-#: view/guest/site/guest/basket.phtml:114
-msgid "The basket is empty."
+#: view/guest/site/guest/selection.phtml:114
+msgid "The selection is empty."
 msgstr ""
 
-#: view/guest/site/guest/widget/basket.phtml:13
-msgid "My basket"
+#: view/guest/site/guest/widget/selection.phtml:13
+msgid "My selection"
 msgstr ""
 
-#: src/Controller/Site/BasketController.php:63
+#: src/Controller/Site/SelectionController.php:63
 msgid "Already in"
 msgstr ""
 
-#: src/Site/Navigation/Link/Basket.php:23
+#: src/Site/Navigation/Link/Selection.php:23
 #, php-format
 msgid "Invalid navigation: link without label (%s)"
 msgstr ""

@@ -1,15 +1,15 @@
 <?php
-namespace Basket\Site\Navigation\Link;
+namespace Selection\Site\Navigation\Link;
 
 use Omeka\Api\Representation\SiteRepresentation;
 use Omeka\Site\Navigation\Link\LinkInterface;
 use Omeka\Stdlib\ErrorStore;
 
-class Basket implements LinkInterface
+class Selection implements LinkInterface
 {
     public function getName()
     {
-        return 'Basket'; // @translate
+        return 'Selection'; // @translate
     }
 
     public function getFormTemplate()
@@ -30,15 +30,15 @@ class Basket implements LinkInterface
     {
         return isset($data['label']) && trim($data['label']) !== ''
             ? $data['label']
-            : 'Basket'; // @translate
+            : 'Selection'; // @translate
     }
 
     public function toZend(array $data, SiteRepresentation $site)
     {
         return [
             'label' => $data['label'],
-            'route' => 'site/guest/basket',
-            'class' => 'basket-link',
+            'route' => 'site/guest/selection',
+            'class' => 'selection-link',
             'params' => [
                 'site-slug' => $site->slug(),
             ],

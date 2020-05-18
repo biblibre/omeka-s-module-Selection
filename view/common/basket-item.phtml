@@ -7,7 +7,7 @@
  */
 
 // For a better display, it is recommended to edit the original item/show
-// template, and any other one, to include the link to update the basket and to
+// template, and any other one, to include the link to update the selection and to
 // skip this partial. This partial can be skipped automatically with module
 // BlockDisposition.
 
@@ -17,22 +17,22 @@ if (!$this->identity()):
 endif;
 
 $translate = $this->plugin('translate');
-$updateBasketLink = $this->plugin('updateBasketLink');
+$updateSelectionLink = $this->plugin('updateSelectionLink');
 
 $medias = $item->media();
 ?>
 
 <style>
-#content .basket .media.resource { text-align: inherit; }
+#content .selection .media.resource { text-align: inherit; }
 </style>
 
-<div class="basket">
-    <h2><?= $translate('Basket') ?></h2>
+<div class="selection">
+    <h2><?= $translate('Selection') ?></h2>
     <?php if (count($medias)): ?>
     <h3><?= $translate('Item') ?></h3>
     <?php endif; ?>
     <div class="item resource">
-        <?= $updateBasketLink($item) ?>
+        <?= $updateSelectionLink($item) ?>
         <?= $item->linkPretty() ?>
     </div>
     <?php if (count($medias)): ?>
@@ -40,7 +40,7 @@ $medias = $item->media();
     <div class="media-list">
         <?php foreach ($medias as $media): ?>
         <div class="media resource">
-            <?= $updateBasketLink($media) ?>
+            <?= $updateSelectionLink($media) ?>
             <?= $media->linkPretty() ?>
         </div>
         <?php endforeach; ?>

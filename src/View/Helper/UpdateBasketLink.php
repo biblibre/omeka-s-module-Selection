@@ -1,18 +1,18 @@
 <?php
-namespace Basket\View\Helper;
+namespace Selection\View\Helper;
 
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use Zend\View\Helper\AbstractHelper;
 
-class UpdateBasketLink extends AbstractHelper
+class UpdateSelectionLink extends AbstractHelper
 {
     /**
      * The default partial view script.
      */
-    const PARTIAL_NAME = 'common/basket-button';
+    const PARTIAL_NAME = 'common/selection-button';
 
     /**
-     * Create a button to add or remove a resource to/from the basket.
+     * Create a button to add or remove a resource to/from the selection.
      *
      * @param AbstractResourceEntityRepresentation $resource
      * @param array $options Options for the partial. Managed key:
@@ -28,9 +28,9 @@ class UpdateBasketLink extends AbstractHelper
             return '';
         }
 
-        if (!array_key_exists('basketItem', $options)) {
-            $options['basketItem'] = $this->getView()->api()->searchOne(
-                'basket_items',
+        if (!array_key_exists('selectionItem', $options)) {
+            $options['selectionItem'] = $this->getView()->api()->searchOne(
+                'selection_items',
                 [
                     'user_id' => $user->getId(),
                     'resource_id' => $resource->id(),
@@ -45,16 +45,16 @@ class UpdateBasketLink extends AbstractHelper
         $options += $defaultOptions;
 
         $view->headScript()
-            ->appendFile($view->assetUrl('js/basket.js', 'Basket'), 'text/javascript', ['defer' => 'defer']);
+            ->appendFile($view->assetUrl('js/selection.js', 'Selection'), 'text/javascript', ['defer' => 'defer']);
 
         $template = $options['template'];
         unset($options['template']);
 
         $params = [
             'resource' => $resource,
-            'url' => $view->url('site/basket-id', ['action' => $options['action'], 'id' => $resource->id()], true),
+            'url' => $view->url('site/selection-id', ['action' => $options['action'], 'id' => $resource->id()], true),
             // @deprecated Kept for old themes.
-            'action' => $options['basketItem'] ? 'delete' : 'add',
+            'action' => $options['selectionItem'] ? 'delete' : 'add',
         ];
 
         return $view->partial($template, $params + $options);

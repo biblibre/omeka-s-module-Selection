@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS basket_item;
+DROP TABLE IF EXISTS selection_item;

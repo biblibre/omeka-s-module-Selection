@@ -1,6 +1,6 @@
 (function() {
     $(document).ready(function() {
-        $('body').on('click', '.basket-update', function(e) {
+        $('body').on('click', '.selection-update', function(e) {
             e.preventDefault();
             e.stopPropagation();
             var button = $(this);

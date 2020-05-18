@@ -30,15 +30,15 @@
 /**
  * @var \Zend\View\Renderer\PhpRenderer $this
  * @var \Omeka\Api\Representation\SiteRepresentation $site
- * @var \Basket\Api\Representation\BasketItemRepresentation[] $basketItems
+ * @var \Selection\Api\Representation\SelectionItemRepresentation[] $selectionItems
  */
 
 $plugins = $this->getHelperPluginManager();
 $translate = $plugins->get('translate');
 $thumbnail = $plugins->get('thumbnail');
-$updateBasketLink = $this->plugin('updateBasketLink');
+$updateSelectionLink = $this->plugin('updateSelectionLink');
 
-$this->htmlElement('body')->appendAttribute('class', 'basket resource browse');
+$this->htmlElement('body')->appendAttribute('class', 'selection resource browse');
 
 $headingTerm = $this->siteSetting('browse_heading_property_term', 'dcterms:title');
 $bodyTerm = $this->siteSetting('browse_body_property_term', 'dcterms:description');
@@ -50,8 +50,8 @@ $resourceNameToType = [
     'media' => 'media',
 ];
 $resources = ['item' => [], 'media' => []];
-foreach ($basketItems as $basketItem):
-    $resource = $basketItem->resource();
+foreach ($selectionItems as $selectionItem):
+    $resource = $selectionItem->resource();
     $resources[$resourceNameToType[$resource->resourceName()]][] = $resource;
 endforeach;
 ?>
@@ -60,9 +60,9 @@ endforeach;
 #content .media.resource:hover { border-bottom: 1px solid transparent; }
 </style>
 
-<?= $this->pageTitle($translate('Basket'), 2); ?>
+<?= $this->pageTitle($translate('Selection'), 2); ?>
 
-<?php if (count($basketItems)): ?>
+<?php if (count($selectionItems)): ?>
 <h3><?= sprintf($translate('%d items, %d media'), count($resources['item']), count($resources['media'])) ?></h3>
 
 <?php $this->trigger('view.browse.before'); ?>
@@ -102,7 +102,7 @@ endforeach;
             <?= $body ?>
         </div>
         <?php endif; ?>
-        <?= $updateBasketLink($resource) ?>
+        <?= $updateSelectionLink($resource) ?>
     </li>
         <?php endforeach; ?>
     <?php endforeach; ?>
@@ -111,6 +111,6 @@ endforeach;
 
 <?php else: ?>
 <p>
-    <?= $translate('The basket is empty.') ?>
+    <?= $translate('The selection is empty.') ?>
 </p>
 <?php endif; ?>

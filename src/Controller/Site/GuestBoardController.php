@@ -28,7 +28,7 @@
  * knowledge of the CeCILL license and that you accept its terms.
  */
 
-namespace Basket\Controller\Site;
+namespace Selection\Controller\Site;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
@@ -49,13 +49,13 @@ class GuestBoardController extends AbstractActionController
         $query = $this->params()->fromQuery();
         $query['user_id'] = $user->getId();
 
-        $basketItems = $this->api()->search('basket_items', $query)->getContent();
+        $selectionItems = $this->api()->search('selection_items', $query)->getContent();
 
         $view = new ViewModel;
         $view
-            ->setTemplate('guest/site/guest/basket')
+            ->setTemplate('guest/site/guest/selection')
             ->setVariable('site', $this->currentSite())
-            ->setVariable('basketItems', $basketItems);
+            ->setVariable('selectionItems', $selectionItems);
         return $view;
     }
 }

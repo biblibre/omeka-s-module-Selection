@@ -1,4 +1,4 @@
-CREATE TABLE basket_item (
+CREATE TABLE selection_item (
     id INT AUTO_INCREMENT NOT NULL,
     user_id INT NOT NULL,
     resource_id INT NOT NULL,

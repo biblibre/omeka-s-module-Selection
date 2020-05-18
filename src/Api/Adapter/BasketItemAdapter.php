@@ -28,7 +28,7 @@
  * knowledge of the CeCILL license and that you accept its terms.
  */
 
-namespace Basket\Api\Adapter;
+namespace Selection\Api\Adapter;
 
 use Doctrine\ORM\QueryBuilder;
 use Omeka\Api\Adapter\AbstractEntityAdapter;
@@ -36,7 +36,7 @@ use Omeka\Api\Request;
 use Omeka\Entity\EntityInterface;
 use Omeka\Stdlib\ErrorStore;
 
-class BasketItemAdapter extends AbstractEntityAdapter
+class SelectionItemAdapter extends AbstractEntityAdapter
 {
     protected $sortFields = [
         'id' => 'id',
@@ -45,17 +45,17 @@ class BasketItemAdapter extends AbstractEntityAdapter
 
     public function getResourceName()
     {
-        return 'basket_items';
+        return 'selection_items';
     }
 
     public function getRepresentationClass()
     {
-        return \Basket\Api\Representation\BasketItemRepresentation::class;
+        return \Selection\Api\Representation\SelectionItemRepresentation::class;
     }
 
     public function getEntityClass()
     {
-        return \Basket\Entity\BasketItem::class;
+        return \Selection\Entity\SelectionItem::class;
     }
 
     public function hydrate(Request $request, EntityInterface $entity,

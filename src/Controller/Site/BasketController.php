@@ -28,13 +28,13 @@
  * knowledge of the CeCILL license and that you accept its terms.
  */
 
-namespace Basket\Controller\Site;
+namespace Selection\Controller\Site;
 
 use Zend\Http\Response;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
 
-class BasketController extends AbstractActionController
+class SelectionController extends AbstractActionController
 {
     public function addAction()
     {
@@ -66,21 +66,21 @@ class BasketController extends AbstractActionController
 
         $user = $this->identity();
         $userId = $user->getId();
-        $updateBasketLink = $this->viewHelpers()->get('updateBasketLink');
+        $updateSelectionLink = $this->viewHelpers()->get('updateSelectionLink');
         $results = [];
 
         foreach ($resources as $resourceId => $resource) {
-            $basketItem = $api->searchOne('basket_items', ['user_id' => $userId, 'resource_id' => $resourceId])->getContent();
-            if ($basketItem) {
+            $selectionItem = $api->searchOne('selection_items', ['user_id' => $userId, 'resource_id' => $resourceId])->getContent();
+            if ($selectionItem) {
                 $results[$resourceId] = [
                     'status' => Response::STATUS_CODE_400,
                     'message' => 'Already in', // @translate
                 ];
             } else {
-                $basketItem = $api->create('basket_items', ['o:user_id' => $userId, 'o:resource_id' => $resourceId])->getContent();
+                $selectionItem = $api->create('selection_items', ['o:user_id' => $userId, 'o:resource_id' => $resourceId])->getContent();
                 $results[$resourceId] = [
                     'status' => Response::STATUS_CODE_200,
-                    'content' => $updateBasketLink($resource, ['basketItem' => $basketItem, 'action' => 'delete']),
+                    'content' => $updateSelectionLink($resource, ['selectionItem' => $selectionItem, 'action' => 'delete']),
                 ];
             }
         }
@@ -111,7 +111,7 @@ class BasketController extends AbstractActionController
 
         $user = $this->identity();
         $userId = $user->getId();
-        $updateBasketLink = $this->viewHelpers()->get('updateBasketLink');
+        $updateSelectionLink = $this->viewHelpers()->get('updateSelectionLink');
         $results = [];
 
         foreach ($ids as $resourceId) {
@@ -119,13 +119,13 @@ class BasketController extends AbstractActionController
                 'user_id' => $userId,
                 'resource_id' => $resourceId,
             ];
-            $basketItem = $api->searchOne('basket_items', $data)->getContent();
-            if ($basketItem) {
-                $resource = $basketItem->resource();
-                $api->delete('basket_items', $basketItem->id());
+            $selectionItem = $api->searchOne('selection_items', $data)->getContent();
+            if ($selectionItem) {
+                $resource = $selectionItem->resource();
+                $api->delete('selection_items', $selectionItem->id());
                 $results[$resourceId] = [
                     'status' => Response::STATUS_CODE_200,
-                    'content' => $updateBasketLink($resource, ['basketItem' => null, 'action' => 'add']),
+                    'content' => $updateSelectionLink($resource, ['selectionItem' => null, 'action' => 'add']),
                 ];
             } else {
                 $results[$resourceId] = [
@@ -175,15 +175,15 @@ class BasketController extends AbstractActionController
 
         $user = $this->identity();
         $userId = $user->getId();
-        $updateBasketLink = $this->viewHelpers()->get('updateBasketLink');
+        $updateSelectionLink = $this->viewHelpers()->get('updateSelectionLink');
 
         $results = [];
         $add = [];
-        /** @var \Basket\Api\Representation\BasketItemRepresentation[] $delete */
+        /** @var \Selection\Api\Representation\SelectionItemRepresentation[] $delete */
         $delete = [];
         foreach ($resources as $resourceId => $resource) {
             $data = ['user_id' => $userId, 'resource_id' => $resourceId];
-            $response = $api->searchOne('basket_items', $data);
+            $response = $api->searchOne('selection_items', $data);
             if ($response->getTotalResults()) {
                 $delete[$resourceId] = $response->getContent();
             } else {
@@ -193,20 +193,20 @@ class BasketController extends AbstractActionController
 
         if ($add) {
             foreach ($add as $resourceId) {
-                $basketItem = $api->create('basket_items', ['o:user_id' => $userId, 'o:resource_id' => $resourceId])->getContent();
+                $selectionItem = $api->create('selection_items', ['o:user_id' => $userId, 'o:resource_id' => $resourceId])->getContent();
                 $results[$resourceId] = [
                     'status' => Response::STATUS_CODE_200,
-                    'content' => $updateBasketLink($resource, ['basketItem' => $basketItem, 'action' => 'toggle']),
+                    'content' => $updateSelectionLink($resource, ['selectionItem' => $selectionItem, 'action' => 'toggle']),
                 ];
             }
         }
 
         if ($delete) {
-            foreach ($delete as $resourceId => $basketItem) {
-                $api->delete('basket_items', $basketItem->id());
+            foreach ($delete as $resourceId => $selectionItem) {
+                $api->delete('selection_items', $selectionItem->id());
                 $results[$resourceId] = [
                     'status' => Response::STATUS_CODE_200,
-                    'content' => $updateBasketLink($resources[$resourceId], ['basketItem' => null, 'action' => 'toggle']),
+                    'content' => $updateSelectionLink($resources[$resourceId], ['selectionItem' => null, 'action' => 'toggle']),
                 ];
             }
         }
