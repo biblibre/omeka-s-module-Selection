@@ -11,12 +11,23 @@ $siteSetting = $plugins->get('siteSetting');
 
 $user = $this->identity();
 $allowVisitor = !$user && $siteSetting('selection_visitor_allow', true);
-$userFillSession = $user && !$siteSetting('selection_user_fill_main');
+if (!$allowVisitor && !$user):
+    return;
+endif;
 
 $container = new \Zend\Session\Container('Selection');
+
+$formatters = isset($container->records) && count($container->records) && $plugins->has('listFormatters')
+    ? $plugins->get('listFormatters')->__invoke(true)
+    : false;
+if ($formatters):
+    $ids = implode(',', array_keys($container->records));
+    $route = $this->status()->isAdminRequest() ? 'admin/resource-output' : 'site/resource-output';
+    $this->headLink()
+        ->appendStylesheet($this->assetUrl('css/bulk-export.css', 'BulkExport'));
+endif;
 ?>
 
-<?php if ($allowVisitor || $userFillSession): // Don't display the selection for a user, except if the session is used. ?>
 <?php $removeText = $escapeAttr($translate('Remove from selection')); // @translate ?>
 <h3><a href="#" class="selection-list-toggle"><?= $translate('Selected resources') // @translate ?></a></h3>
 <div class="selection-list" style="display:none;">
@@ -29,5 +40,16 @@ $container = new \Zend\Session\Container('Selection');
         <?php endforeach; ?>
     </ul>
     <p class="selection-empty<?= empty($container->records) ? ' active' : '' ?>"><?= $translate('No selection') // @translate ?></p>
+
+    <?php if ($formatters): ?>
+    <div class="bulk-export">
+        <h4><?= $translate('Download selection') ?></h4>
+        <ul class="formatters">
+        <?php foreach ($formatters as $format => $label): ?>
+            <?php $urlFormat = $url($route, ['resource-type' => 'resource', 'format' => $format], ['query' => ['id' => $ids]], true); ?>
+            <li><a class="download-<?= $format ?>" href="<?= $escapeAttr($urlFormat) ?>"><?= $label ?></a></li>
+        <?php endforeach; ?>
+        </ul>
+    </div>
+    <?php endif; ?>
 </div>
-<?php endif; ?>
