@@ -80,7 +80,7 @@ class SelectionController extends AbstractActionController
         }
         // Session selection.
         else {
-            $container = new Container('Selection');
+            $container = $this->containerSession();
             foreach ($resources as $resourceId => $resource) {
                 $data = $this->selectionItemForResource($resource, true);
                 if (isset($container->records[$resourceId])) {
@@ -149,7 +149,7 @@ class SelectionController extends AbstractActionController
         }
         // Session selection.
         else {
-            $container = new Container('Selection');
+            $container = $this->containerSession();
             foreach ($resources as $resourceId => $resource) {
                 $data = $this->selectionItemForResource($resource, false);
                 $data['status'] = 'success';
@@ -224,7 +224,7 @@ class SelectionController extends AbstractActionController
         }
         // Session selection.
         else {
-            $container = new Container('Selection');
+            $container = $this->containerSession();
             $add = [];
             $delete = [];
             foreach ($resources as $resourceId => $resource) {
@@ -264,6 +264,23 @@ class SelectionController extends AbstractActionController
             'status' => 'success',
             'data' => $data,
         ]);
+    }
+
+    /**
+     * @return \Zend\Session\Container
+     */
+    protected function containerSession()
+    {
+        // Check if the container is ready for the current user.
+        $container = new Container('Selection');
+        if (empty($container->init)) {
+            $container->user = sha1(microtime() . random_bytes(20));
+            $container->records = [];
+            $container->init = true;
+        } elseif (!isset($container->records)) {
+            $container->records = [];
+        }
+        return $container;
     }
 
     protected function requestedResources()
