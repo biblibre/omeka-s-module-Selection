@@ -21,11 +21,19 @@ class UpdateSelectionLink extends AbstractHelper
      */
     public function __invoke(AbstractResourceEntityRepresentation $resource, array $options = [])
     {
+        static $first;
+
         $view = $this->getView();
 
         $user = $view->identity();
         if (!$user) {
             return '';
+        }
+
+        if (is_null($first)) {
+            $view->headScript()
+                ->appendFile($view->assetUrl('js/selection.js', 'Selection'), 'text/javascript', ['defer' => 'defer']);
+            $first = false;
         }
 
         if (!array_key_exists('selectionItem', $options)) {
@@ -43,9 +51,6 @@ class UpdateSelectionLink extends AbstractHelper
             'action' => 'toggle',
         ];
         $options += $defaultOptions;
-
-        $view->headScript()
-            ->appendFile($view->assetUrl('js/selection.js', 'Selection'), 'text/javascript', ['defer' => 'defer']);
 
         $template = $options['template'];
         unset($options['template']);

@@ -66,20 +66,27 @@ class SelectionController extends AbstractActionController
 
         $user = $this->identity();
         $userId = $user->getId();
-        $updateSelectionLink = $this->viewHelpers()->get('updateSelectionLink');
+        $siteSlug = $this->currentSite()->slug();
         $results = [];
 
+        /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $resources */
         foreach ($resources as $resourceId => $resource) {
             $selectionItem = $api->searchOne('selection_items', ['user_id' => $userId, 'resource_id' => $resourceId])->getContent();
             $data = [
-                'content' => $updateSelectionLink($resource, ['selectionItem' => $selectionItem, 'action' => 'delete']),
+                'id' => $resourceId,
+                'type' => $resource->getControllerName(),
+                'url' => $resource->siteUrl($siteSlug, true),
+                // String is required to avoid error in container when the title
+                // is a resource.
+                'title' => (string) $resource->displayTitle(),
+                'inside' => true,
             ];
             if ($selectionItem) {
                 $data['status'] = 'fail';
                 $data['message'] = $this->translate('Already in'); // @translate
             } else {
+                $api->create('selection_items', ['o:user_id' => $userId, 'o:resource_id' => $resourceId])->getContent();
                 $data['status'] = 'success';
-                $selectionItem = $api->create('selection_items', ['o:user_id' => $userId, 'o:resource_id' => $resourceId])->getContent();
             }
             $results[$resourceId] = $data;
         }
@@ -119,28 +126,31 @@ class SelectionController extends AbstractActionController
 
         $user = $this->identity();
         $userId = $user->getId();
-        $updateSelectionLink = $this->viewHelpers()->get('updateSelectionLink');
+        $siteSlug = $this->currentSite()->slug();
         $results = [];
 
         foreach ($ids as $resourceId) {
-            $data = [
-                'user_id' => $userId,
-                'resource_id' => $resourceId,
-            ];
-            $selectionItem = $api->searchOne('selection_items', $data)->getContent();
+            $selectionItem = $api->searchOne('selection_items', ['user_id' => $userId, 'resource_id' => $resourceId])->getContent();
             if ($selectionItem) {
                 $resource = $selectionItem->resource();
                 $api->delete('selection_items', $selectionItem->id());
-                $results[$resourceId] = [
+                $data = [
+                    'id' => $resourceId,
+                    'type' => $resource->getControllerName(),
+                    'url' => $resource->siteUrl($siteSlug, true),
+                    // String is required to avoid error in container when the title
+                    // is a resource.
+                    'title' => (string) $resource->displayTitle(),
+                    'inside' => false,
                     'status' => 'success',
-                    'content' => $updateSelectionLink($resource, ['selectionItem' => null, 'action' => 'add']),
                 ];
             } else {
-                $results[$resourceId] = [
+                $data = [
                     'status' => 'error',
                     'message' => $this->translate('Not found'), // @translate
                 ];
             }
+            $results[$resourceId] = $data;
         }
 
         if ($isMultiple) {
@@ -192,7 +202,7 @@ class SelectionController extends AbstractActionController
 
         $user = $this->identity();
         $userId = $user->getId();
-        $updateSelectionLink = $this->viewHelpers()->get('updateSelectionLink');
+        $siteSlug = $this->currentSite()->slug();
 
         $results = [];
         $add = [];
@@ -204,26 +214,39 @@ class SelectionController extends AbstractActionController
             if ($response->getTotalResults()) {
                 $delete[$resourceId] = $response->getContent();
             } else {
-                $add[$resourceId] = $resourceId;
+                $add[$resourceId] = $resource;
             }
         }
 
         if ($add) {
-            foreach ($add as $resourceId) {
-                $selectionItem = $api->create('selection_items', ['o:user_id' => $userId, 'o:resource_id' => $resourceId])->getContent();
+            foreach ($add as $resourceId => $resource) {
+                $api->create('selection_items', ['o:user_id' => $userId, 'o:resource_id' => $resourceId])->getContent();
                 $results[$resourceId] = [
+                    'id' => $resourceId,
+                    'type' => $resource->getControllerName(),
+                    'url' => $resource->siteUrl($siteSlug, true),
+                    // String is required to avoid error in container when the title
+                    // is a resource.
+                    'title' => (string) $resource->displayTitle(),
+                    'inside' => true,
                     'status' => 'success',
-                    'content' => $updateSelectionLink($resource, ['selectionItem' => $selectionItem, 'action' => 'toggle']),
                 ];
             }
         }
 
         if ($delete) {
             foreach ($delete as $resourceId => $selectionItem) {
+                $resource = $selectionItem->resource();
                 $api->delete('selection_items', $selectionItem->id());
                 $results[$resourceId] = [
+                    'id' => $resourceId,
+                    'type' => $resource->getControllerName(),
+                    'url' => $resource->siteUrl($siteSlug, true),
+                    // String is required to avoid error in container when the title
+                    // is a resource.
+                    'title' => (string) $resource->displayTitle(),
+                    'inside' => false,
                     'status' => 'success',
-                    'content' => $updateSelectionLink($resources[$resourceId], ['selectionItem' => null, 'action' => 'toggle']),
                 ];
             }
         }

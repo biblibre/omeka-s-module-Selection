@@ -122,4 +122,8 @@ return  [
             ],
         ],
     ],
+    'js_translate_strings' => [
+        'Select', // @translate
+        'Unselect', // @translate
+    ],
 ];
