@@ -10,6 +10,9 @@ $hyperlink = $this->plugin('hyperlink');
 
 <ul>
     <li>
-        <?= $hyperlink($translate('See selection'), $url('site/guest/selection', [], true)) // @translate ?>
+        <?= $hyperlink(
+            $translate('See selection'), // @translate
+            $url('site/guest/selection', [], true)
+        ) ?>
     </li>
 </ul>

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-28 00:00+0100\n"
+"POT-Creation-Date: 2020-05-25 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,22 +17,27 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: Module.php:84 view/common/selection-item.phtml:25
-#: view/common/selection-link.phtml:10 view/guest/site/guest/selection.phtml:63
+#: Module.php:151 view/common/selection-item.phtml:26
+#: view/common/selection-link.phtml:11 view/guest/site/guest/selection.phtml:64
 msgid "Selection"
 msgstr ""
 
-#: src/Generic/AbstractModule.php:498
+#: src/Controller/Site/SelectionController.php:73
+#: src/Controller/Site/SelectionController.php:88
+msgid "Already in"
+msgstr ""
+
+#: src/Generic/AbstractModule.php:598
 #, php-format
 msgid "This module requires the module \"%s\"."
 msgstr ""
 
-#: src/Generic/AbstractModule.php:518
+#: src/Generic/AbstractModule.php:618
 #, php-format
 msgid "This module requires modules \"%s\"."
 msgstr ""
 
-#: src/Generic/AbstractModule.php:586
+#: src/Generic/AbstractModule.php:686
 #, php-format
 msgid ""
 "The module \"%s\" was automatically deactivated because the dependencies are "
@@ -43,25 +48,54 @@ msgstr ""
 msgid "Add to selection"
 msgstr ""
 
-#: view/common/selection-button.phtml:12
+#: view/common/selection-button.phtml:13 view/common/selection-list.phtml:34
 msgid "Remove from selection"
 msgstr ""
 
-#: view/guest/site/guest/selection.phtml:66
+#: view/common/selection-list.phtml:35
+msgid "Selected resources"
+msgstr ""
+
+#: view/common/selection-list.phtml:45
+msgid "No selection"
+msgstr ""
+
+#: view/common/selection-list.phtml:49
+msgid "Download selection"
+msgstr ""
+
+#: view/guest/site/guest/selection.phtml:67
 #, php-format
 msgid "%d items, %d media"
 msgstr ""
 
-#: view/guest/site/guest/selection.phtml:114
+#: view/guest/site/guest/selection.phtml:115
 msgid "The selection is empty."
 msgstr ""
 
-#: view/guest/site/guest/widget/selection.phtml:13
-msgid "My selection"
+#: view/guest/site/guest/widget/selection.phtml:14
+msgid "See selection"
 msgstr ""
 
-#: src/Controller/Site/SelectionController.php:63
-msgid "Already in"
+#: data/scripts/upgrade_from_basket.php:23
+#, php-format
+msgid "The version of the module Basket should be at least %s."
+msgstr ""
+
+#: data/scripts/upgrade_from_basket.php:63
+msgid "The module Basket was upgraded by module Selection and uninstalled."
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:12
+msgid "Selection module"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:21
+msgid "Enable session selection for visitors"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:31
+msgid "For authenticated users, fill the main selection directly"
 msgstr ""
 
 #: src/Site/Navigation/Link/Selection.php:23

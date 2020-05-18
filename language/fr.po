@@ -1,60 +1,149 @@
-# Translation template for module Solr.
-# Copyright (C) 2016 BibLibre
-# This file is distributed under the same license as the Solr package.
-# Julian Maurice <julian.maurice@biblibre.com>, 2016.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Solr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-29 15:13+0100\n"
-"PO-Revision-Date: 2016-11-30 10:21+0100\n"
-"Last-Translator: Julian Maurice <julian.maurice@biblibre.com>\n"
+"POT-Creation-Date: 2020-05-25 00:00+0000\n"
+"PO-Revision-Date: 2020-05-25 00:00+0000\n"
+"Last-Translator: Daniel Berthereau <Daniel.fr@Berthereau.net>\n"
 "Language-Team: French\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 2.3.1\n"
 
-#: view/public/selection/selection-button.phtml:2
-msgid "Add to selection"
-msgstr "Ajouter au panier"
-
-#: view/public/selection/selection-button.phtml:2
-msgid "Remove from selection"
-msgstr "Supprimer du panier"
-
-#: view/public/selection/selection-link.phtml:1
-#: view/public/selection/index/show.phtml:31
+#: Module.php:151 view/common/selection-item.phtml:26
+#: view/common/selection-link.phtml:11 view/guest/site/guest/selection.phtml:64
 msgid "Selection"
-msgstr "Panier"
+msgstr "Sélection"
 
-#: view/public/selection/index/show.phtml:45
-msgid "items"
-msgstr "contenus"
+#: src/Controller/Site/SelectionController.php:73
+#: src/Controller/Site/SelectionController.php:88
+msgid "Already in"
+msgstr "Déjà ajouté"
 
-#: view/public/selection/index/show.phtml:54
-msgid "files"
-msgstr "fichiers"
+#: src/Generic/AbstractModule.php:598
+#, php-format
+msgid "This module requires the module \"%s\"."
+msgstr "Ce module requiert le module \"%s\"."
 
-#: view/public/omeka/site/item/browse.phtml:10
-msgid "Item Set"
-msgstr "Collection"
+#: src/Generic/AbstractModule.php:618
+#, php-format
+msgid "This module requires modules \"%s\"."
+msgstr "Ce module requiert les modules \"%s\"."
 
-#: view/public/omeka/site/item/browse.phtml:14
-#: view/public/omeka/site/item/browse.phtml:16
-msgid "Items"
-msgstr "Contenus"
+#: src/Generic/AbstractModule.php:686
+#, php-format
+msgid ""
+"The module \"%s\" was automatically deactivated because the dependencies are "
+"unavailable."
+msgstr ""
+"Le module %s\" a été automatiquement désactivé car ses dépendances ne sont "
+"plus disponibles."
 
-#: view/public/omeka/site/item/browse.phtml:20
-msgid "Advanced search"
-msgstr "Recherche avancée"
+#: view/common/selection-button.phtml:12
+msgid "Add to selection"
+msgstr "Ajouter à la sélection"
 
-#: view/public/omeka/site/item/show.phtml:6
-msgid "Item"
-msgstr "Contenu"
+#: view/common/selection-button.phtml:13 view/common/selection-list.phtml:34
+msgid "Remove from selection"
+msgstr "Retirer de la sélection"
 
-#: view/public/omeka/site/item/show.phtml:11
-msgid "Item Sets"
-msgstr "Collections"
+#: view/common/selection-list.phtml:35
+msgid "Selected resources"
+msgstr "Ressources sélectionnées"
+
+#: view/common/selection-list.phtml:45
+msgid "No selection"
+msgstr "Pas de sélection"
+
+#: view/common/selection-list.phtml:49
+msgid "Download selection"
+msgstr "Télécharger la sélection"
+
+#: view/guest/site/guest/selection.phtml:67
+#, php-format
+msgid "%d items, %d media"
+msgstr "%d contenus, %d médias"
+
+#: view/guest/site/guest/selection.phtml:115
+msgid "The selection is empty."
+msgstr "La sélection est vide."
+
+#: view/guest/site/guest/widget/selection.phtml:14
+msgid "See selection"
+msgstr "Voir la sélection"
+
+#: data/scripts/upgrade_from_basket.php:23
+#, php-format
+msgid "The version of the module Basket should be at least %s."
+msgstr "La version du module Basket doit être au moins %s."
+
+#: data/scripts/upgrade_from_basket.php:63
+msgid "The module Basket was upgraded by module Selection and uninstalled."
+msgstr ""
+"Le module Basket a été mis à niveau par le module Sélection et supprimé."
+
+#: src/Form/SiteSettingsFieldset.php:12
+msgid "Selection module"
+msgstr "Sélection"
+
+#: src/Form/SiteSettingsFieldset.php:21
+msgid "Enable session selection for visitors"
+msgstr "Activer la sélection pour les visiteurs"
+
+#: src/Form/SiteSettingsFieldset.php:31
+msgid "For authenticated users, fill the main selection directly"
+msgstr ""
+"Pour les utilisateurs authentifiés, ajouter directement à la sélection "
+"principale"
+
+#: src/Site/Navigation/Link/Selection.php:23
+#, php-format
+msgid "Invalid navigation: link without label (%s)"
+msgstr "Navigation invalide : lien sans libellé (%s)"
+
+#~ msgid "Unselect"
+#~ msgstr "Retirer"
+
+#~ msgid "Basket"
+#~ msgstr "Panier"
+
+#~ msgid "Add to basket"
+#~ msgstr "Ajouter au panier"
+
+#~ msgid "Remove from basket"
+#~ msgstr "Supprimer du panier"
+
+#~ msgid "Your selection"
+#~ msgstr "Votre sélection"
+
+#~ msgid "See content"
+#~ msgstr "Voir le contenu"
+
+#~ msgid "items"
+#~ msgstr "contenus"
+
+#~ msgid "files"
+#~ msgstr "fichiers"
+
+#~ msgid "Item Set"
+#~ msgstr "Collection"
+
+#~ msgid "Items"
+#~ msgstr "Contenus"
+
+#~ msgid "Advanced search"
+#~ msgstr "Recherche avancée"
+
+#~ msgid "Item"
+#~ msgstr "Contenu"
+
+#~ msgid "Item Sets"
+#~ msgstr "Collections"
