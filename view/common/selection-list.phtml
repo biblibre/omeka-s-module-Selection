@@ -1,0 +1,33 @@
+<?php
+/**
+ * @var \Zend\View\Renderer\PhpRenderer $this
+ */
+
+$plugins = $this->getHelperPluginManager();
+$translate = $plugins->get('translate');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+$url = $plugins->get('url');
+$siteSetting = $plugins->get('siteSetting');
+
+$user = $this->identity();
+$allowVisitor = !$user && $siteSetting('selection_visitor_allow', true);
+$userFillSession = $user && !$siteSetting('selection_user_fill_main');
+
+$container = new \Zend\Session\Container('Selection');
+?>
+
+<?php if ($allowVisitor || $userFillSession): // Don't display the selection for a user, except if the session is used. ?>
+<?php $removeText = $escapeAttr($translate('Remove from selection')); // @translate ?>
+<h3><a href="#" class="selection-list-toggle"><?= $translate('Selected resources') // @translate ?></a></h3>
+<div class="selection-list" style="display:none;">
+    <ul class="selection-items" data-text-remove="<?= $removeText ?>">
+        <?php foreach ($container->records as $record): ?>
+        <li data-id="<?= $record['id'] ?>">
+            <a href="<?= $url('site/resource-id', ['controller' => $record['type'], 'id' => $record['id'], 'action' => 'show'], true) ?>"><?= $record['title'] ?></a>
+            <span class="selection-delete" data-id="<?= $record['id'] ?>" data-url="<?= $url('site/selection-id', ['action' => 'delete', 'id' => $record['id']], true) ?>" title="<?= $removeText ?>" aria-label="<?= $removeText ?>">X</span>
+        </li>
+        <?php endforeach; ?>
+    </ul>
+    <p class="selection-empty<?= empty($container->records) ? ' active' : '' ?>"><?= $translate('No selection') // @translate ?></p>
+</div>
+<?php endif; ?>
