@@ -51,6 +51,30 @@ class Module extends AbstractModule
         );
     }
 
+    protected function postInstall()
+    {
+        // Upgrade from old module Basket if any.
+        $services = $this->getServiceLocator();
+        $connection = $services->get('Omeka\Connection');
+
+        /** @var \Omeka\Module\Manager $moduleManager */
+        $moduleManager = $services->get('Omeka\ModuleManager');
+        $module = $moduleManager->getModule('Basket');
+        if ($module
+            && version_compare($module->getIni('version'), '0.2.0', '>')
+        ) {
+            // Check if Basket was really installed.
+            try {
+                $connection->fetchAll('SELECT id FROM basket_item LIMIT 1;');
+                // So upgrade Basket.
+                $filepath = $this->modulePath() . '/data/scripts/upgrade_from_basket.php';
+                require_once $filepath;
+                return;
+            } catch (\Exception $e) {
+            }
+        }
+    }
+
     public function attachListeners(SharedEventManagerInterface $sharedEventManager)
     {
         $sharedEventManager->attach(
