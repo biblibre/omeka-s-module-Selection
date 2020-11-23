@@ -1,6 +1,9 @@
 Selection (module for Omeka S)
 ==============================
 
+> __New versions of this module and support for Omeka S version 3.0 and above
+> are available on [GitLab], which seems to respect users and privacy better.__
+
 [Selection] is a module for [Omeka S] that allows any visitor to store selected
 resources through sessions and, when module [Bulk Export] is installed, to
 export them instantly to common formats, included common spreadsheet formats.
@@ -102,4 +105,5 @@ This module was initially based on the fork of the module [Basket] from BibLibre
 [OSI]: http://opensource.org
 [Basket]: https://github.com/BibLibre/Omeka-S-module-Basket
 [Biblibre]: https://github.com/biblibre
+[GitLab]: https://gitlab.com/Daniel-KM
 [Daniel-KM]: https://github.com/Daniel-KM "Daniel Berthereau"
