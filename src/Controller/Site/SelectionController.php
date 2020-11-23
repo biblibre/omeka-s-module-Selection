@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * Copyright BibLibre, 2016
@@ -30,10 +30,10 @@
 
 namespace Selection\Controller\Site;
 
-use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use Laminas\Http\Response;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\JsonModel;
+use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 
 class SelectionController extends AbstractActionController
 {

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * Copyright BibLibre, 2016
@@ -60,7 +60,7 @@ class SelectionItemAdapter extends AbstractEntityAdapter
 
     public function hydrate(Request $request, EntityInterface $entity,
         ErrorStore $errorStore
-    ) {
+    ): void {
         if ($this->shouldHydrate($request, 'o:user_id')) {
             $userId = $request->getValue('o:user_id');
             $entity->setUser($this->getAdapter('users')->findEntity($userId));
@@ -72,7 +72,7 @@ class SelectionItemAdapter extends AbstractEntityAdapter
         }
     }
 
-    public function buildQuery(QueryBuilder $qb, array $query)
+    public function buildQuery(QueryBuilder $qb, array $query): void
     {
         $expr = $qb->expr();
         if (isset($query['user_id'])) {
@@ -99,7 +99,7 @@ class SelectionItemAdapter extends AbstractEntityAdapter
         }
     }
 
-    public function sortQuery(QueryBuilder $qb, array $query)
+    public function sortQuery(QueryBuilder $qb, array $query): void
     {
         if (!empty($query['sort_by'])) {
             $property = $this->getPropertyByTerm($query['sort_by']);

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace SelectionTest\Controller;
 
@@ -10,7 +10,7 @@ class SelectionControllerTest extends OmekaControllerTestCase
     protected $item;
     protected $site;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -21,7 +21,7 @@ class SelectionControllerTest extends OmekaControllerTestCase
         $this->login('test@test.fr', 'toto');
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->loginAsAdmin();
         $selectionItems = $this->api()->search('selection_items')->getContent();
@@ -34,7 +34,7 @@ class SelectionControllerTest extends OmekaControllerTestCase
     }
 
     /** @test */
-    public function additemToSelectionShouldStoreSelectionForUser()
+    public function additemToSelectionShouldStoreSelectionForUser(): void
     {
         $this->dispatch('/s/test/selection/add/' . $this->item->id());
 
@@ -47,7 +47,7 @@ class SelectionControllerTest extends OmekaControllerTestCase
     }
 
     /** @test */
-    public function addmediaToSelectionShouldStoreSelectionForUSer()
+    public function addmediaToSelectionShouldStoreSelectionForUSer(): void
     {
         $media = $this->item->primaryMedia();
         $this->dispatch('/s/test/selection/add/' . $media->id());
@@ -61,7 +61,7 @@ class SelectionControllerTest extends OmekaControllerTestCase
     }
 
     /** @test */
-    public function addExistingItemShouldNotUpdateSelection()
+    public function addExistingItemShouldNotUpdateSelection(): void
     {
         $this->addToSelection($this->item);
         $this->dispatch('/s/test/selection/add/' . $this->item->id());
@@ -74,7 +74,7 @@ class SelectionControllerTest extends OmekaControllerTestCase
     }
 
     /** @test */
-    public function removeItemToSelectionShouldRemoveSelectionForUser()
+    public function removeItemToSelectionShouldRemoveSelectionForUser(): void
     {
         $this->addToSelection($this->item);
         $this->dispatch('/s/test/selection/delete/' . $this->item->id());
@@ -88,7 +88,7 @@ class SelectionControllerTest extends OmekaControllerTestCase
     }
 
     /** @test */
-    public function displaySelectionShouldDisplayItems()
+    public function displaySelectionShouldDisplayItems(): void
     {
         $this->addToSelection($this->item);
         $this->dispatch('/s/test/selection');
@@ -96,7 +96,7 @@ class SelectionControllerTest extends OmekaControllerTestCase
     }
 
     /** @test */
-    public function displaySelectionShouldDisplayMedia()
+    public function displaySelectionShouldDisplayMedia(): void
     {
         $media = $this->item->primaryMedia();
         $this->addToSelection($media);
@@ -170,7 +170,7 @@ class SelectionControllerTest extends OmekaControllerTestCase
         return $user;
     }
 
-    protected function addToSelection($resource)
+    protected function addToSelection($resource): void
     {
         $this->api()->create('selection_items', [
             'o:user_id' => $this->user->id(),

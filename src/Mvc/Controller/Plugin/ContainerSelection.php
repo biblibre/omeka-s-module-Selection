@@ -1,10 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Selection\Mvc\Controller\Plugin;
 
-use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
 use Laminas\Session\Container;
+use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 
 class ContainerSelection extends AbstractPlugin
 {

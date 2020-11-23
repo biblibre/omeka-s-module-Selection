@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 namespace Selection;
 
 if (!class_exists(\Generic\AbstractModule::class)) {
@@ -26,7 +26,7 @@ class Module extends AbstractModule
     // Guest is an optional dependency, not a required one.
     // protected $dependency = 'Guest';
 
-    public function onBootstrap(MvcEvent $event)
+    public function onBootstrap(MvcEvent $event): void
     {
         parent::onBootstrap($event);
 
@@ -60,7 +60,7 @@ class Module extends AbstractModule
         ;
     }
 
-    protected function postInstall()
+    protected function postInstall(): void
     {
         // Upgrade from old module Basket if any.
         $services = $this->getServiceLocator();
@@ -84,7 +84,7 @@ class Module extends AbstractModule
         }
     }
 
-    public function attachListeners(SharedEventManagerInterface $sharedEventManager)
+    public function attachListeners(SharedEventManagerInterface $sharedEventManager): void
     {
         $controllers = [
             'Omeka\Controller\Site\Item',
@@ -113,7 +113,7 @@ class Module extends AbstractModule
         );
     }
 
-    public function handleViewShowAfter(Event $event)
+    public function handleViewShowAfter(Event $event): void
     {
         $view = $event->getTarget();
         $siteSetting = $view->getHelperPluginManager()->get('siteSetting');
@@ -130,7 +130,7 @@ class Module extends AbstractModule
         echo $view->partial('common/selection-item');
     }
 
-    public function handleGuestWidgets(Event $event)
+    public function handleGuestWidgets(Event $event): void
     {
         $widgets = $event->getParam('widgets');
         $helpers = $this->getServiceLocator()->get('ViewHelperManager');

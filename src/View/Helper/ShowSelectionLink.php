@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Selection\View\Helper;
 
@@ -20,7 +20,7 @@ class ShowSelectionLink extends AbstractHelper
     public function __invoke(array $options = [])
     {
         $view = $this->getView();
-        $template = isset($options['template']) ? $options['template'] : self::PARTIAL_NAME;
+        $template = $options['template'] ?? self::PARTIAL_NAME;
         unset($options['template']);
         return $view->partial($template, $options);
     }
