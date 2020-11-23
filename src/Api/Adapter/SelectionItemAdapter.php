@@ -74,14 +74,11 @@ class SelectionItemAdapter extends AbstractEntityAdapter
 
     public function buildQuery(QueryBuilder $qb, array $query)
     {
-        $isOldOmeka = \Omeka\Module::VERSION < 2;
-        $alias = $isOldOmeka ? $this->getEntityClass() : 'omeka_root';
-
         $expr = $qb->expr();
         if (isset($query['user_id'])) {
             $userAlias = $this->createAlias();
             $qb->innerJoin(
-                $alias . '.user',
+                'omeka_root.user',
                 $userAlias
             );
             $qb->andWhere($expr->eq(
@@ -92,7 +89,7 @@ class SelectionItemAdapter extends AbstractEntityAdapter
         if (isset($query['resource_id'])) {
             $resourceAlias = $this->createAlias();
             $qb->innerJoin(
-                $alias . '.resource',
+                'omeka_root.resource',
                 $resourceAlias
             );
             $qb->andWhere($expr->eq(
@@ -107,10 +104,8 @@ class SelectionItemAdapter extends AbstractEntityAdapter
         if (!empty($query['sort_by'])) {
             $property = $this->getPropertyByTerm($query['sort_by']);
             if ($property) {
-                $isOldOmeka = \Omeka\Module::VERSION < 2;
-                $alias = $isOldOmeka ? $this->getEntityClass() : 'omeka_root';
                 $resourceAlias = $this->createAlias();
-                $qb->leftJoin("$alias.resource", $resourceAlias);
+                $qb->leftJoin('omeka_root.resource', $resourceAlias);
                 $valuesAlias = $this->createAlias();
                 $qb->leftJoin(
                     "$resourceAlias.values", $valuesAlias,
@@ -148,6 +143,7 @@ class SelectionItemAdapter extends AbstractEntityAdapter
             ->setParameters([
                 'localName' => $localName,
                 'prefix' => $prefix,
-            ])->getOneOrNullResult();
+            ])
+            ->getOneOrNullResult();
     }
 }
