@@ -50,13 +50,13 @@ your archives regularly so you can roll back if needed.
 Troubleshooting
 ---------------
 
-See online issues on the [module issues] page on GitHub.
+See online issues on the [module issues] page on GitLab.
 
 
 License
 -------
 
-This module is published under the [CeCILL v2.1] licence, compatible with
+This module is published under the [CeCILL v2.1] license, compatible with
 [GNU/GPL] and approved by [FSF] and [OSI].
 
 This software is governed by the CeCILL license under French law and abiding by
@@ -87,18 +87,18 @@ Copyright
 ---------
 
 * Copyright Biblibre, 2016-2017 (see [Biblibre])
-* Copyright Daniel Berthereau, 2017-2020 (see [Daniel-KM] on GitHub)
+* Copyright Daniel Berthereau, 2017-2020 (see [Daniel-KM] on GitLab)
 
 This module was initially based on the fork of the module [Basket] from BibLibre.
 
 
-[Selection]: https://github.com/Daniel-KM/Omeka-S-module-Selection
+[Selection]: https://gitlab.com/Daniel-KM/Omeka-S-module-Selection
 [Omeka S]: https://omeka.org/s
-[Generic]: https://github.com/Daniel-KM/Omeka-S-module-Generic
-[Guest]: https://github.com/Daniel-KM/Omeka-S-module-Guest
-[Bulk Export]: https://github.com/Daniel-KM/Omeka-S-module-BulkExport
+[Generic]: https://gitlab.com/Daniel-KM/Omeka-S-module-Generic
+[Guest]: https://gitlab.com/Daniel-KM/Omeka-S-module-Guest
+[Bulk Export]: https://gitlab.com/Daniel-KM/Omeka-S-module-BulkExport
 [Installing a module]: http://dev.omeka.org/docs/s/user-manual/modules/#installing-modules
-[module issues]: https://github.com/Daniel-KM/Omeka-S-module-Selection/issues
+[module issues]: https://gitlab.com/Daniel-KM/Omeka-S-module-Selection/-/issues
 [CeCILL v2.1]: https://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
 [GNU/GPL]: https://www.gnu.org/licenses/gpl-3.0.html
 [FSF]: https://www.fsf.org
@@ -106,4 +106,4 @@ This module was initially based on the fork of the module [Basket] from BibLibre
 [Basket]: https://github.com/BibLibre/Omeka-S-module-Basket
 [Biblibre]: https://github.com/biblibre
 [GitLab]: https://gitlab.com/Daniel-KM
-[Daniel-KM]: https://github.com/Daniel-KM "Daniel Berthereau"
+[Daniel-KM]: https://gitlab.com/Daniel-KM "Daniel Berthereau"
