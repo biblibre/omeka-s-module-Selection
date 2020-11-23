@@ -3,7 +3,7 @@ namespace Selection;
 
 /**
  * @var Module $this
- * @var \Zend\ServiceManager\ServiceLocatorInterface $serviceLocator
+ * @var \Laminas\ServiceManager\ServiceLocatorInterface $serviceLocator
  * @var string $newVersion
  * @var string $oldVersion
  *

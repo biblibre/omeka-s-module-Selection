@@ -3,7 +3,7 @@ namespace Selection;
 
 /**
  * @var Module $this
- * @var \Zend\ServiceManager\ServiceLocatorInterface $services
+ * @var \Laminas\ServiceManager\ServiceLocatorInterface $services
  * @var \Doctrine\DBAL\Connection $connection
  * @var \Omeka\Module\Manager $moduleManager
  * @var \Omeka\Settings\Settings $settings

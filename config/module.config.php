@@ -67,7 +67,7 @@ return  [
             'site' => [
                 'child_routes' => [
                     'selection' => [
-                        'type' => \Zend\Router\Http\Segment::class,
+                        'type' => \Laminas\Router\Http\Segment::class,
                         'options' => [
                             'route' => '/selection[/:action]',
                             'constraints' => [
@@ -81,7 +81,7 @@ return  [
                         ],
                     ],
                     'selection-id' => [
-                        'type' => \Zend\Router\Http\Segment::class,
+                        'type' => \Laminas\Router\Http\Segment::class,
                         'options' => [
                             'route' => '/selection/:id[/:action]',
                             'constraints' => [
@@ -99,14 +99,14 @@ return  [
                         // The default values for the guest user route are kept
                         // to avoid issues for visitors when an upgrade of
                         // module Guest occurs or when it is disabled.
-                        'type' => \Zend\Router\Http\Literal::class,
+                        'type' => \Laminas\Router\Http\Literal::class,
                         'options' => [
                             'route' => '/guest',
                         ],
                         'may_terminate' => true,
                         'child_routes' => [
                             'selection' => [
-                                'type' => \Zend\Router\Http\Literal::class,
+                                'type' => \Laminas\Router\Http\Literal::class,
                                 'options' => [
                                     'route' => '/selection',
                                     'defaults' => [

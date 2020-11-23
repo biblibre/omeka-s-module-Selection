@@ -3,8 +3,8 @@
 namespace Selection\Mvc\Controller\Plugin;
 
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
-use Zend\Mvc\Controller\Plugin\AbstractPlugin;
-use Zend\Session\Container;
+use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
+use Laminas\Session\Container;
 
 class ContainerSelection extends AbstractPlugin
 {

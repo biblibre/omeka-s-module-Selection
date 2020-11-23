@@ -2,7 +2,7 @@
 namespace Selection\View\Helper;
 
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
-use Zend\View\Helper\AbstractHelper;
+use Laminas\View\Helper\AbstractHelper;
 
 class UpdateSelectionLink extends AbstractHelper
 {
@@ -30,7 +30,7 @@ class UpdateSelectionLink extends AbstractHelper
             return '';
         }
 
-        $container = new \Zend\Session\Container('Selection');
+        $container = new \Laminas\Session\Container('Selection');
         $options['selectionItem'] = isset($container->records[$resource->id()]);
 
         $defaultOptions = [

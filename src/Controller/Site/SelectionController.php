@@ -31,9 +31,9 @@
 namespace Selection\Controller\Site;
 
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
-use Zend\Http\Response;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\JsonModel;
+use Laminas\Http\Response;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\JsonModel;
 
 class SelectionController extends AbstractActionController
 {
