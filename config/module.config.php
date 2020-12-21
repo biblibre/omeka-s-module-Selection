@@ -1,9 +1,11 @@
 <?php declare(strict_types=1);
+
 namespace Selection;
 
 return  [
     'api_adapters' => [
         'invokables' => [
+            'selections' => Api\Adapter\SelectionAdapter::class,
             'selection_resources' => Api\Adapter\SelectionResourceAdapter::class,
         ],
     ],

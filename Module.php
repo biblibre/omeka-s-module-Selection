@@ -34,18 +34,15 @@ class Module extends AbstractModule
         $acl = $services->get('Omeka\Acl');
 
         // Since Omeka 1.4, modules are ordered, so Guest come after Selection.
-        // See \Guest\Module::onBootstrap().
-        if (!$acl->hasRole('guest')) {
-            $acl->addRole('guest');
-        }
-
         $roles = $acl->getRoles();
 
         $acl
             ->allow(
                 $roles,
                 [
+                    Entity\Selection::class,
                     Entity\SelectionResource::class,
+                    Api\Adapter\SelectionAdapter::class,
                     Api\Adapter\SelectionResourceAdapter::class,
                     'Selection\Controller\Site\Selection',
                     'Selection\Controller\Site\GuestBoard',

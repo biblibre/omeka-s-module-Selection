@@ -30,12 +30,14 @@
 
 namespace Selection\Api\Adapter;
 
+use DateTime;
 use Doctrine\ORM\QueryBuilder;
 use Omeka\Api\Adapter\AbstractEntityAdapter;
 use Omeka\Api\Request;
 use Omeka\Entity\EntityInterface;
 use Omeka\Entity\Resource;
 use Omeka\Stdlib\ErrorStore;
+use Selection\Entity\Selection;
 
 class SelectionResourceAdapter extends AbstractEntityAdapter
 {
@@ -65,7 +67,7 @@ class SelectionResourceAdapter extends AbstractEntityAdapter
     {
         $expr = $qb->expr();
 
-        if (isset($query['owner_id'])) {
+        if (isset($query['owner_id']) && is_numeric($query['owner_id'])) {
             $userAlias = $this->createAlias();
             $qb->innerJoin(
                 'omeka_root.owner',
@@ -73,11 +75,11 @@ class SelectionResourceAdapter extends AbstractEntityAdapter
             );
             $qb->andWhere($expr->eq(
                 "$userAlias.id",
-                $this->createNamedParameter($qb, $query['owner_id']))
-            );
+                $this->createNamedParameter($qb, $query['owner_id'])
+            ));
         }
 
-        if (isset($query['resource_id'])) {
+        if (isset($query['resource_id']) && is_numeric($query['resource_id'])) {
             $resourceAlias = $this->createAlias();
             $qb->innerJoin(
                 'omeka_root.resource',
@@ -85,8 +87,39 @@ class SelectionResourceAdapter extends AbstractEntityAdapter
             );
             $qb->andWhere($expr->eq(
                 "$resourceAlias.id",
-                $this->createNamedParameter($qb, $query['resource_id']))
+                $this->createNamedParameter($qb, $query['resource_id'])
+            ));
+        }
+
+        if (isset($query['selection_id']) && is_numeric($query['selection_id'])) {
+            $selectionId = (int) $query['selection_id'];
+            // Allow to get the selection resources that are not in a specific
+            // selection, i.e. in the unlabelised default selection.
+            if ($selectionId) {
+                $selectionAlias = $this->createAlias();
+                $qb->innerJoin(
+                    'omeka_root.selection',
+                    $selectionAlias
+                );
+                $qb->andWhere($expr->eq(
+                    "$selectionAlias.id",
+                    $this->createNamedParameter($qb, $selectionId)
+                ));
+            } else {
+                $qb->andWhere($expr->isNull('omeka_root.selection'));
+            }
+        }
+
+        if (isset($query['selection_label']) && trim($query['selection_label'])) {
+            $selectionAlias = $this->createAlias();
+            $qb->innerJoin(
+                'omeka_root.selection',
+                $selectionAlias
             );
+            $qb->andWhere($expr->eq(
+                "$selectionAlias.label",
+                $this->createNamedParameter($qb, trim($query['selection_label']))
+            ));
         }
     }
 
@@ -123,19 +156,54 @@ class SelectionResourceAdapter extends AbstractEntityAdapter
             if ($this->shouldHydrate($request, 'o:resource')) {
                 $resource = $request->getValue('o:resource');
                 if (is_array($resource) && !empty($resource['o:id']) && is_numeric($resource['o:id'])) {
-                    $resource = $this->getAdapter('resources')->findEntity((int) $resource['o:id']);
+                    $resourceEntity = $this->getAdapter('resources')->findEntity((int) $resource['o:id']);
                 }
-                if ($resource && $resource instanceof Resource) {
-                    $entity->setResource($resource);
+                if ($resourceEntity && $resourceEntity instanceof Resource) {
+                    $entity->setResource($resourceEntity);
                 }
             }
+            if ($this->shouldHydrate($request, 'o:selection')) {
+                $selection = $request->getValue('o:selection');
+                if (is_array($selection)) {
+                    if (!empty($selection['o:id']) && is_numeric($selection['o:id'])) {
+                        $selectionEntity = $this->getAdapter('selections')->findEntity((int) $selection['o:id']);
+                    } elseif (isset($selection['o:label'])) {
+                        $label = trim((string) $selection['o:label']);
+                        if (strlen($label)) {
+                            // To simplify client requests to api, the selection
+                            // is automatically created if a label is set.
+                            try {
+                                $selectionEntity = $this->getAdapter('selections')->findEntity([
+                                    'owner' => $entity->getOwner(),
+                                    'label' => $label,
+                                ]);
+                            } catch (\Omeka\Api\Exception\NotFoundException $e) {
+                                $selectionEntity = null;
+                            }
+                            if (!$selectionEntity) {
+                                $comment = trim($selection['o:comment'] ?? '') ?: null;
+                                $selectionEntity = new Selection();
+                                $selectionEntity
+                                    ->setOwner($entity->getOwner())
+                                    ->setLabel($label)
+                                    ->setComment($comment);
+                                $this->getEntityManager()->persist($selectionEntity);
+                            }
+                        }
+                    }
+                }
+                if ($selectionEntity && $selectionEntity instanceof Selection) {
+                    $entity->setSelection($selectionEntity);
+                }
+            }
+            $entity->setCreated(new DateTime('now'));
         }
     }
 
     public function validateEntity(
         EntityInterface $entity,
         ErrorStore $errorStore
-    ) {
+    ): void {
         $owner = $entity->getOwner();
         if (!$owner) {
             $errorStore->addError('o:owner', 'A selection resource must have an owner.'); // @translate
@@ -144,7 +212,64 @@ class SelectionResourceAdapter extends AbstractEntityAdapter
         if (!$resource) {
             $errorStore->addError('o:resource', 'A selection resource must have a resource.'); // @translate
         }
+        $selection = $entity->getSelection();
+        if ($owner && $selection
+            && $owner->getId() !== $selection->getOwner()->getId()
+        ) {
+            $errorStore->addError('o:owner', 'A selection resource must have the same owner than the selection.'); // @translate
+        }
+        // The toggle is not automatic here.
+        if ($selection) {
+            if ($selection->getId()
+                && !$this->isUnique($entity, ['resource' => $resource, 'selection' => $selection])
+            ) {
+                $errorStore->addError('o:selection', 'A resource must be unique inside a selection.'); // @translate
+            }
+        } elseif (!$this->isUniqueWithNull($entity, ['resource' => $resource, 'owner' => $owner, 'selection' => null])) {
+            $errorStore->addError('o:resource', 'A selection resource must be unique for the owner when there is no selection.'); // @translate
+        }
         parent::validateEntity($entity, $errorStore);
+    }
+
+    /**
+     * Check for uniqueness by a set of criteria, included null.
+     *
+     * @see \Omeka\Api\Adapter\AbstractEntityAdapter::isUnique()
+     *
+     * @param EntityInterface $entity
+     * @param array $criteria Keys are fields to check, values are strings or
+     * null to check against. An entity may be passed as a value.
+     * @return bool
+     */
+    public function isUniqueWithNull(EntityInterface $entity, array $criteria)
+    {
+        $this->index = 0;
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('e.id')
+            ->from($this->getEntityClass(), 'e');
+
+        // Exclude the passed entity from the query if it has an persistent
+        // identifier.
+        $expr = $qb->expr();
+        if ($entity->getId()) {
+            $qb->andWhere($expr->neq(
+                'e.id',
+                $this->createNamedParameter($qb, $entity->getId())
+            ));
+        }
+
+        foreach ($criteria as $field => $value) {
+            if (is_null($value)) {
+                $qb->andWhere($expr->isNull("e.$field"));
+            } else {
+                $qb->andWhere($expr->eq(
+                    "e.$field",
+                    $this->createNamedParameter($qb, $value)
+                ));
+            }
+        }
+
+        return null === $qb->getQuery()->getOneOrNullResult();
     }
 
     /**

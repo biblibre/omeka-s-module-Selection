@@ -45,9 +45,12 @@ class SelectionResourceRepresentation extends AbstractEntityRepresentation
 
     public function getJsonLd()
     {
+        $selection = $this->selection();
+
         return [
             'o:owner' => $this->owner()->getReference(),
             'o:resource' => $this->resource()->getReference(),
+            'o:selection' => $selection ? $selection->getReference() : null,
             'o:created' => [
                 '@value' => $this->getDateTime($this->created()),
                 '@type' => 'http://www.w3.org/2001/XMLSchema#dateTime',
@@ -65,6 +68,14 @@ class SelectionResourceRepresentation extends AbstractEntityRepresentation
     {
         $adapter = $this->getAdapter('resources');
         return $adapter->getRepresentation($this->resource->getResource());
+    }
+
+    public function selection(): ?SelectionRepresentation
+    {
+        $selection = $this->resource->getSelection();
+        return $selection
+            ? $this->getAdapter('selections')->getRepresentation($selection)
+            : null;
     }
 
     public function created(): DateTime

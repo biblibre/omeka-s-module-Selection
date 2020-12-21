@@ -1,7 +1,6 @@
 <?php declare(strict_types=1);
 
 /*
- * Copyright BibLibre, 2016
  * Copyright Daniel Berthereau, 2020
  *
  * This software is governed by the CeCILL license under French law and abiding
@@ -31,30 +30,27 @@
 namespace Selection\Entity;
 
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Omeka\Entity\AbstractEntity;
-use Omeka\Entity\Resource;
 use Omeka\Entity\User;
 
 /**
- * Unique constraint options are not managed by mysql: the resource should be
- * unique for the owner when there is no selection. So this is managed only
- * during hydration: @UniqueConstraint(columns={"resource_id","owner_id"},options={"where": "selection_id IS NULL"}).
- *
  * @Entity
  * @Table(
  *     uniqueConstraints={
  *          @UniqueConstraint(
  *              columns={
- *                  "resource_id",
- *                  "selection_id"
+ *                  "owner_id",
+ *                  "label"
  *              }
  *          )
  *    }
  * )
  * @HasLifecycleCallbacks
  */
-class SelectionResource extends AbstractEntity
+class Selection extends AbstractEntity
 {
     /**
      * @var int
@@ -81,31 +77,37 @@ class SelectionResource extends AbstractEntity
     protected $owner;
 
     /**
-     * @var \Omeka\Entity\Resource
+     * @var string
      *
-     * @ManyToOne(
-     *      targetEntity="\Omeka\Entity\Resource"
-     * )
-     * @JoinColumn(
+     * @Column(
      *      nullable=false,
-     *      onDelete="CASCADE"
+     *      length=190
      * )
      */
-    protected $resource;
+    protected $label;
 
     /**
-     * @var Selection
+     * @var string
      *
-     * @ManyToOne(
-     *      targetEntity="Selection",
-     *      inversedBy="selectionResources"
-     * )
-     * @JoinColumn(
-     *      nullable=true,
-     *      onDelete="CASCADE"
+     * @Column(
+     *      type="text",
+     *      nullable=true
      * )
      */
-    protected $selection;
+    protected $comment;
+
+    /**
+     * @var SelectionResource[]
+     *
+     * @OneToMany(
+     *      targetEntity="SelectionResource",
+     *      mappedBy="selection",
+     *      orphanRemoval=true,
+     *      cascade={"persist", "remove", "detach"},
+     *      indexBy="id"
+     * )
+     */
+    protected $selectionResources;
 
     /**
      * @var DateTime
@@ -115,6 +117,11 @@ class SelectionResource extends AbstractEntity
      * )
      */
     protected $created;
+
+    public function __construct()
+    {
+        $this->selectionResources = new ArrayCollection();
+    }
 
     public function getId()
     {
@@ -132,26 +139,31 @@ class SelectionResource extends AbstractEntity
         return $this->owner;
     }
 
-    public function setResource(Resource $resource): self
+    public function setLabel(string $label): self
     {
-        $this->resource = $resource;
+        $this->label = $label;
         return $this;
     }
 
-    public function getResource(): ?Resource
+    public function getLabel(): ?string
     {
-        return $this->resource;
+        return $this->label;
     }
 
-    public function setSelection(?Selection $selection): self
+    public function setComment(?string $comment): self
     {
-        $this->selection = $selection;
+        $this->comment = $comment;
         return $this;
     }
 
-    public function getSelection(): ?Selection
+    public function getComment(): ?string
     {
-        return $this->selection;
+        return $this->comment;
+    }
+
+    public function getSelectionResources(): Collection
+    {
+        return $this->selectionResources;
     }
 
     public function setCreated(DateTime $dateTime): self
@@ -165,6 +177,9 @@ class SelectionResource extends AbstractEntity
         return $this->created;
     }
 
+    /**
+     * @PrePersist
+     */
     public function prePersist(LifecycleEventArgs $eventArgs): self
     {
         $this->created = new DateTime('now');
