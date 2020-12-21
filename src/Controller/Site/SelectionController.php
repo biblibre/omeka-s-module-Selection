@@ -74,7 +74,7 @@ class SelectionController extends AbstractActionController
                 $data['status'] = 'success';
                 if ($userId) {
                     try {
-                        $api->create('selection_resources', ['o:owner_id' => $userId, 'o:resource_id' => $resourceId])->getContent();
+                        $api->create('selection_resources', ['o:owner' => ['o:id' => $userId], 'o:resource' => ['o:id' => $resourceId]])->getContent();
                     } catch (\Exception $e) {
                     }
                 }
@@ -198,7 +198,7 @@ class SelectionController extends AbstractActionController
             $results[$resourceId] = $data;
             if ($userId) {
                 try {
-                    $api->create('selection_resources', ['o:owner_id' => $userId, 'o:resource_id' => $resourceId])->getContent();
+                    $api->create('selection_resources', ['o:owner' => ['o:id' => $userId], 'o:resource' => ['o:id' => $resourceId]])->getContent();
                 } catch (\Exception $e) {
                 }
             }

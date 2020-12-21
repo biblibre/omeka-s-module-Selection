@@ -34,6 +34,7 @@ use Doctrine\ORM\QueryBuilder;
 use Omeka\Api\Adapter\AbstractEntityAdapter;
 use Omeka\Api\Request;
 use Omeka\Entity\EntityInterface;
+use Omeka\Entity\Resource;
 use Omeka\Stdlib\ErrorStore;
 
 class SelectionResourceAdapter extends AbstractEntityAdapter
@@ -116,16 +117,34 @@ class SelectionResourceAdapter extends AbstractEntityAdapter
         EntityInterface $entity,
         ErrorStore $errorStore
     ): void {
-        if ($this->shouldHydrate($request, 'o:owner_id')) {
-            $ownerId = $request->getValue('o:owner_id');
-            $adapter = $this->getAdapter('users');
-            $entity->setResource($adapter->findEntity($ownerId));
+        // The selection is not updatable, it would be non-sense.
+        if ($request->getOperation() === Request::CREATE) {
+            $this->hydrateOwner($request, $entity);
+            if ($this->shouldHydrate($request, 'o:resource')) {
+                $resource = $request->getValue('o:resource');
+                if (is_array($resource) && !empty($resource['o:id']) && is_numeric($resource['o:id'])) {
+                    $resource = $this->getAdapter('resources')->findEntity((int) $resource['o:id']);
+                }
+                if ($resource && $resource instanceof Resource) {
+                    $entity->setResource($resource);
+                }
+            }
         }
-        if ($this->shouldHydrate($request, 'o:resource_id')) {
-            $resourceId = $request->getValue('o:resource_id');
-            $adapter = $this->getAdapter('resources');
-            $entity->setResource($adapter->findEntity($resourceId));
+    }
+
+    public function validateEntity(
+        EntityInterface $entity,
+        ErrorStore $errorStore
+    ) {
+        $owner = $entity->getOwner();
+        if (!$owner) {
+            $errorStore->addError('o:owner', 'A selection resource must have an owner.'); // @translate
         }
+        $resource = $entity->getResource();
+        if (!$resource) {
+            $errorStore->addError('o:resource', 'A selection resource must have a resource.'); // @translate
+        }
+        parent::validateEntity($entity, $errorStore);
     }
 
     /**
