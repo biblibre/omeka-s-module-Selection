@@ -19,3 +19,16 @@ $entityManager = $services->get('Omeka\EntityManager');
 $plugins = $services->get('ControllerPluginManager');
 $api = $plugins->get('api');
 $space = strtolower(__NAMESPACE__);
+
+if (version_compare($oldVersion, '3.3.4.1', '<')) {
+    $sqls = <<<'SQL'
+ALTER TABLE `selection_item` DROP FOREIGN KEY FK_CB95FBE3A76ED395;
+ALTER TABLE `selection_item`
+CHANGE `user_id` `owner_id` int(11) NOT NULL AFTER `id`,
+RENAME TO `selection_resource`;
+ALTER TABLE `selection_resource` ADD CONSTRAINT FK_6B34815E7E3C61F9 FOREIGN KEY (`owner_id`) REFERENCES `user` (`id`) ON DELETE CASCADE;
+SQL;
+    foreach (explode(";\n", $sqls) as $sql) {
+        $connection->exec($sql);
+    }
+}

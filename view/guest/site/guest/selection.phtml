@@ -30,7 +30,7 @@
 /**
  * @var \Laminas\View\Renderer\PhpRenderer $this
  * @var \Omeka\Api\Representation\SiteRepresentation $site
- * @var \Selection\Api\Representation\SelectionItemRepresentation[] $selectionItems
+ * @var \Selection\Api\Representation\SelectionResourceRepresentation[] $selectionResources
  * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $resources
  */
 
@@ -58,7 +58,7 @@ endforeach;
 
 <?= $this->pageTitle($translate('Selection'), 2) // @translate ?>
 
-<?php if (count($selectionItems)): ?>
+<?php if (count($selectionResources)): ?>
 <h3><?= sprintf($translate('%d items, %d media'), count($resourcesByType['item']), count($resourcesByType['media'])) // @translate ?></h3>
 
 <?php $this->trigger('view.browse.before'); ?>

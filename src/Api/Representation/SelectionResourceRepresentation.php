@@ -2,6 +2,7 @@
 
 /*
  * Copyright BibLibre, 2016
+ * Copyright Daniel Berthereau, 2020
  *
  * This software is governed by the CeCILL license under French law and abiding
  * by the rules of distribution of free software.  You can use, modify and/ or
@@ -29,56 +30,48 @@
 
 namespace Selection\Api\Representation;
 
+use DateTime;
 use Omeka\Api\Representation\AbstractEntityRepresentation;
+use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
+use Omeka\Api\Representation\MediaRepresentation;
+use Omeka\Api\Representation\UserRepresentation;
 
-class SelectionItemRepresentation extends AbstractEntityRepresentation
+class SelectionResourceRepresentation extends AbstractEntityRepresentation
 {
     public function getJsonLdType()
     {
-        return 'o:SelectionItem';
+        return 'o:SelectionResource';
     }
 
     public function getJsonLd()
     {
         $entity = $this->resource;
         return [
-            'o:user_id' => $entity->getUser()->getId(),
+            'o:owner_id' => $entity->getOwner()->getId(),
             'o:resource_id' => $entity->getResource()->getId(),
             'o:created' => $this->getDateTime($entity->getCreated()),
         ];
     }
 
-    /**
-     * @return \Omeka\Api\Representation\UserRepresentation
-     */
-    public function user()
+    public function owner(): UserRepresentation
     {
         $adapter = $this->getAdapter('users');
-        return $adapter->getRepresentation($this->resource->getUser());
+        return $adapter->getRepresentation($this->resource->getOwner());
     }
 
-    /**
-     * @return \Omeka\Api\Representation\AbstractResourceEntityRepresentation
-     */
-    public function resource()
+    public function resource(): AbstractResourceEntityRepresentation
     {
         $adapter = $this->getAdapter('resources');
         return $adapter->getRepresentation($this->resource->getResource());
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function created()
+    public function created(): DateTime
     {
         return $this->resource->getCreated();
     }
 
-    /**
-     * @return \Selection\Entity\SelectionItem
-     */
-    public function getEntity()
+    public function primaryMedia(): ?MediaRepresentation
     {
-        return $this->resource;
+        return $this->resource()->primaryMedia();
     }
 }

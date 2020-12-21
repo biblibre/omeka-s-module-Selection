@@ -31,7 +31,7 @@ endif;
 <?php $removeText = $escapeAttr($translate('Remove from selection')); // @translate ?>
 <h3><a href="#" class="selection-list-toggle"><?= $translate('Selected resources') // @translate ?></a></h3>
 <div class="selection-list" style="display:none;">
-    <ul class="selection-items" data-text-remove="<?= $removeText ?>">
+    <ul class="selection-resources" data-text-remove="<?= $removeText ?>">
         <?php foreach ($container->records as $record): ?>
         <li data-id="<?= $record['id'] ?>">
             <a href="<?= $url('site/resource-id', ['controller' => $record['type'], 'id' => $record['id'], 'action' => 'show'], true) ?>"><?= $record['title'] ?></a>

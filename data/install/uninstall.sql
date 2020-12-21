@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS selection_item;
+DROP TABLE IF EXISTS selection_resource;

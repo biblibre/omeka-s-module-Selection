@@ -45,8 +45,8 @@ class Module extends AbstractModule
             ->allow(
                 $roles,
                 [
-                    Entity\SelectionItem::class,
-                    Api\Adapter\SelectionItemAdapter::class,
+                    Entity\SelectionResource::class,
+                    Api\Adapter\SelectionResourceAdapter::class,
                     'Selection\Controller\Site\Selection',
                     'Selection\Controller\Site\GuestBoard',
                 ]
@@ -127,7 +127,7 @@ class Module extends AbstractModule
         $containerSelection = $this->getServiceLocator()->get('ControllerPluginManager')->get('containerSelection');
         $containerSelection();
 
-        echo $view->partial('common/selection-item');
+        echo $view->partial('common/selection-resource');
     }
 
     public function handleGuestWidgets(Event $event): void

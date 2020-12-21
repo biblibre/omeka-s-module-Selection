@@ -48,20 +48,20 @@ class GuestBoardController extends AbstractActionController
 
         if (isset($user)) {
             $query = $this->params()->fromQuery();
-            $query['user_id'] = $user->getId();
+            $query['owner_id'] = $user->getId();
 
-            $selectionItems = $this->api()->search('selection_items', $query)->getContent();
+            $selectionResources = $this->api()->search('selection_resources', $query)->getContent();
 
             $resources = [];
-            foreach ($selectionItems as $selectionItem) {
-                $resources[] = $selectionItem->resource();
+            foreach ($selectionResources as $selectionResource) {
+                $resources[] = $selectionResource->resource();
             }
 
             $view = new ViewModel;
             return $view
                 ->setTemplate('guest/site/guest/selection')
                 ->setVariable('site', $this->currentSite())
-                ->setVariable('selectionItems', $selectionItems)
+                ->setVariable('selectionResources', $selectionResources)
                 ->setVariable('resources', $resources);
         }
     }

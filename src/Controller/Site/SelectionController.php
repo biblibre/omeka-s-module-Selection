@@ -65,7 +65,7 @@ class SelectionController extends AbstractActionController
         $container = $this->containerSelection();
 
         foreach ($resources as $resourceId => $resource) {
-            $data = $this->selectionItemForResource($resource, true);
+            $data = $this->selectionResourceForResource($resource, true);
             if (isset($container->records[$resourceId])) {
                 $data['status'] = 'fail';
                 $data['message'] = $this->translate('Already in'); // @translate
@@ -74,7 +74,7 @@ class SelectionController extends AbstractActionController
                 $data['status'] = 'success';
                 if ($userId) {
                     try {
-                        $api->create('selection_items', ['o:user_id' => $userId, 'o:resource_id' => $resourceId])->getContent();
+                        $api->create('selection_resources', ['o:owner_id' => $userId, 'o:resource_id' => $resourceId])->getContent();
                     } catch (\Exception $e) {
                     }
                 }
@@ -84,11 +84,11 @@ class SelectionController extends AbstractActionController
 
         if ($isMultiple) {
             $data = [
-                'selection_items' => $results,
+                'selection_resources' => $results,
             ];
         } else {
             $data = [
-                'selection_item' => reset($results),
+                'selection_resource' => reset($results),
             ];
         }
 
@@ -126,12 +126,12 @@ class SelectionController extends AbstractActionController
         $container = $this->containerSelection();
 
         foreach ($resources as $resourceId => $resource) {
-            $data = $this->selectionItemForResource($resource, false);
+            $data = $this->selectionResourceForResource($resource, false);
             $data['status'] = 'success';
             unset($container->records[$resourceId]);
             if ($userId) {
                 try {
-                    $api->delete('selection_items', ['user' => $userId, 'resource' => $resourceId]);
+                    $api->delete('selection_resources', ['owner' => $userId, 'resource' => $resourceId]);
                 } catch (\Exception $e) {
                 }
             }
@@ -140,11 +140,11 @@ class SelectionController extends AbstractActionController
 
         if ($isMultiple) {
             $data = [
-                'selection_items' => $results,
+                'selection_resources' => $results,
             ];
         } else {
             $data = [
-                'selection_item' => reset($results),
+                'selection_resource' => reset($results),
             ];
         }
 
@@ -192,26 +192,26 @@ class SelectionController extends AbstractActionController
         }
         /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $add */
         foreach ($add as $resourceId => $resource) {
-            $data = $this->selectionItemForResource($resource, true);
+            $data = $this->selectionResourceForResource($resource, true);
             $data['status'] = 'success';
             $container->records[$resourceId] = $data;
             $results[$resourceId] = $data;
             if ($userId) {
                 try {
-                    $api->create('selection_items', ['o:user_id' => $userId, 'o:resource_id' => $resourceId])->getContent();
+                    $api->create('selection_resources', ['o:owner_id' => $userId, 'o:resource_id' => $resourceId])->getContent();
                 } catch (\Exception $e) {
                 }
             }
         }
         /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $delete */
         foreach ($delete as $resourceId => $resource) {
-            $data = $this->selectionItemForResource($resource, false);
+            $data = $this->selectionResourceForResource($resource, false);
             $data['status'] = 'success';
             unset($container->records[$resourceId]);
             $results[$resourceId] = $data;
             if ($userId) {
                 try {
-                    $api->delete('selection_items', ['user' => $userId, 'resource' => $resourceId]);
+                    $api->delete('selection_resources', ['owner' => $userId, 'resource' => $resourceId]);
                 } catch (\Exception $e) {
                 }
             }
@@ -219,11 +219,11 @@ class SelectionController extends AbstractActionController
 
         if ($isMultiple) {
             $data = [
-                'selection_items' => $results,
+                'selection_resources' => $results,
             ];
         } else {
             $data = [
-                'selection_item' => reset($results),
+                'selection_resource' => reset($results),
             ];
         }
 
@@ -267,13 +267,13 @@ class SelectionController extends AbstractActionController
     /**
      * Format a resource for the container.
      *
-     * Copy in \Selection\Mvc\Controller\Plugin\ContainerSelection::selectionItemForResource()
+     * Copy in \Selection\Mvc\Controller\Plugin\ContainerSelection::selectionResourceForResource()
      *
      * @param AbstractResourceEntityRepresentation $resource
      * @param bool $isSelected
      * @return array
      */
-    protected function selectionItemForResource(AbstractResourceEntityRepresentation $resource, $isSelected)
+    protected function selectionResourceForResource(AbstractResourceEntityRepresentation $resource, $isSelected)
     {
         static $siteSlug;
         static $url;

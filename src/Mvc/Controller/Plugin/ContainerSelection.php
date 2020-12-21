@@ -27,16 +27,16 @@ class ContainerSelection extends AbstractPlugin
             $container->records = [];
         }
 
-        // Sync with the user selected items.
+        // Sync with the user selected resources.
         $user = $controller->identity();
         if ($user) {
             // TODO Add an option to limit size of selection.
             $container->records = [];
-            /** @var \Selection\Api\Representation\SelectionItemRepresentation[] $selectionItems*/
-            $selectionItems = $controller->api()->search('selection_items', ['user_id' => $user->getId()])->getContent();
-            foreach ($selectionItems as $selectionItem) {
-                $resource = $selectionItem->resource();
-                $container->records[$resource->id()] = $this->selectionItemForResource($resource, true);
+            /** @var \Selection\Api\Representation\SelectionResourceRepresentation[] $selectionResources*/
+            $selectionResources = $controller->api()->search('selection_resources', ['owner_id' => $user->getId()])->getContent();
+            foreach ($selectionResources as $selectionResource) {
+                $resource = $selectionResource->resource();
+                $container->records[$resource->id()] = $this->selectionResourceForResource($resource, true);
             }
         }
 
@@ -46,13 +46,13 @@ class ContainerSelection extends AbstractPlugin
     /**
      * Format a resource for the container.
      *
-     * Copy in \Selection\Controller\SelectionController::selectionItemForResource()
+     * Copy in \Selection\Controller\SelectionController::selectionResourceForResource()
      *
      * @param AbstractResourceEntityRepresentation $resource
      * @param bool $isSelected
      * @return array
      */
-    protected function selectionItemForResource(AbstractResourceEntityRepresentation $resource, $isSelected)
+    protected function selectionResourceForResource(AbstractResourceEntityRepresentation $resource, $isSelected)
     {
         static $siteSlug;
         static $url;

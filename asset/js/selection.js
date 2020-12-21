@@ -9,10 +9,10 @@
             $.ajax(url)
             .done(function(data) {
                 if (data.status === 'success') {
-                    let selectionItem = data.data.selection_item;
-                    if (selectionItem.status === 'success') {
-                        updateSelectionButton(selectionItem);
-                        updateSelectionList(selectionItem);
+                    let selectionResource = data.data.selection_resource;
+                    if (selectionResource.status === 'success') {
+                        updateSelectionButton(selectionResource);
+                        updateSelectionList(selectionResource);
                     }
                 }
             });
@@ -24,40 +24,40 @@
            return false;
         });
 
-        var updateSelectionButton = function(selectionItem) {
-            let button = $('.selection-update[data-id=' + selectionItem.id + ']');
+        var updateSelectionButton = function(selectionResource) {
+            let button = $('.selection-update[data-id=' + selectionResource.id + ']');
             if (!button.length) {
                 return;
             }
             button
-                .prop('title', button.attr('data-title-' + selectionItem.value))
+                .prop('title', button.attr('data-title-' + selectionResource.value))
                 .removeClass('selected unselected')
-                .addClass(selectionItem.value);
+                .addClass(selectionResource.value);
         }
 
-        var updateSelectionList = function(selectionItem) {
-            let list = $('.selection-list .selection-items');
+        var updateSelectionList = function(selectionResource) {
+            let list = $('.selection-list .selection-resources');
             if (!list.length) {
                 return;
             }
-            if (selectionItem.value === 'selected') {
-                if (!list.find('li[data-id=' + selectionItem.id + ']').length) {
+            if (selectionResource.value === 'selected') {
+                if (!list.find('li[data-id=' + selectionResource.id + ']').length) {
                     list.append(
-                        $('<li>').attr('data-id', selectionItem.id)
+                        $('<li>').attr('data-id', selectionResource.id)
                             .append(
-                                $('<a>').prop('href', selectionItem.url).append(selectionItem.title)
+                                $('<a>').prop('href', selectionResource.url).append(selectionResource.title)
                             )
                             .append(
                                 $('<span class="selection-delete">')
-                                    .attr('data-id', selectionItem.id)
-                                    .attr('data-url', selectionItem.url_remove)
+                                    .attr('data-id', selectionResource.id)
+                                    .attr('data-url', selectionResource.url_remove)
                                     .attr('title', list.attr('data-text-remove'))
                                     .attr('aria-label', list.attr('data-text-remove'))
                             )
                     );
                 }
             } else {
-                list.find('li[data-id=' + selectionItem.id + ']').remove();
+                list.find('li[data-id=' + selectionResource.id + ']').remove();
             }
             if (list.find('li').length) {
                 $('.selection-empty').removeClass('active');

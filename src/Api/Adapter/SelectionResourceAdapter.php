@@ -2,7 +2,7 @@
 
 /*
  * Copyright BibLibre, 2016
- * Copyright Daniel Berthereau, 2019
+ * Copyright Daniel Berthereau, 2019-2020
  *
  * This software is governed by the CeCILL license under French law and abiding
  * by the rules of distribution of free software.  You can use, modify and/ or
@@ -36,56 +36,46 @@ use Omeka\Api\Request;
 use Omeka\Entity\EntityInterface;
 use Omeka\Stdlib\ErrorStore;
 
-class SelectionItemAdapter extends AbstractEntityAdapter
+class SelectionResourceAdapter extends AbstractEntityAdapter
 {
     protected $sortFields = [
         'id' => 'id',
+        'owner_id' => 'owner',
+        'resource_id' => 'resource',
         'created' => 'created',
     ];
 
     public function getResourceName()
     {
-        return 'selection_items';
+        return 'selection_resources';
     }
 
     public function getRepresentationClass()
     {
-        return \Selection\Api\Representation\SelectionItemRepresentation::class;
+        return \Selection\Api\Representation\SelectionResourceRepresentation::class;
     }
 
     public function getEntityClass()
     {
-        return \Selection\Entity\SelectionItem::class;
-    }
-
-    public function hydrate(Request $request, EntityInterface $entity,
-        ErrorStore $errorStore
-    ): void {
-        if ($this->shouldHydrate($request, 'o:user_id')) {
-            $userId = $request->getValue('o:user_id');
-            $entity->setUser($this->getAdapter('users')->findEntity($userId));
-        }
-        if ($this->shouldHydrate($request, 'o:resource_id')) {
-            $resourceId = $request->getValue('o:resource_id');
-            $adapter = $this->getAdapter('resources');
-            $entity->setResource($adapter->findEntity($resourceId));
-        }
+        return \Selection\Entity\SelectionResource::class;
     }
 
     public function buildQuery(QueryBuilder $qb, array $query): void
     {
         $expr = $qb->expr();
-        if (isset($query['user_id'])) {
+
+        if (isset($query['owner_id'])) {
             $userAlias = $this->createAlias();
             $qb->innerJoin(
-                'omeka_root.user',
+                'omeka_root.owner',
                 $userAlias
             );
             $qb->andWhere($expr->eq(
                 "$userAlias.id",
-                $this->createNamedParameter($qb, $query['user_id']))
+                $this->createNamedParameter($qb, $query['owner_id']))
             );
         }
+
         if (isset($query['resource_id'])) {
             $resourceAlias = $this->createAlias();
             $qb->innerJoin(
@@ -118,6 +108,23 @@ class SelectionItemAdapter extends AbstractEntityAdapter
             } else {
                 parent::sortQuery($qb, $query);
             }
+        }
+    }
+
+    public function hydrate(
+        Request $request,
+        EntityInterface $entity,
+        ErrorStore $errorStore
+    ): void {
+        if ($this->shouldHydrate($request, 'o:owner_id')) {
+            $ownerId = $request->getValue('o:owner_id');
+            $adapter = $this->getAdapter('users');
+            $entity->setResource($adapter->findEntity($ownerId));
+        }
+        if ($this->shouldHydrate($request, 'o:resource_id')) {
+            $resourceId = $request->getValue('o:resource_id');
+            $adapter = $this->getAdapter('resources');
+            $entity->setResource($adapter->findEntity($resourceId));
         }
     }
 

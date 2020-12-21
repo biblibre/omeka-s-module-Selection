@@ -24,9 +24,9 @@ class SelectionControllerTest extends OmekaControllerTestCase
     public function tearDown(): void
     {
         $this->loginAsAdmin();
-        $selectionItems = $this->api()->search('selection_items')->getContent();
-        foreach ($selectionItems as $selectionItem) {
-            $this->api()->delete('selection_items', $selectionItem->id());
+        $selectionResources = $this->api()->search('selection_resources')->getContent();
+        foreach ($selectionResources as $selectionResource) {
+            $this->api()->delete('selection_resources', $selectionResource->id());
         }
         $this->api()->delete('items', $this->item->id());
         $this->api()->delete('sites', $this->site->id());
@@ -38,12 +38,12 @@ class SelectionControllerTest extends OmekaControllerTestCase
     {
         $this->dispatch('/s/test/selection/add/' . $this->item->id());
 
-        $selectionItems = $this->api()->search('selection_items', [
-            'user_id' => $this->user->id(),
+        $selectionResources = $this->api()->search('selection_resources', [
+            'owner_id' => $this->user->id(),
             'resource_id' => $this->item->id(),
         ])->getContent();
 
-        $this->assertCount(1, $selectionItems);
+        $this->assertCount(1, $selectionResources);
     }
 
     /** @test */
@@ -52,12 +52,12 @@ class SelectionControllerTest extends OmekaControllerTestCase
         $media = $this->item->primaryMedia();
         $this->dispatch('/s/test/selection/add/' . $media->id());
 
-        $selectionItems = $this->api()->search('selection_items', [
-            'user_id' => $this->user->id(),
+        $selectionResources = $this->api()->search('selection_resources', [
+            'owner_id' => $this->user->id(),
             'resource_id' => $media->id(),
         ])->getContent();
 
-        $this->assertCount(1, $selectionItems);
+        $this->assertCount(1, $selectionResources);
     }
 
     /** @test */
@@ -66,11 +66,11 @@ class SelectionControllerTest extends OmekaControllerTestCase
         $this->addToSelection($this->item);
         $this->dispatch('/s/test/selection/add/' . $this->item->id());
 
-        $selectionItems = $this->api()->search('selection_items', [
-            'user_id' => $this->user->id(),
+        $selectionResources = $this->api()->search('selection_resources', [
+            'owner_id' => $this->user->id(),
         ])->getContent();
 
-        $this->assertCount(1, $selectionItems);
+        $this->assertCount(1, $selectionResources);
     }
 
     /** @test */
@@ -80,15 +80,15 @@ class SelectionControllerTest extends OmekaControllerTestCase
         $this->dispatch('/s/test/selection/delete/' . $this->item->id());
         $this->assertResponseStatusCode(200);
 
-        $selectionItems = $this->api()->search('selection_items', [
-            'user_id' => $this->user->id(),
+        $selectionResources = $this->api()->search('selection_resources', [
+            'owner_id' => $this->user->id(),
         ])->getContent();
 
-        $this->assertEmpty($selectionItems);
+        $this->assertEmpty($selectionResources);
     }
 
     /** @test */
-    public function displaySelectionShouldDisplayItems(): void
+    public function displaySelectionShouldDisplayResources(): void
     {
         $this->addToSelection($this->item);
         $this->dispatch('/s/test/selection');
@@ -172,8 +172,8 @@ class SelectionControllerTest extends OmekaControllerTestCase
 
     protected function addToSelection($resource): void
     {
-        $this->api()->create('selection_items', [
-            'o:user_id' => $this->user->id(),
+        $this->api()->create('selection_resources', [
+            'o:owner_id' => $this->user->id(),
             'o:resource_id' => $resource->id(),
         ]);
     }

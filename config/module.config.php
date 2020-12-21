@@ -4,7 +4,7 @@ namespace Selection;
 return  [
     'api_adapters' => [
         'invokables' => [
-            'selection_items' => Api\Adapter\SelectionItemAdapter::class,
+            'selection_resources' => Api\Adapter\SelectionResourceAdapter::class,
         ],
     ],
     'entity_manager' => [

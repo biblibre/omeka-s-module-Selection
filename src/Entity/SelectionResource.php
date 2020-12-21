@@ -33,19 +33,22 @@ namespace Selection\Entity;
 use DateTime;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Omeka\Entity\AbstractEntity;
+use Omeka\Entity\Resource;
 use Omeka\Entity\User;
 
 /**
  * @Entity
  * @HasLifecycleCallbacks
  */
-class SelectionItem extends AbstractEntity
+class SelectionResource extends AbstractEntity
 {
     /**
      * @var int
      *
      * @Id
-     * @Column(type="integer")
+     * @Column(
+     *      type="integer"
+     * )
      * @GeneratedValue
      */
     protected $id;
@@ -53,23 +56,35 @@ class SelectionItem extends AbstractEntity
     /**
      * @var User
      *
-     * @ManyToOne(targetEntity="\Omeka\Entity\User")
-     * @JoinColumn(nullable=false, onDelete="CASCADE")
+     * @ManyToOne(
+     *      targetEntity="\Omeka\Entity\User"
+     * )
+     * @JoinColumn(
+     *      nullable=false,
+     *      onDelete="CASCADE"
+     * )
      */
-    protected $user;
+    protected $owner;
 
     /**
      * @var \Omeka\Entity\Resource
      *
-     * @ManyToOne(targetEntity="\Omeka\Entity\Resource")
-     * @JoinColumn(nullable=false, onDelete="CASCADE")
+     * @ManyToOne(
+     *      targetEntity="\Omeka\Entity\Resource"
+     * )
+     * @JoinColumn(
+     *      nullable=false,
+     *      onDelete="CASCADE"
+     * )
      */
     protected $resource;
 
     /**
      * @var DateTime
      *
-     * @Column(type="datetime")
+     * @Column(
+     *      type="datetime"
+     * )
      */
     protected $created;
 
@@ -78,64 +93,40 @@ class SelectionItem extends AbstractEntity
         return $this->id;
     }
 
-    /**
-     * @param User $user
-     * @return \Selection\Entity\SelectionItem
-     */
-    public function setUser(User $user)
+    public function setOwner(User $owner): self
     {
-        $this->user = $user;
+        $this->owner = $owner;
         return $this;
     }
 
-    /**
-     * @return \Omeka\Entity\User
-     */
-    public function getUser()
+    public function getOwner(): User
     {
-        return $this->user;
+        return $this->owner;
     }
 
-    /**
-     * @param AbstractEntity $resource
-     * @return \Selection\Entity\SelectionItem
-     */
-    public function setResource(AbstractEntity $resource)
+    public function setResource(Resource $resource): self
     {
         $this->resource = $resource;
         return $this;
     }
 
-    /**
-     * @return \Omeka\Entity\Resource
-     */
-    public function getResource()
+    public function getResource(): Resource
     {
         return $this->resource;
     }
 
-    /**
-     * @param DateTime $dateTime
-     * @return \Selection\Entity\SelectionItem
-     */
-    public function setCreated(DateTime $dateTime)
+    public function setCreated(DateTime $dateTime): self
     {
         $this->created = $dateTime;
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
-    public function getCreated()
+    public function getCreated(): DateTime
     {
         return $this->created;
     }
 
-    /**
-     * @PrePersist
-     */
-    public function prePersist(LifecycleEventArgs $eventArgs)
+    public function prePersist(LifecycleEventArgs $eventArgs): self
     {
         $this->created = new DateTime('now');
         return $this;

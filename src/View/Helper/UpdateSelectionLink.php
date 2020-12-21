@@ -31,7 +31,7 @@ class UpdateSelectionLink extends AbstractHelper
         }
 
         $container = new \Laminas\Session\Container('Selection');
-        $options['selectionItem'] = isset($container->records[$resource->id()]);
+        $options['selectionResource'] = isset($container->records[$resource->id()]);
 
         $defaultOptions = [
             'template' => self::PARTIAL_NAME,
