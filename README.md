@@ -6,8 +6,15 @@ Selection (module for Omeka S)
 > than the previous repository.__
 
 [Selection] is a module for [Omeka S] that allows any visitor to store selected
-resources through sessions and, when module [Bulk Export] is installed, to
+resources through sessions. The selected resources can be saved in multiple
+selections with a label to simplify management.
+
+Furthermore, when the module [Bulk Export] is installed, it is possible to
 export them instantly to common formats, included common spreadsheet formats.
+
+The selection is saved in a cookie for anonymous visitor, so anybody can create
+a selection. When the user is authenticated, in particular as a [Guest], the
+selections is saved in the database and available through sessions.
 
 
 Installation
@@ -32,11 +39,98 @@ other registered user too.
 It is recommended to edit the theme directly to include the selection besides the
 item and the media, in particular in the item/show and the item/browse views.
 
+A resource can be selected multiple times, but only once by selection.
+
+The api is the standard one and is available internally and via the endpoint:
+
+- List selected resources of an owner. The available keys are : `owner_id`,
+`resource_id`, `selection_id`, `selection_label`. To get the selected resources
+that are not stored in a specific selection, use `selection_id=0`. Via endpoint,
+selected resources are not visible, so the credentials are required.
+
+```sh
+curl -X GET -H 'Accept: application/json' -i 'https://example.org/api/selection_resources?key_identity=xxx&key_credential=yyy&&pretty_print=1'
+```
+
+```php
+$selectedResources = $this->api()->search('selection_resources', ['owner_id' => 1])->getContent();
+```
+
+- Create a selection for resource #2 and save it in the selection list with the
+label test. If the selection does not exist, it is automatically created. If the
+selection is not defined, the selected resource is saved but not attached to a
+specific selection. Via endpoint, the user is set via the credential.
+
+Warning: it is not possible currently to add a resource that is already
+selected via the key `selection_resources`, so check the list of existing
+selected resources before doing the request.
+
+```sh
+curl -X POST -H 'Content-Type: application/json' -H 'Accept: application/json' -i 'https://example.org/api/selection_resources?key_identity=xxx&key_credential=yyy&pretty_print=1' --data '{"o:resource":{"o:id":2},"o:selection":{"o:label":"test"}}'
+```
+
+```php
+$selectedResource = $this->api()->create('selection_resources', [
+    'o:owner' => ['o:id' => 1],
+    'o:selection' => ['o:label' => 'test'],
+)->getContent();
+```
+
+- Add a selection of resource in bulk in a specific selection. Here, the api key
+is `selections`, so it avoids to use the key `selection_resources` multiple
+times, in particular via endpoint. A check is done on the list of resources, so
+a resource can be saved only if it is visible by the user and there won't be
+error if the resource is already listed in the specified selection. Nevertheless,
+the full list should be used, because the existing other selected resources will
+be removed.
+
+```sh
+curl -X PATCH -H 'Content-Type: application/json' -H 'Accept: application/json' -i 'https://example.org/api/selections/1?key_identity=xxx&key_credential=yyy&pretty_print=1' --data '{"resources":[3,4,5]}'
+```
+
+```php
+$selection = $this->api()->update('selections', 1, [
+    'o:comment' => 'the updated list of resources',
+    'o:resources' => [['o:id' => 3], ['o:id' => 4], ['o:id' => 5]],
+], [], ['isPartial' => true])->getContent();
+```
+
+To simplify management of selection of resources in bulk without check, the
+shortcut key `resources` is available in the json payload or in the internal
+api. It allows to specify what to do for each resource: add, delete, or toggle.
+
+```php
+    // Replace the existing selected resources by this new list:
+    'resources' => [3, 4, 5],
+
+    // Fine tune the update of the resources:
+    'resources' => [
+        // Replace all the selected resources (default behavior).
+        'replace' => [3, 4, 5],
+        // Add this selection of resources to the selection.
+        'append' => [6, 7, 8],
+        // Remove these resources from the selection.
+        'remove' => [9, 10]
+        // Toggle the resources: if a resource is in a selection, it is removed,
+        // else it is added.
+        'toggle' => [11, 12]
+    ],
+```
+
+Important: `'resources' => []` or `'resources' => ['remove' => []]` means to
+remove all selected resources of the selection. Set it to `null` if you really
+need the key.
+
 
 TODO
 ----
 
-- Multiple selections with a title for each.
+- [ ] Multiple selection of resources at once when a selection is not specified. Use a default selection in all cases?
+- [x] Multiple selections with a title for each.
+- [ ] Multiple selections (view pages).
+- [ ] Integrate visibility in order to share selections.
+- [ ] Allow to query multiple ids (owner id, resource id, selection id) in the api.
+- [ ] Add a modified date of a selection (from the selection itself, not only from the list of selected resources).
 
 
 Warning
