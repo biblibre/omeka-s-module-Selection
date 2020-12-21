@@ -156,6 +156,10 @@ class SelectionController extends AbstractActionController
 
     public function toggleAction()
     {
+        if (!$this->getRequest()->isXmlHttpRequest()) {
+            return $this->jsonErrorNotFound();
+        }
+
         $siteSettings = $this->siteSettings();
         $allowVisitor = $siteSettings->get('selection_visitor_allow', true);
         $user = $this->identity();
