@@ -30,11 +30,16 @@
 namespace Selection\Api\Adapter;
 
 use DateTime;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\QueryBuilder;
 use Omeka\Api\Adapter\AbstractEntityAdapter;
+use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use Omeka\Api\Request;
 use Omeka\Entity\EntityInterface;
+use Omeka\Entity\Resource;
 use Omeka\Stdlib\ErrorStore;
+use Selection\Entity\Selection;
+use Selection\Entity\SelectionResource;
 
 class SelectionAdapter extends AbstractEntityAdapter
 {
@@ -99,6 +104,7 @@ class SelectionAdapter extends AbstractEntityAdapter
         if (Request::CREATE === $request->getOperation()) {
             $entity->setCreated(new DateTime('now'));
         }
+        $this->hydrateSelectionResources($request, $entity);
     }
 
     public function validateEntity(
@@ -116,5 +122,165 @@ class SelectionAdapter extends AbstractEntityAdapter
         } elseif (!$this->isUnique($entity, ['owner' => $owner, 'label' => $label])) {
             $errorStore->addError('o:label', 'The label is already taken by the owner.'); // @translate
         }
+    }
+
+    protected function hydrateSelectionResources(Request $request, Selection $selection): void
+    {
+        $owner = $selection->getOwner();
+        if (!$owner) {
+            return;
+        }
+
+        $oResources = $request->getValue('o:resources', null);
+        $resources = $request->getValue('resources', null);
+        if (is_null($oResources) && is_null($resources)) {
+            return;
+        }
+
+        $default = [
+            'replace' => null,
+            'append' => [],
+            'remove' => [],
+            'toggle' => [],
+        ];
+        $resources = is_array($resources) ? $resources + $default : $default;
+
+        foreach ($resources as $key => $resource) {
+            if (is_numeric($key)) {
+                if (is_numeric($resource)) {
+                    if (is_null($resources['replace'])) {
+                        $resources['replace'] = [(int) $resource];
+                    } else {
+                        $resources['replace'][] = (int) $resource;
+                    }
+                }
+                unset($resources[$key]);
+            }
+        }
+        $resources = array_intersect_key($resources, $default);
+
+        if (is_array($oResources)) {
+            if (is_null($resources['replace'])) {
+                $resources['replace'] = [];
+            }
+            foreach ($oResources as $resource) {
+                // "o:resources" should not manage numeric resources, else it
+                // will be a duplicate of "resources".
+                if (is_object($resource)) {
+                    if ($resource instanceof AbstractResourceEntityRepresentation) {
+                        $resources['replace'][] = (int) $resource->id();
+                    } elseif ($resource instanceof Resource) {
+                        $resources['replace'][] = (int) $resource->getId();
+                    }
+                } elseif (is_array($resource) && !empty($resource['o:id'])) {
+                    $resources['replace'][] = (int) $resource['o:id'];
+                }
+            }
+        }
+
+        // Convert each sub-list into numeric id.
+        foreach ($resources as &$list) {
+            if (!is_array($list)) {
+                if (!is_null($list)) {
+                    $list = [];
+                }
+                continue;
+            }
+            foreach ($list as $key => &$resource) {
+                if (is_numeric($resource)) {
+                    $resource = (int) $resource;
+                } elseif (is_object($resource)) {
+                    if ($resource instanceof AbstractResourceEntityRepresentation) {
+                        $resource = (int) $resource->id();
+                    } elseif ($resource instanceof Resource) {
+                        $resource = (int) $resource->getId();
+                    }
+                } elseif (is_array($resource) && !empty($resource['o:id'])) {
+                    $resource = (int) $resource['o:id'];
+                } else {
+                    $resource = null;
+                }
+                if (empty($resource)) {
+                    unset($list[$key]);
+                }
+            }
+            unset($resource);
+        }
+        unset($list);
+
+        $entityManager = $this->getEntityManager();
+
+        // Get the current list to update it partially.
+        // Get only resource ids to simplify checks, not the useless ids of the
+        // selection resources.
+        /** @var \Doctrine\Common\Collections\Collection $selectionResources */
+        $criteria = Criteria::create()
+            ->andWhere(Criteria::expr()->eq('owner', $owner))
+            ->andWhere(Criteria::expr()->eq('selection', $selection));
+        $selectionResources = $this->getEntityManager()->getRepository(\Selection\Entity\SelectionResource::class)
+            ->matching($criteria);
+        $resourceIds = array_map(function ($v) {
+            return (int) $v->getResource()->getId();
+        }, $selectionResources->toArray());
+
+        if (is_array($resources['replace'])) {
+            $resourceIds = array_unique(array_filter(array_map('intval', array_filter($resources['replace'], 'is_numeric'))));
+        }
+        if (is_array($resources['append'])) {
+            $resourceIds = array_merge(
+                $resourceIds,
+                array_unique(array_filter(array_map('intval', array_filter($resources['append'], 'is_numeric'))))
+            );
+        }
+        if (is_array($resources['remove'])) {
+            $resourceIds = array_diff(
+                $resourceIds,
+                array_unique(array_filter(array_map('intval', array_filter($resources['remove'], 'is_numeric'))))
+            );
+            $resourceIds = array_unique(array_filter(array_map('intval', $resourceIds)));
+        }
+        if (is_array($resources['toggle'])) {
+            $toggle = array_unique(array_filter(array_map('intval', array_filter($resources['toggle'], 'is_numeric'))));
+            $resourceIds = array_merge(
+                array_diff($resourceIds, $toggle),
+                array_diff($toggle, $resourceIds)
+            );
+        }
+
+        $resourceIds = array_unique(array_filter($resourceIds));
+
+        // Remove existing selection resources.
+        $toAppend = array_combine($resourceIds, $resourceIds);
+
+        // Here, $selectionResources is the collection attached to the entity.
+        $selectionResources = $selection->getSelectionResources();
+        foreach ($selectionResources as $key => $selectionResource) {
+            $resourceId = $selectionResource->getResource()->getId();
+            if (in_array($resourceId, $resourceIds)) {
+                unset($toAppend[$resourceId]);
+            } else {
+                $selectionResources->remove($key);
+            }
+        }
+
+        if (!count($toAppend)) {
+            return;
+        }
+
+        $criteria = Criteria::create()
+            ->andWhere(Criteria::expr()->in('id', $toAppend));
+        $now = new DateTime('now');
+        foreach ($entityManager->getRepository(\Omeka\Entity\Resource::class)->matching($criteria) as $resource) {
+            $selectionResource = new SelectionResource();
+            $selectionResource
+                ->setOwner($owner)
+                ->setResource($resource)
+                ->setSelection($selection)
+                ->setCreated($now);
+            $entityManager->persist($selectionResource);
+        }
+
+        // Refresh the selection with the appended resources.
+        $entityManager->refresh($selection);
     }
 }
