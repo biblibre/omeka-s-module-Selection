@@ -66,10 +66,10 @@ class Selection extends \Selection\Entity\Selection implements \Doctrine\ORM\Pro
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return ['__isInitialized__', 'id', 'owner', 'label', 'comment', 'selectionResources', 'created'];
+            return ['__isInitialized__', 'id', 'owner', 'isPublic', 'isDynamic', 'label', 'comment', 'searchQuery', 'selectionResources', 'created', 'modified'];
         }
 
-        return ['__isInitialized__', 'id', 'owner', 'label', 'comment', 'selectionResources', 'created'];
+        return ['__isInitialized__', 'id', 'owner', 'isPublic', 'isDynamic', 'label', 'comment', 'searchQuery', 'selectionResources', 'created', 'modified'];
     }
 
     /**
@@ -216,6 +216,39 @@ class Selection extends \Selection\Entity\Selection implements \Doctrine\ORM\Pro
     /**
      * {@inheritDoc}
      */
+    public function setIsPublic($isPublic): \Selection\Entity\Selection
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setIsPublic', [$isPublic]);
+
+        return parent::setIsPublic($isPublic);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isPublic(): bool
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'isPublic', []);
+
+        return parent::isPublic();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isDynamic(): bool
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'isDynamic', []);
+
+        return parent::isDynamic();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function setLabel(string $label): \Selection\Entity\Selection
     {
 
@@ -260,12 +293,45 @@ class Selection extends \Selection\Entity\Selection implements \Doctrine\ORM\Pro
     /**
      * {@inheritDoc}
      */
+    public function setSearchQuery(?string $searchQuery): \Selection\Entity\Selection
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setSearchQuery', [$searchQuery]);
+
+        return parent::setSearchQuery($searchQuery);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSearchQuery(): ?string
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getSearchQuery', []);
+
+        return parent::getSearchQuery();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function getSelectionResources(): \Doctrine\Common\Collections\Collection
     {
 
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getSelectionResources', []);
 
         return parent::getSelectionResources();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getResources(): ?\Doctrine\Common\Collections\Collection
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getResources', []);
+
+        return parent::getResources();
     }
 
     /**
@@ -288,6 +354,28 @@ class Selection extends \Selection\Entity\Selection implements \Doctrine\ORM\Pro
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getCreated', []);
 
         return parent::getCreated();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setModified(\DateTime $dateTime): \Selection\Entity\Selection
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setModified', [$dateTime]);
+
+        return parent::setModified($dateTime);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getModified(): ?\DateTime
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getModified', []);
+
+        return parent::getModified();
     }
 
     /**

@@ -69,26 +69,28 @@ class SelectionResourceAdapter extends AbstractEntityAdapter
 
         if (isset($query['owner_id']) && is_numeric($query['owner_id'])) {
             $userAlias = $this->createAlias();
-            $qb->innerJoin(
-                'omeka_root.owner',
-                $userAlias
-            );
-            $qb->andWhere($expr->eq(
-                "$userAlias.id",
-                $this->createNamedParameter($qb, $query['owner_id'])
-            ));
+            $qb
+                ->innerJoin(
+                    'omeka_root.owner',
+                    $userAlias
+                )
+                ->andWhere($expr->eq(
+                    "$userAlias.id",
+                    $this->createNamedParameter($qb, $query['owner_id'])
+                ));
         }
 
         if (isset($query['resource_id']) && is_numeric($query['resource_id'])) {
             $resourceAlias = $this->createAlias();
-            $qb->innerJoin(
-                'omeka_root.resource',
-                $resourceAlias
-            );
-            $qb->andWhere($expr->eq(
-                "$resourceAlias.id",
-                $this->createNamedParameter($qb, $query['resource_id'])
-            ));
+            $qb
+                ->innerJoin(
+                    'omeka_root.resource',
+                    $resourceAlias
+                )
+                ->andWhere($expr->eq(
+                    "$resourceAlias.id",
+                    $this->createNamedParameter($qb, $query['resource_id'])
+                ));
         }
 
         if (isset($query['selection_id']) && is_numeric($query['selection_id'])) {
@@ -112,14 +114,19 @@ class SelectionResourceAdapter extends AbstractEntityAdapter
 
         if (isset($query['selection_label']) && trim($query['selection_label'])) {
             $selectionAlias = $this->createAlias();
-            $qb->innerJoin(
-                'omeka_root.selection',
-                $selectionAlias
-            );
-            $qb->andWhere($expr->eq(
-                "$selectionAlias.label",
-                $this->createNamedParameter($qb, trim($query['selection_label']))
-            ));
+            $qb
+                ->innerJoin(
+                    'omeka_root.selection',
+                    $selectionAlias
+                )
+                ->andWhere($expr->eq(
+                    "$selectionAlias.label",
+                    $this->createNamedParameter($qb, trim($query['selection_label']))
+                ))
+                ->andWhere($expr->eq(
+                    "$selectionAlias.isDynamic",
+                    $this->createNamedParameter($qb, 0)
+                ));
         }
     }
 
@@ -165,6 +172,7 @@ class SelectionResourceAdapter extends AbstractEntityAdapter
             if ($this->shouldHydrate($request, 'o:selection')) {
                 $selection = $request->getValue('o:selection');
                 if (is_array($selection)) {
+                    $selectionEntity = null;
                     if (!empty($selection['o:id']) && is_numeric($selection['o:id'])) {
                         $selectionEntity = $this->getAdapter('selections')->findEntity((int) $selection['o:id']);
                     } elseif (isset($selection['o:label'])) {
@@ -176,6 +184,7 @@ class SelectionResourceAdapter extends AbstractEntityAdapter
                                 $selectionEntity = $this->getAdapter('selections')->findEntity([
                                     'owner' => $entity->getOwner(),
                                     'label' => $label,
+                                    'is_dynamic' => false,
                                 ]);
                             } catch (\Omeka\Api\Exception\NotFoundException $e) {
                                 $selectionEntity = null;
@@ -191,9 +200,9 @@ class SelectionResourceAdapter extends AbstractEntityAdapter
                             }
                         }
                     }
-                }
-                if ($selectionEntity && $selectionEntity instanceof Selection) {
-                    $entity->setSelection($selectionEntity);
+                    if ($selectionEntity && $selectionEntity instanceof Selection) {
+                        $entity->setSelection($selectionEntity);
+                    }
                 }
             }
             $entity->setCreated(new DateTime('now'));

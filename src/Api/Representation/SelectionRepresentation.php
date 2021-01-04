@@ -43,23 +43,35 @@ class SelectionRepresentation extends AbstractEntityRepresentation
 
     public function getJsonLd()
     {
-        // The selection resources is useful only to get the date.
-        // So another way to present it is to merge the date in the resource
-        // reference, but it is not standard.
-        $selectionResources = [];
-        foreach ($this->selectionResources() as $selectionResource) {
-            $selectionResources[] = $selectionResource->getReference();
+        $searchQuery = $this->searchQuery();
+
+        if ($searchQuery) {
+            $selectionResources = null;
+            $resources = $this->dynamicResources();
+            foreach ($this->resources() as $resource) {
+                $resources[] = $resource->getReference();
+            }
+        } else {
+            // The selection resources is useful only to get the date.
+            // So another way to present it is to merge the date in the resource
+            // reference, but it is not standard.
+            $selectionResources = [];
+            foreach ($this->selectionResources() as $selectionResource) {
+                $selectionResources[] = $selectionResource->getReference();
+            }
+            $resources = [];
+            foreach ($this->resources() as $resource) {
+                $resources[] = $resource->getReference();
+            }
         }
 
-        $resources = [];
-        foreach ($this->resources() as $resource) {
-            $resources[] = $resource->getReference();
-        }
-
-        return [
+        $json = [
             'o:owner' => $this->owner()->getReference(),
+            'o:is_public' => $this->isPublic(),
+            'o:is_dynamic' => $this->isDynamic(),
             'o:label' => $this->label(),
             'o:comment' => $this->comment(),
+            'o:search_query' => $searchQuery,
             'o:selection_resources' => $selectionResources,
             'o:resources' => $resources,
             'o:created' => [
@@ -67,12 +79,32 @@ class SelectionRepresentation extends AbstractEntityRepresentation
                 '@type' => 'http://www.w3.org/2001/XMLSchema#dateTime',
             ],
         ];
+
+        $modified = $this->modified();
+        if ($modified) {
+            $json['o:modified'] = [
+                '@value' => $this->getDateTime($modified),
+                '@type' => 'http://www.w3.org/2001/XMLSchema#dateTime',
+            ];
+        }
+
+        return $json;
     }
 
     public function owner(): UserRepresentation
     {
         $adapter = $this->getAdapter('users');
         return $adapter->getRepresentation($this->resource->getOwner());
+    }
+
+    public function isPublic(): bool
+    {
+        return $this->resource->isPublic();
+    }
+
+    public function isDynamic(): bool
+    {
+        return $this->resource->isDynamic();
     }
 
     public function label(): ?string
@@ -85,9 +117,9 @@ class SelectionRepresentation extends AbstractEntityRepresentation
         return $this->resource->getComment();
     }
 
-    public function created(): DateTime
+    public function searchQuery(): ?string
     {
-        return $this->resource->getCreated();
+        return $this->resource->getSearchQuery();
     }
 
     /**
@@ -95,6 +127,10 @@ class SelectionRepresentation extends AbstractEntityRepresentation
      */
     public function selectionResources(): array
     {
+        if ($this->isDynamic()) {
+            return [];
+        }
+
         $selectionResources = [];
         $selectionResourceAdapter = $this->getAdapter('selection_resources');
         foreach ($this->resource->getSelectionResources() as $selectionResourceEntity) {
@@ -110,6 +146,10 @@ class SelectionRepresentation extends AbstractEntityRepresentation
      */
     public function resources(): array
     {
+        if ($this->isDynamic()) {
+            return $this->dynamicResources();
+        }
+
         $resources = [];
         $resourceAdapter = $this->getAdapter('resources');
         foreach ($this->resource->getSelectionResources() as $selectionResourceEntity) {
@@ -117,6 +157,25 @@ class SelectionRepresentation extends AbstractEntityRepresentation
             $resources[$resource->getId()] = $resourceAdapter->getRepresentation($resource);
         }
         return $resources;
+    }
+
+    protected function dynamicResources(): array
+    {
+        // TODO Determine what to output and set a limit.
+        if (!$this->isDynamic()) {
+            return [];
+        }
+        return [];
+    }
+
+    public function created(): DateTime
+    {
+        return $this->resource->getCreated();
+    }
+
+    public function modified(): ?DateTime
+    {
+        return $this->resource->getModified();
     }
 
     public function primaryMedia(): ?MediaRepresentation

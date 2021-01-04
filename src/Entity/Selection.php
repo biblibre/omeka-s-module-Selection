@@ -37,13 +37,19 @@ use Omeka\Entity\AbstractEntity;
 use Omeka\Entity\User;
 
 /**
+ * The unique constraint is limited to static/dynamic selection, so it is
+ * possible to use the same label for a static selection and a dynamic one.
+ * This is a end user requirement (display the dynamic and static selections on
+ * two pages), but it avoids to duplicate the module.
+ *
  * @Entity
  * @Table(
  *     uniqueConstraints={
  *          @UniqueConstraint(
  *              columns={
  *                  "owner_id",
- *                  "label"
+ *                  "label",
+ *                  "is_dynamic"
  *              }
  *          )
  *    }
@@ -77,6 +83,36 @@ class Selection extends AbstractEntity
     protected $owner;
 
     /**
+     * The visibility is false by default, because it belongs to a user.
+     *
+     * @var bool
+     *
+     * @Column(
+     *      type="boolean",
+     *      nullable=false,
+     *      options={
+     *          "default":0
+     *      }
+     * )
+     */
+    protected $isPublic = false;
+
+    /**
+     * This flag is automatically generated from the presence of a search query.
+     *
+     * @var bool
+     *
+     * @Column(
+     *      type="boolean",
+     *      nullable=false,
+     *      options={
+     *          "default":0
+     *      }
+     * )
+     */
+    protected $isDynamic = false;
+
+    /**
      * @var string
      *
      * @Column(
@@ -97,6 +133,22 @@ class Selection extends AbstractEntity
     protected $comment;
 
     /**
+     * This is a full search, that is not related to a specific resource type
+     * (items, item sets, media), except if the key "resource_type" is set.
+     *
+     * @var string
+     *
+     * @Column(
+     *      type="text",
+     *      nullable=true
+     * )
+     */
+    protected $searchQuery;
+
+    /**
+     * When a search query is set, all selection resources are removed, so the
+     * list of selections is empty, but the list of resources is dynamic.
+     *
      * @var SelectionResource[]
      *
      * @OneToMany(
@@ -118,6 +170,16 @@ class Selection extends AbstractEntity
      */
     protected $created;
 
+    /**
+     * @var DateTime
+     *
+     * @Column(
+     *      type="datetime",
+     *      nullable=true
+     * )
+     */
+    protected $modified;
+
     public function __construct()
     {
         $this->selectionResources = new ArrayCollection();
@@ -137,6 +199,24 @@ class Selection extends AbstractEntity
     public function getOwner(): ?User
     {
         return $this->owner;
+    }
+
+    public function setIsPublic($isPublic): self
+    {
+        $this->isPublic = (bool) $isPublic;
+        return $this;
+    }
+
+    public function isPublic(): bool
+    {
+        return (bool) $this->isPublic;
+    }
+
+    public function isDynamic(): bool
+    {
+        // There is no set value, so the flag is always checked against query.
+        $this->isDynamic = !empty($this->searchQuery);
+        return $this->isDynamic;
     }
 
     public function setLabel(string $label): self
@@ -161,9 +241,35 @@ class Selection extends AbstractEntity
         return $this->comment;
     }
 
+    public function setSearchQuery(?string $searchQuery): self
+    {
+        $this->searchQuery = trim((string) $searchQuery) ?: null;
+        $this->isDynamic = !empty($this->searchQuery);
+        return $this;
+    }
+
+    public function getSearchQuery(): ?string
+    {
+        return $this->searchQuery;
+    }
+
     public function getSelectionResources(): Collection
     {
         return $this->selectionResources;
+    }
+
+    /**
+     * Returns the selected resource from the selection resources only if there
+     * is no search query.
+     */
+    public function getResources(): ?Collection
+    {
+        if ($this->isDynamic()) {
+            return null;
+        }
+        return $this->getSelectionResources()->map(function ($selectionResource) {
+            return $selectionResource->getResource();
+        });
     }
 
     public function setCreated(DateTime $dateTime): self
@@ -175,6 +281,17 @@ class Selection extends AbstractEntity
     public function getCreated(): DateTime
     {
         return $this->created;
+    }
+
+    public function setModified(DateTime $dateTime): self
+    {
+        $this->modified = $dateTime;
+        return $this;
+    }
+
+    public function getModified(): ?DateTime
+    {
+        return $this->modified;
     }
 
     /**

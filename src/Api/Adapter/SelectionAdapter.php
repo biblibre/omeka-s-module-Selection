@@ -47,7 +47,10 @@ class SelectionAdapter extends AbstractEntityAdapter
         'id' => 'id',
         'label' => 'label',
         'owner_id' => 'owner',
+        'is_public' => 'isPublic',
+        'is_dynamic' => 'isDynamic',
         'created' => 'created',
+        'modified' => 'modified',
     ];
 
     public function getResourceName()
@@ -71,20 +74,35 @@ class SelectionAdapter extends AbstractEntityAdapter
 
         if (isset($query['owner_id']) && is_numeric($query['owner_id'])) {
             $userAlias = $this->createAlias();
-            $qb->innerJoin(
-                'omeka_root.owner',
-                $userAlias
-            );
-            $qb->andWhere($expr->eq(
-                "$userAlias.id",
-                $this->createNamedParameter($qb, $query['owner_id'])
-            ));
+            $qb
+                ->innerJoin(
+                    'omeka_root.owner',
+                    $userAlias
+                )
+                ->andWhere($expr->eq(
+                    "$userAlias.id",
+                    $this->createNamedParameter($qb, $query['owner_id'])
+                ));
         }
 
         if (isset($query['label'])) {
             $qb->andWhere($expr->eq(
                 "omeka_root.label",
                 $this->createNamedParameter($qb, $query['label'])
+            ));
+        }
+
+        if (isset($query['is_public']) && is_numeric($query['is_public'])) {
+            $qb->andWhere($expr->eq(
+                'omeka_root.isPublic',
+                $this->createNamedParameter($qb, (bool) $query['is_public'])
+            ));
+        }
+
+        if (isset($query['is_dynamic']) && is_numeric($query['is_dynamic'])) {
+            $qb->andWhere($expr->eq(
+                'omeka_root.isDynamic',
+                $this->createNamedParameter($qb, (bool) $query['is_dynamic'])
             ));
         }
     }
@@ -96,15 +114,32 @@ class SelectionAdapter extends AbstractEntityAdapter
     ): void {
         $this->hydrateOwner($request, $entity);
         if ($this->shouldHydrate($request, 'o:label')) {
-            $entity->setLabel($request->getValue('o:label'));
+            $entity->setLabel(trim((string) $request->getValue('o:label')));
         }
         if ($this->shouldHydrate($request, 'o:comment')) {
             $entity->setComment($request->getValue('o:comment'));
         }
+        // The query is updatable: if not, check it at another layer.
+        if ($this->shouldHydrate($request, 'o:search_query')) {
+            $searchQuery = $this->cleanSearchQuery($request->getValue('o:search_query'));
+            $entity->setSearchQuery($searchQuery);
+        }
+        if ($this->shouldHydrate($request, 'o:is_public')) {
+            // Unlike resources, the selections are always private by default.
+            $entity->setIsPublic($request->getValue('o:is_public', false));
+        }
         if (Request::CREATE === $request->getOperation()) {
             $entity->setCreated(new DateTime('now'));
+        } else {
+            $entity->setModified(new DateTime('now'));
         }
-        $this->hydrateSelectionResources($request, $entity);
+
+        $hasSearchQuery = $entity->getSearchQuery();
+        if ($hasSearchQuery) {
+            $this->removeSelectionResources($entity);
+        } else {
+            $this->hydrateSelectionResources($request, $entity);
+        }
     }
 
     public function validateEntity(
@@ -122,12 +157,32 @@ class SelectionAdapter extends AbstractEntityAdapter
         } elseif (!$this->isUnique($entity, ['owner' => $owner, 'label' => $label])) {
             $errorStore->addError('o:label', 'The label is already taken by the owner.'); // @translate
         }
+        $searchQuery = trim((string) $entity->getSearchQuery());
+        if ($searchQuery && $entity->getSelectionResources()->count()) {
+            $errorStore->addError('o:search_query', 'The selection cannot have selection resources when a query is set.'); // @translate
+        }
+    }
+
+    protected function removeSelectionResources(Selection $selection): void
+    {
+        $entityManager = $this->getEntityManager();
+        foreach ($selection->getSelectionResources() as $selectionResource) {
+            $entityManager->remove($selectionResource);
+        }
+        if ($selection->getId()) {
+            $entityManager->refresh($selection);
+        }
     }
 
     protected function hydrateSelectionResources(Request $request, Selection $selection): void
     {
         $owner = $selection->getOwner();
         if (!$owner) {
+            return;
+        }
+
+        if ($selection->isDynamic()) {
+            $this->removeSelectionResources($selection);
             return;
         }
 
@@ -208,20 +263,12 @@ class SelectionAdapter extends AbstractEntityAdapter
         }
         unset($list);
 
-        $entityManager = $this->getEntityManager();
-
-        // Get the current list to update it partially.
+        // Get the current list of resource ids in order to update it partially.
         // Get only resource ids to simplify checks, not the useless ids of the
         // selection resources.
-        /** @var \Doctrine\Common\Collections\Collection $selectionResources */
-        $criteria = Criteria::create()
-            ->andWhere(Criteria::expr()->eq('owner', $owner))
-            ->andWhere(Criteria::expr()->eq('selection', $selection));
-        $selectionResources = $this->getEntityManager()->getRepository(\Selection\Entity\SelectionResource::class)
-            ->matching($criteria);
         $resourceIds = array_map(function ($v) {
-            return (int) $v->getResource()->getId();
-        }, $selectionResources->toArray());
+            return (int) $v->getId();
+        }, $selection->getResources()->toArray());
 
         if (is_array($resources['replace'])) {
             $resourceIds = array_unique(array_filter(array_map('intval', array_filter($resources['replace'], 'is_numeric'))));
@@ -252,7 +299,6 @@ class SelectionAdapter extends AbstractEntityAdapter
         // Remove existing selection resources.
         $toAppend = array_combine($resourceIds, $resourceIds);
 
-        // Here, $selectionResources is the collection attached to the entity.
         $selectionResources = $selection->getSelectionResources();
         foreach ($selectionResources as $key => $selectionResource) {
             $resourceId = $selectionResource->getResource()->getId();
@@ -266,6 +312,8 @@ class SelectionAdapter extends AbstractEntityAdapter
         if (!count($toAppend)) {
             return;
         }
+
+        $entityManager = $this->getEntityManager();
 
         $criteria = Criteria::create()
             ->andWhere(Criteria::expr()->in('id', $toAppend));
@@ -281,6 +329,36 @@ class SelectionAdapter extends AbstractEntityAdapter
         }
 
         // Refresh the selection with the appended resources.
-        $entityManager->refresh($selection);
+        if ($selection->getId()) {
+            $entityManager->refresh($selection);
+        }
+    }
+
+    /**
+     * Clean a search query: remove empty and useless arguments.
+     *
+     * @param string $searchQuery
+     * @return string|null
+     */
+    protected function cleanSearchQuery(?string $searchQuery): ?string
+    {
+        $searchQuery = trim((string) $searchQuery, "? \t\n\r\0\x0B");
+        if (empty($searchQuery)) {
+            return null;
+        }
+
+        $query = [];
+        parse_str($searchQuery, $query);
+        unset($query['page'], $query['per_page'], $query['limit'], $query['offset'], $query['submit']);
+        $query = array_filter($query, function ($v) {
+            if (is_array($v)) {
+                // TODO Filter other useless values (properties, numeric, created...).
+                return count($v);
+            }
+            return strlen(trim((string) $v));
+        });
+        return count($query)
+            ? rawurldecode(http_build_query($query, '', '&', PHP_QUERY_RFC3986))
+            : null;
     }
 }

@@ -55,7 +55,7 @@ SQL;
     $indexes = $sm->listTableIndexes('selection_resource');
     foreach ($indexes as $index) {
         if ($index && in_array(strtoupper($index->getName()), $keys)) {
-            $sql .= 'DROP INDEX ' . $index->getName() . ' ON `selection_resource`;' . PHP_EOL;
+            $sql .= 'DROP INDEX ' . $index->getName() . ' ON `selection_resource`;' . "\n";
         }
     }
     foreach (explode(";\n", $sqls) as $sql) {
@@ -83,6 +83,34 @@ ALTER TABLE selection_resource ADD CONSTRAINT FK_6B34815E7E3C61F9 FOREIGN KEY (`
 ALTER TABLE selection_resource ADD CONSTRAINT FK_6B34815EE48EFE78 FOREIGN KEY (`selection_id`) REFERENCES `selection` (`id`) ON DELETE CASCADE;
 ALTER TABLE selection_resource ADD CONSTRAINT FK_CB95FBE389329D25 FOREIGN KEY (`resource_id`) REFERENCES `resource` (`id`) ON DELETE CASCADE;
 ALTER TABLE selection_resource ADD CONSTRAINT selection_resource_ibfk_1 FOREIGN KEY (`owner_id`) REFERENCES `user` (`id`);
+SQL;
+    foreach (explode(";\n", $sqls) as $sql) {
+        $connection->exec($sql);
+    }
+}
+
+if (version_compare($oldVersion, '3.3.4.2', '<')) {
+    $sm = $connection->getSchemaManager();
+    $indexes = $sm->listTableIndexes('selection');
+    foreach ($indexes as $index) {
+        if ($index && strtoupper($index->getName()) === 'UNIQ_96A50CD77E3C61F9EA750E8') {
+            $sql = 'DROP INDEX UNIQ_96A50CD77E3C61F9EA750E8 ON `selection`;';
+            $connection->exec($sql);
+            break;
+        }
+    }
+
+    $sqls = <<<'SQL'
+ALTER TABLE `selection`
+ADD `is_public` TINYINT(1) DEFAULT 0 NOT NULL AFTER `owner_id`,
+ADD `is_dynamic` TINYINT(1) DEFAULT 0 NOT NULL AFTER `is_public`,
+ADD `search_query` LONGTEXT DEFAULT NULL AFTER `comment`,
+ADD `modified` DATETIME DEFAULT NULL AFTER `created`;
+
+CREATE UNIQUE INDEX UNIQ_96A50CD77E3C61F9EA750E85D978C7C ON `selection` (`owner_id`, `label`, `is_dynamic`);
+
+UPDATE `selection` SET `is_dynamic` = 0, `search_query` = NULL WHERE `search_query` IS NULL OR TRIM(search_query) = "";
+UPDATE `selection` SET `is_dynamic` = 1, `search_query` = TRIM(`search_query`) WHERE `search_query` IS NOT NULL AND TRIM(search_query) != "";
 SQL;
     foreach (explode(";\n", $sqls) as $sql) {
         $connection->exec($sql);
