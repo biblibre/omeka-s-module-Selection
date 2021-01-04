@@ -7,7 +7,8 @@ Selection (module for Omeka S)
 
 [Selection] is a module for [Omeka S] that allows any visitor to store selected
 resources through sessions. The selected resources can be saved in multiple
-selections with a label to simplify management.
+selections with a label to simplify management. The selection can be dynamic too
+when a search query is used.
 
 Furthermore, when the module [Bulk Export] is installed, it is possible to
 export them instantly to common formats, included common spreadsheet formats.
@@ -76,6 +77,17 @@ $selectedResource = $this->api()->create('selection_resources', [
 )->getContent();
 ```
 
+- Create a dynamic selection for the query "resource_class_id=1":
+
+```php
+$selectedResource = $this->api()->create('selections', [
+    'o:owner' => ['o:id' => 1],
+    'o:label' => 'my query',
+    'o:comment' => 'a comment',
+    'o:search_query' => 'resource_class_id=1'
+)->getContent();
+```
+
 - Add a selection of resource in bulk in a specific selection. Here, the api key
 is `selections`, so it avoids to use the key `selection_resources` multiple
 times, in particular via endpoint. A check is done on the list of resources, so
@@ -121,6 +133,9 @@ Important: `'resources' => []` or `'resources' => ['remove' => []]` means to
 remove all selected resources of the selection. Set it to `null` if you really
 need the key.
 
+When a selection is converted into a search query, all selection resources are
+removed. The type change of a selection may be forbidden in a future version.
+
 
 TODO
 ----
@@ -130,7 +145,7 @@ TODO
 - [ ] Multiple selections (view pages).
 - [ ] Integrate visibility in order to share selections.
 - [ ] Allow to query multiple ids (owner id, resource id, selection id) in the api.
-- [ ] Add a modified date of a selection (from the selection itself, not only from the list of selected resources).
+- [x] Add a modified date of a selection (from the selection itself, not only from the list of selected resources).
 
 
 Warning
@@ -182,7 +197,7 @@ Copyright
 ---------
 
 * Copyright Biblibre, 2016-2017 (see [Biblibre])
-* Copyright Daniel Berthereau, 2017-2020 (see [Daniel-KM] on GitLab)
+* Copyright Daniel Berthereau, 2017-2021 (see [Daniel-KM] on GitLab)
 
 This module was initially based on the fork of the module [Basket] from BibLibre.
 
