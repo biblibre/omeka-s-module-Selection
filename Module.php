@@ -67,7 +67,7 @@ class Module extends AbstractModule
         $moduleManager = $services->get('Omeka\ModuleManager');
         $module = $moduleManager->getModule('Basket');
         if ($module
-            && version_compare($module->getIni('version'), '0.2.0', '>')
+            && version_compare($module->getIni('version') ?? '', '0.2.0', '>')
         ) {
             // Check if Basket was really installed.
             try {
