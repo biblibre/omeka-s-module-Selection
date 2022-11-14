@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace Selection;
 
 if (!class_exists(\Generic\AbstractModule::class)) {
@@ -16,7 +17,7 @@ use Laminas\Mvc\MvcEvent;
  * Selection.
  *
  * @copyright Biblibre, 2016
- * @copyright Daniel Berthereau 2019-2020
+ * @copyright Daniel Berthereau 2019-2022
  * @license http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.txt
  */
 class Module extends AbstractModule
@@ -33,7 +34,7 @@ class Module extends AbstractModule
         $services = $this->getServiceLocator();
         $acl = $services->get('Omeka\Acl');
 
-        // Since Omeka 1.4, modules are ordered, so Guest come after Selection.
+        // Since Omeka 1.4, modules are ordered, so Guest come before Selection.
         $roles = $acl->getRoles();
 
         $acl
@@ -121,8 +122,8 @@ class Module extends AbstractModule
             return;
         }
 
-        $containerSelection = $this->getServiceLocator()->get('ControllerPluginManager')->get('containerSelection');
-        $containerSelection();
+        $selectionContainer = $this->getServiceLocator()->get('ControllerPluginManager')->get('selectionContainer');
+        $selectionContainer();
 
         echo $view->partial('common/selection-resource');
     }

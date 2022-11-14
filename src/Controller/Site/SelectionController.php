@@ -2,7 +2,7 @@
 
 /*
  * Copyright BibLibre, 2016
- * Copyright Daniel Berthereau, 2019-2020
+ * Copyright Daniel Berthereau, 2019-2022
  *
  * This software is governed by the CeCILL license under French law and abiding
  * by the rules of distribution of free software.  You can use, modify and/ or
@@ -62,7 +62,7 @@ class SelectionController extends AbstractActionController
         $userId = $user ? $user->getId() : false;
 
         // When a user is set, the session and the database are sync.
-        $container = $this->containerSelection();
+        $container = $this->selectionContainer();
 
         foreach ($resources as $resourceId => $resource) {
             $data = $this->selectionResourceForResource($resource, true);
@@ -123,7 +123,7 @@ class SelectionController extends AbstractActionController
         $userId = $user ? $user->getId() : false;
 
         // When a user is set, the session and the database are sync.
-        $container = $this->containerSelection();
+        $container = $this->selectionContainer();
 
         foreach ($resources as $resourceId => $resource) {
             $data = $this->selectionResourceForResource($resource, false);
@@ -179,7 +179,7 @@ class SelectionController extends AbstractActionController
         $userId = $user ? $user->getId() : false;
 
         // When a user is set, the session and the database are sync.
-        $container = $this->containerSelection();
+        $container = $this->selectionContainer();
 
         $add = [];
         $delete = [];
@@ -267,7 +267,7 @@ class SelectionController extends AbstractActionController
     /**
      * Format a resource for the container.
      *
-     * Copy in \Selection\Mvc\Controller\Plugin\ContainerSelection::selectionResourceForResource()
+     * Copy in \Selection\Mvc\Controller\Plugin\SelectionContainer::selectionResourceForResource()
      *
      * @param AbstractResourceEntityRepresentation $resource
      * @param bool $isSelected

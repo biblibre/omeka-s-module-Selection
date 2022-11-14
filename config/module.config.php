@@ -27,8 +27,13 @@ return  [
     ],
     'view_helpers' => [
         'invokables' => [
-            'showSelectionLink' => View\Helper\ShowSelectionLink::class,
-            'updateSelectionLink' => View\Helper\UpdateSelectionLink::class,
+            'selectionButtonToggle' => View\Helper\SelectionButtonToggle::class,
+            'selectionLinkBrowse' => View\Helper\SelectionLinkBrowse::class,
+        ],
+        'aliases' => [
+            // @deprecated
+            'showSelectionLink' => 'selectionLinkBrowse',
+            'updateSelectionLink' => 'selectionButtonToggle',
         ],
     ],
     'form_elements' => [
@@ -44,7 +49,10 @@ return  [
     ],
     'controller_plugins' => [
         'invokables' => [
-            'containerSelection' => Mvc\Controller\Plugin\ContainerSelection::class,
+            'selectionContainer' => Mvc\Controller\Plugin\SelectionContainer::class,
+        ],
+        'aliases' => [
+            'containerSelection' => 'selectionContainer',
         ],
     ],
     'navigation_links' => [
@@ -115,7 +123,7 @@ return  [
                                     'defaults' => [
                                         '__NAMESPACE__' => 'Selection\Controller\Site',
                                         'controller' => 'GuestBoard',
-                                        'action' => 'show',
+                                        'action' => 'resource-browse',
                                     ],
                                 ],
                             ],

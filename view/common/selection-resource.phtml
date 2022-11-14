@@ -12,7 +12,7 @@
 
 $plugins = $this->getHelperPluginManager();
 $translate = $plugins->get('translate');
-$updateSelectionLink = $plugins->get('updateSelectionLink');
+$selectionButtonToggle = $plugins->get('selectionButtonToggle');
 
 $this->headLink()
     ->appendStylesheet($this->assetUrl('css/selection.css', 'Selection'));
@@ -28,7 +28,7 @@ $medias = $resource->getControllerName() === 'item' ? $resource->media() : [];
     <h3><?= $translate('Item') ?></h3>
     <?php endif; ?>
     <div class="item resource">
-        <?= $updateSelectionLink($resource) ?>
+        <?= $selectionButtonToggle($resource) ?>
         <?= $resource->linkPretty() ?>
     </div>
     <?php if (count($medias)): ?>
@@ -36,7 +36,7 @@ $medias = $resource->getControllerName() === 'item' ? $resource->media() : [];
     <div class="media-list">
         <?php foreach ($medias as $media): ?>
         <div class="media resource">
-            <?= $updateSelectionLink($media) ?>
+            <?= $selectionButtonToggle($media) ?>
             <?= $media->linkPretty() ?>
         </div>
         <?php endforeach; ?>

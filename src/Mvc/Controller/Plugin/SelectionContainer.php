@@ -6,7 +6,7 @@ use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
 use Laminas\Session\Container;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 
-class ContainerSelection extends AbstractPlugin
+class SelectionContainer extends AbstractPlugin
 {
     /**
      * Check and get the seleciton list in session container.

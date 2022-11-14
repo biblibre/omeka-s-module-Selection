@@ -2,7 +2,7 @@
 
 /*
  * Copyright BibLibre, 2016
- * Copyright Daniel Berthereau, 2019-2020
+ * Copyright Daniel Berthereau, 2019-2022
  *
  * This software is governed by the CeCILL license under French law and abiding
  * by the rules of distribution of free software.  You can use, modify and/ or
@@ -38,11 +38,11 @@ class GuestBoardController extends AbstractActionController
     public function indexAction()
     {
         $params = $this->params()->fromRoute();
-        $params['action'] = 'show';
-        return $this->forward()->dispatch(__CLASS__, $params);
+        $params['action'] = 'resource-browse';
+        return $this->forward()->dispatch('Selection\Controller\Site\GuestBoard', $params);
     }
 
-    public function showAction()
+    public function resourceBrowseAction()
     {
         $user = $this->identity();
 
@@ -57,12 +57,13 @@ class GuestBoardController extends AbstractActionController
                 $resources[] = $selectionResource->resource();
             }
 
-            $view = new ViewModel;
+            $view = new ViewModel([
+                'site' => $this->currentSite(),
+                'selectionResources' => $selectionResources,
+                'resources' => $resources,
+            ]);
             return $view
-                ->setTemplate('guest/site/guest/selection')
-                ->setVariable('site', $this->currentSite())
-                ->setVariable('selectionResources', $selectionResources)
-                ->setVariable('resources', $resources);
+                ->setTemplate('guest/site/guest/selection-resource-browse');
         }
     }
 }

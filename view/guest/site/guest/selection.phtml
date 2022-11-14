@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright BibLibre, 2016
- * Copyright Daniel Berthereau 2018-2020
+ * Copyright Daniel Berthereau 2018-2022
  *
  * This software is governed by the CeCILL license under French law and abiding
  * by the rules of distribution of free software.  You can use, modify and/ or
@@ -34,79 +34,6 @@
  * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $resources
  */
 
-$plugins = $this->getHelperPluginManager();
-$translate = $plugins->get('translate');
-$thumbnail = $plugins->get('thumbnail');
-$updateSelectionLink = $this->plugin('updateSelectionLink');
+// Deprecated. Use selection-resource-browse.
 
-$this->htmlElement('body')->appendAttribute('class', 'selection resource browse');
-
-$this->headLink()
-    ->appendStylesheet($this->assetUrl('css/selection.css', 'Selection'));
-$this->headScript()
-    ->appendFile($this->assetUrl('js/selection.js', 'Selection'), 'text/javascript', ['defer' => 'defer']);
-
-$headingTerm = $this->siteSetting('browse_heading_property_term', 'dcterms:title');
-$bodyTerm = $this->siteSetting('browse_body_property_term', 'dcterms:description');
-
-// Order resources by type.
-$resourcesByType = ['item-set' => [], 'item' => [], 'media' => [], 'annotation' => []];
-foreach ($resources as $resource) {
-    $resourcesByType[$resource->getControllerName()][] = $resource;
-}
-?>
-
-<?= $this->pageTitle($translate('Selection'), 2) // @translate ?>
-
-<?php if (count($selectionResources)): ?>
-<h3><?= sprintf($translate('%d items, %d media'), count($resourcesByType['item']), count($resourcesByType['media'])) // @translate ?></h3>
-
-<?php $this->trigger('view.browse.before'); ?>
-<ul class="resource-list selection-resources">
-    <?php
-    $defaultHeading = ['default' => $translate('[Untitled]')];
-    foreach ($resourcesByType as $resourceType => $resourceList):
-        foreach ($resourceList as $resource):
-        if ($resourceType === 'item') {
-            $heading = $resource->value($headingTerm, $defaultHeading);
-        } else {
-            $heading = $resource->value($headingTerm);
-            if (!$heading):
-                // There is no media->position().
-                $mediaId = $resource->id();
-                $position = 0;
-                foreach ($resource->item()->media() as $media):
-                    ++$position;
-                    if ($media->id() === $mediaId):
-                        break;
-                    endif;
-                endforeach;
-                $heading = sprintf(
-                    '%s (%d)',
-                    $resource->item()->value($headingTerm, $defaultHeading),
-                    $position
-                );
-            endif;
-        }
-        $body = $resource->value($bodyTerm);
-    ?>
-    <li class="<?= $resourceType ?> resource">
-        <?= $resource->linkRaw($thumbnail($resource, 'medium')) ?>
-        <h4><?= $resource->link($heading) ?></h4>
-        <?php if ($body): ?>
-        <div class="description">
-            <?= $body ?>
-        </div>
-        <?php endif; ?>
-        <?= $updateSelectionLink($resource) ?>
-    </li>
-        <?php endforeach; ?>
-    <?php endforeach; ?>
-</ul>
-<?php $this->trigger('view.browse.after'); ?>
-
-<?php else: ?>
-<p>
-    <?= $translate('The selection is empty.') // @translate ?>
-</p>
-<?php endif; ?>
+echo $this->partial('guest/site/guest/selection-resource-browse.phtml');

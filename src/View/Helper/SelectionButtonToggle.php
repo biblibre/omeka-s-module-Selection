@@ -1,10 +1,11 @@
 <?php declare(strict_types=1);
+
 namespace Selection\View\Helper;
 
 use Laminas\View\Helper\AbstractHelper;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 
-class UpdateSelectionLink extends AbstractHelper
+class SelectionButtonToggle extends AbstractHelper
 {
     /**
      * The default partial view script.

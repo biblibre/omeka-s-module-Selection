@@ -4,12 +4,12 @@ namespace Selection\View\Helper;
 
 use Laminas\View\Helper\AbstractHelper;
 
-class ShowSelectionLink extends AbstractHelper
+class SelectionLinkBrowse extends AbstractHelper
 {
     /**
      * The default partial view script.
      */
-    const PARTIAL_NAME = 'common/selection-link';
+    const PARTIAL_NAME = 'common/selection-link-browse';
 
     /**
      * Get the link to the user selection.

@@ -1,0 +1,112 @@
+<?php
+/*
+ * Copyright BibLibre, 2016
+ * Copyright Daniel Berthereau 2018-2022
+ *
+ * This software is governed by the CeCILL license under French law and abiding
+ * by the rules of distribution of free software.  You can use, modify and/ or
+ * redistribute the software under the terms of the CeCILL license as circulated
+ * by CEA, CNRS and INRIA at the following URL "http://www.cecill.info".
+ *
+ * As a counterpart to the access to the source code and rights to copy, modify
+ * and redistribute granted by the license, users are provided only with a
+ * limited warranty and the software's author, the holder of the economic
+ * rights, and the successive licensors have only limited liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated with
+ * loading, using, modifying and/or developing or reproducing the software by
+ * the user in light of its specific status of free software, that may mean that
+ * it is complicated to manipulate, and that also therefore means that it is
+ * reserved for developers and experienced professionals having in-depth
+ * computer knowledge. Users are therefore encouraged to load and test the
+ * software's suitability as regards their requirements in conditions enabling
+ * the security of their systems and/or data to be ensured and, more generally,
+ * to use and operate it in the same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL license and that you accept its terms.
+ */
+
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Selection\Api\Representation\SelectionResourceRepresentation[] $selectionResources
+ * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $resources
+ */
+
+$plugins = $this->getHelperPluginManager();
+$translate = $plugins->get('translate');
+$thumbnail = $plugins->get('thumbnail');
+$selectionButtonToggle = $this->plugin('selectionButtonToggle');
+
+$this->htmlElement('body')->appendAttribute('class', 'selection resource browse');
+
+$this->headLink()
+    ->appendStylesheet($this->assetUrl('css/selection.css', 'Selection'));
+$this->headScript()
+    ->appendFile($this->assetUrl('js/selection.js', 'Selection'), 'text/javascript', ['defer' => 'defer']);
+
+$headingTerm = $this->siteSetting('browse_heading_property_term', 'dcterms:title');
+$bodyTerm = $this->siteSetting('browse_body_property_term', 'dcterms:description');
+
+// Order resources by type.
+$resourcesByType = ['item-set' => [], 'item' => [], 'media' => [], 'annotation' => []];
+foreach ($resources as $resource) {
+    $resourcesByType[$resource->getControllerName()][] = $resource;
+}
+?>
+
+<?= $this->pageTitle($translate('Selection'), 2) // @translate ?>
+
+<?php if (count($selectionResources)): ?>
+<h3><?= sprintf($translate('%d items, %d media'), count($resourcesByType['item']), count($resourcesByType['media'])) // @translate ?></h3>
+
+<?php $this->trigger('view.browse.before'); ?>
+<ul class="resource-list selection-resources">
+    <?php
+    $defaultHeading = ['default' => $translate('[Untitled]')];
+    foreach ($resourcesByType as $resourceType => $resourceList):
+        foreach ($resourceList as $resource):
+            if ($resourceType === 'item') {
+                $heading = $resource->value($headingTerm, $defaultHeading);
+            } else {
+                $heading = $resource->value($headingTerm);
+                if (!$heading):
+                    // There is no media->position().
+                    $mediaId = $resource->id();
+                    $position = 0;
+                    foreach ($resource->item()->media() as $media):
+                        ++$position;
+                        if ($media->id() === $mediaId):
+                            break;
+                        endif;
+                    endforeach;
+                    $heading = sprintf(
+                        '%s (%d)',
+                        $resource->item()->value($headingTerm, $defaultHeading),
+                        $position
+                    );
+                endif;
+            }
+            $body = $resource->value($bodyTerm);
+            ?>
+    <li class="<?= $resourceType ?> resource">
+        <?= $resource->linkRaw($thumbnail($resource, 'medium')) ?>
+        <h4><?= $resource->link($heading) ?></h4>
+        <?php if ($body): ?>
+        <div class="description">
+            <?= $body ?>
+        </div>
+        <?php endif; ?>
+        <?= $selectionButtonToggle($resource) ?>
+    </li>
+        <?php endforeach; ?>
+    <?php endforeach; ?>
+</ul>
+<?php $this->trigger('view.browse.after'); ?>
+
+<?php else: ?>
+<p>
+    <?= $translate('The selection is empty.') // @translate ?>
+</p>
+<?php endif; ?>

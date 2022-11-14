@@ -4,8 +4,6 @@
  * and options passed from the caller.
  */
 
-$translate = $this->plugin('translate');
-$url = $this->plugin('url');
-?>
+// Deprecated. Use selection-link-browse.
 
-<a class="selection show" href="<?= $url('site/guest/selection', [], true) ?>"><?= $translate('Selection') ?></a>
+echo $this->partial('common/selection-link-browse');
