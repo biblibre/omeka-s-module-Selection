@@ -12,6 +12,7 @@ $connection = $services->get('Omeka\Connection');
 $settings = $services->get('Omeka\Settings');
 $moduleManager = $services->get('Omeka\ModuleManager');
 $basketModule = $moduleManager->getModule('Basket');
+$messenger = $services->get('ControllerPluginManager')->get('messenger');
 
 if (!$basketModule) {
     return;
@@ -23,7 +24,6 @@ if (version_compare($oldVersion, '0.2.0', '<=')) {
         'The version of the module Basket should be at least %s.', // @translate
         '0.2.1'
     );
-    $messenger = new \Omeka\Mvc\Controller\Plugin\Messenger;
     $messenger->addWarning($message);
     return;
 }
@@ -62,5 +62,4 @@ foreach ($sqls as $sql) {
 $message = new \Omeka\Stdlib\Message(
     'The module Basket was upgraded by module Selection and uninstalled.' // @translate
 );
-$messenger = new \Omeka\Mvc\Controller\Plugin\Messenger;
 $messenger->addWarning($message);

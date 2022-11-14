@@ -163,7 +163,7 @@ class SelectionControllerTest extends OmekaControllerTestCase
         ])->getContent();
 
         $em = $this->getEntityManager();
-        $userEntity = $em->find('Omeka\Entity\User', $user->id());
+        $userEntity = $em->find(\Omeka\Entity\User::class, $user->id());
         $userEntity->setPassword($password);
         $em->flush();
 
