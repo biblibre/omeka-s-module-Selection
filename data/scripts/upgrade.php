@@ -2,23 +2,27 @@
 
 namespace Selection;
 
+use Omeka\Stdlib\Message;
+
 /**
  * @var Module $this
- * @var \Laminas\ServiceManager\ServiceLocatorInterface $services
+ * @var \Laminas\ServiceManager\ServiceLocatorInterface $serviceLocator
  * @var string $newVersion
  * @var string $oldVersion
  *
  * @var \Doctrine\DBAL\Connection $connection
  * @var \Doctrine\ORM\EntityManager $entityManager
  * @var \Omeka\Api\Manager $api
+ * @var \Omeka\Mvc\Controller\Plugin\Messenger $messenger
+ * @var \Omeka\Settings\Settings $settings
  */
-$settings = $services->get('Omeka\Settings');
-$config = require dirname(__DIR__, 2) . '/config/module.config.php';
-$connection = $services->get('Omeka\Connection');
-$entityManager = $services->get('Omeka\EntityManager');
+$services = $serviceLocator;
 $plugins = $services->get('ControllerPluginManager');
 $api = $plugins->get('api');
-$space = strtolower(__NAMESPACE__);
+// $config = $services->get('Config');
+$connection = $services->get('Omeka\Connection');
+$messenger = $plugins->get('messenger');
+$entityManager = $services->get('Omeka\EntityManager');
 
 if (version_compare($oldVersion, '3.3.4.1', '<')) {
     $sqls = '';
@@ -59,7 +63,7 @@ SQL;
         }
     }
     foreach (explode(";\n", $sqls) as $sql) {
-        $connection->exec($sql);
+        $connection->executeStatement($sql);
     }
 
     $sqls = <<<'SQL'
@@ -85,7 +89,7 @@ ALTER TABLE selection_resource ADD CONSTRAINT FK_CB95FBE389329D25 FOREIGN KEY (`
 ALTER TABLE selection_resource ADD CONSTRAINT selection_resource_ibfk_1 FOREIGN KEY (`owner_id`) REFERENCES `user` (`id`);
 SQL;
     foreach (explode(";\n", $sqls) as $sql) {
-        $connection->exec($sql);
+        $connection->executeStatement($sql);
     }
 }
 
@@ -95,7 +99,7 @@ if (version_compare($oldVersion, '3.3.4.2', '<')) {
     foreach ($indexes as $index) {
         if ($index && strtoupper($index->getName()) === 'UNIQ_96A50CD77E3C61F9EA750E8') {
             $sql = 'DROP INDEX UNIQ_96A50CD77E3C61F9EA750E8 ON `selection`;';
-            $connection->exec($sql);
+            $connection->executeStatement($sql);
             break;
         }
     }
@@ -113,6 +117,13 @@ UPDATE `selection` SET `is_dynamic` = 0, `search_query` = NULL WHERE `search_que
 UPDATE `selection` SET `is_dynamic` = 1, `search_query` = TRIM(`search_query`) WHERE `search_query` IS NOT NULL AND TRIM(search_query) != "";
 SQL;
     foreach (explode(";\n", $sqls) as $sql) {
-        $connection->exec($sql);
+        $connection->executeStatement($sql);
     }
+}
+
+if (version_compare($oldVersion, '3.3.4.4', '<')) {
+    $message = new Message(
+        'Helpers and templates were renamed. Old ones will be removed in a future version.' // @translate
+    );
+    $messenger->addWarning($message);
 }
