@@ -2,7 +2,7 @@
 
 /*
  * Copyright BibLibre, 2016
- * Copyright Daniel Berthereau, 2019-2020
+ * Copyright Daniel Berthereau, 2019-2022
  *
  * This software is governed by the CeCILL license under French law and abiding
  * by the rules of distribution of free software.  You can use, modify and/ or
@@ -45,6 +45,14 @@ class SelectionResourceAdapter extends AbstractEntityAdapter
         'id' => 'id',
         'owner_id' => 'owner',
         'resource_id' => 'resource',
+        'created' => 'created',
+    ];
+
+    protected $scalarFields = [
+        'id' => 'id',
+        'owner' => 'owner',
+        'resource' => 'resource',
+        'selection' => 'selection',
         'created' => 'created',
     ];
 
