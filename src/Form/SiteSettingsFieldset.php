@@ -14,6 +14,7 @@ class SiteSettingsFieldset extends Fieldset
     public function init(): void
     {
         $this
+            ->setAttribute('id', 'selection')
             ->add([
                 'name' => 'selection_visitor_allow',
                 'type' => Element\Checkbox::class,
