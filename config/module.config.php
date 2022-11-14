@@ -88,6 +88,7 @@ return  [
                             'route' => '/selection/:id[/:action]',
                             'constraints' => [
                                 'action' => 'add|delete|toggle',
+                                // The id is the resource id.
                                 'id' => '\d+',
                             ],
                             'defaults' => [

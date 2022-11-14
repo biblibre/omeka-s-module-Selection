@@ -51,9 +51,9 @@ $bodyTerm = $this->siteSetting('browse_body_property_term', 'dcterms:description
 
 // Order resources by type.
 $resourcesByType = ['item-set' => [], 'item' => [], 'media' => [], 'annotation' => []];
-foreach ($resources as $resource):
+foreach ($resources as $resource) {
     $resourcesByType[$resource->getControllerName()][] = $resource;
-endforeach;
+}
 ?>
 
 <?= $this->pageTitle($translate('Selection'), 2) // @translate ?>
@@ -62,7 +62,7 @@ endforeach;
 <h3><?= sprintf($translate('%d items, %d media'), count($resourcesByType['item']), count($resourcesByType['media'])) // @translate ?></h3>
 
 <?php $this->trigger('view.browse.before'); ?>
-<ul class="resource-list">
+<ul class="resource-list selection-resources">
     <?php
     $defaultHeading = ['default' => $translate('[Untitled]')];
     foreach ($resourcesByType as $resourceType => $resourceList):

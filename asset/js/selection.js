@@ -4,12 +4,12 @@
         $('body').on('click', '.selection-update, .selection-delete', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            var button = $(this);
-            var url = button.attr('data-url');
+            const button = $(this);
+            const url = button.attr('data-url');
             $.ajax(url)
             .done(function(data) {
                 if (data.status === 'success') {
-                    let selectionResource = data.data.selection_resource;
+                    const selectionResource = data.data.selection_resource;
                     if (selectionResource.status === 'success') {
                         updateSelectionButton(selectionResource);
                         updateSelectionList(selectionResource);
@@ -21,11 +21,11 @@
         $('body').on('click', '.selection-list-toggle', function() {
             $(this).toggleClass('active');
             $('.selection-list').toggle().toggleClass('active');
-           return false;
+            return false;
         });
 
-        var updateSelectionButton = function(selectionResource) {
-            let button = $('.selection-update[data-id=' + selectionResource.id + ']');
+        const updateSelectionButton = function(selectionResource) {
+            const button = $('.selection-update[data-id=' + selectionResource.id + ']');
             if (!button.length) {
                 return;
             }
@@ -35,8 +35,8 @@
                 .addClass(selectionResource.value);
         }
 
-        var updateSelectionList = function(selectionResource) {
-            let list = $('.selection-list .selection-resources');
+        const updateSelectionList = function(selectionResource) {
+            const list = $('.selection-resources');
             if (!list.length) {
                 return;
             }
