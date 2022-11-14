@@ -32,22 +32,32 @@ See general end user documentation for [Installing a module].
 Usage
 -----
 
-The user can see a selection in the item page. On a click, the item is added to the
-selection, or removed. The full list of resources in the selection is available at
-"/s/my-site/guest/selection". This page is available for guest users, but for any
-other registered user too.
-
-It is recommended to edit the theme directly to include the selection besides the
-item and the media, in particular in the item/show and the item/browse views.
+The user can see a selection in the item page. On a click, the item is added to
+the selection, or removed. The full list of resources in the selection is
+available at "/s/my-site/guest/selection". This page is available for any
+registered users and possibly for visitors.
 
 A resource can be selected multiple times, but only once by selection.
 
+
+Integration in a theme
+----------------------
+
+It is recommended to edit the theme directly to include the selection besides
+the item and the media, in particular in the item/show and the item/browse views.
+
+
+Integration via api (js)
+------------------------
+
 The api is the standard one and is available internally and via the endpoint:
 
-- List selected resources of an owner. The available keys are : `owner_id`,
-`resource_id`, `selection_id`, `selection_label`. To get the selected resources
-that are not stored in a specific selection, use `selection_id=0`. Via endpoint,
-selected resources are not visible, so the credentials are required.
+1. List selected resources of an owner
+
+  The available keys are : `owner_id`, `resource_id`, `selection_id`, `selection_label`.
+  To get the selected resources that are not stored in a specific selection, use
+  `selection_id=0`. Via endpoint, selected resources are not visible, so the
+  credentials are required.
 
 ```sh
 curl -X GET -H 'Accept: application/json' -i 'https://example.org/api/selection_resources?key_identity=xxx&key_credential=yyy&&pretty_print=1'
@@ -57,14 +67,17 @@ curl -X GET -H 'Accept: application/json' -i 'https://example.org/api/selection_
 $selectedResources = $this->api()->search('selection_resources', ['owner_id' => 1])->getContent();
 ```
 
-- Create a selection for resource #2 and save it in the selection list with the
-label test. If the selection does not exist, it is automatically created. If the
-selection is not defined, the selected resource is saved but not attached to a
-specific selection. Via endpoint, the user is set via the credential.
+2. Create a selection with a resource
 
-Warning: it is not possible currently to add a resource that is already
-selected via the key `selection_resources`, so check the list of existing
-selected resources before doing the request.
+  The example below creates a selection for resource #2 and saves it in the
+  selection list with the label test. If the selection does not exist, it is
+  automatically created. If the selection is not defined, the selected resource
+  is saved but not attached to a specific selection. Via endpoint, the user is
+  set via the credential.
+
+  Warning: it is not possible currently to add a resource that is already
+  selected  via the key `selection_resources`, so check the list of existing
+  selected resources before doing the request.
 
 ```sh
 curl -X POST -H 'Content-Type: application/json' -H 'Accept: application/json' -i 'https://example.org/api/selection_resources?key_identity=xxx&key_credential=yyy&pretty_print=1' --data '{"o:resource":{"o:id":2},"o:selection":{"o:label":"test"}}'
@@ -77,7 +90,10 @@ $selectedResource = $this->api()->create('selection_resources', [
 )->getContent();
 ```
 
-- Create a dynamic selection for the query "resource_class_id=1":
+3. Create a dynamic selection
+
+  The example below uses the query "resource_class_id=1" to create a dynamic
+  selection:
 
 ```php
 $selectedResource = $this->api()->create('selections', [
@@ -88,13 +104,18 @@ $selectedResource = $this->api()->create('selections', [
 )->getContent();
 ```
 
-- Add a selection of resource in bulk in a specific selection. Here, the api key
-is `selections`, so it avoids to use the key `selection_resources` multiple
-times, in particular via endpoint. A check is done on the list of resources, so
-a resource can be saved only if it is visible by the user and there won't be
-error if the resource is already listed in the specified selection. Nevertheless,
-the full list should be used, because the existing other selected resources will
-be removed.
+  Important: when a selection is converted into a search query, all selection
+  resources are removed. The type change of a selection may be forbidden in a
+  future version.
+
+4. Add a selection of resources in bulk in a specific selection.
+
+  Here, the api key is `selections`, so it avoids to use the key `selection_resources`
+  multiple times, in particular via endpoint. A check is done on the list of
+  resources, so a resource can be saved only if it is visible by the user and
+  there won't be error if the resource is already listed in the specified
+  selection. Nevertheless, the full list should be used, because the existing
+  other selected resources will be removed.
 
 ```sh
 curl -X PATCH -H 'Content-Type: application/json' -H 'Accept: application/json' -i 'https://example.org/api/selections/1?key_identity=xxx&key_credential=yyy&pretty_print=1' --data '{"resources":[3,4,5]}'
@@ -107,9 +128,11 @@ $selection = $this->api()->update('selections', 1, [
 ], [], ['isPartial' => true])->getContent();
 ```
 
-To simplify management of selection of resources in bulk without check, the
-shortcut key `resources` is available in the json payload or in the internal
-api. It allows to specify what to do for each resource: add, delete, or toggle.
+5. Simplified management
+
+  To simplify management of selection of resources in bulk without check, the
+  shortcut key `resources` is available in the json payload or in the internal
+  api. It allows to specify what to do for each resource: add, delete, or toggle.
 
 ```php
     // Replace the existing selected resources by this new list:
@@ -129,12 +152,9 @@ api. It allows to specify what to do for each resource: add, delete, or toggle.
     ],
 ```
 
-Important: `'resources' => []` or `'resources' => ['remove' => []]` means to
-remove all selected resources of the selection. Set it to `null` if you really
-need the key.
-
-When a selection is converted into a search query, all selection resources are
-removed. The type change of a selection may be forbidden in a future version.
+  Important: `'resources' => []` or `'resources' => ['remove' => []]` means to
+  remove all selected resources of the selection. Set it to `null` if you really
+  need the key.
 
 
 TODO
@@ -197,7 +217,7 @@ Copyright
 ---------
 
 * Copyright Biblibre, 2016-2017 (see [Biblibre])
-* Copyright Daniel Berthereau, 2017-2021 (see [Daniel-KM] on GitLab)
+* Copyright Daniel Berthereau, 2017-2022 (see [Daniel-KM] on GitLab)
 
 This module was initially based on the fork of the module [Basket] from BibLibre.
 
