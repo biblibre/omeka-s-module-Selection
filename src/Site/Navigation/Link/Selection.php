@@ -42,6 +42,7 @@ class Selection implements LinkInterface
             'params' => [
                 'site-slug' => $site->slug(),
             ],
+            'resource' => 'Selection\Controller\Site\GuestBoard',
         ];
     }
 
