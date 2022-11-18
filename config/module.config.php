@@ -9,6 +9,11 @@ return  [
             'selection_resources' => Api\Adapter\SelectionResourceAdapter::class,
         ],
     ],
+    'block_layouts' => [
+        'invokables' => [
+            'selection' => Site\BlockLayout\Selection::class,
+        ],
+    ],
     'entity_manager' => [
         'mapping_classes_paths' => [
             dirname(__DIR__) . '/src/Entity',

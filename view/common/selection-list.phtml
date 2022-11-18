@@ -1,6 +1,7 @@
 <?php
 /**
  * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var boolean $open
  */
 
 $plugins = $this->getHelperPluginManager();
@@ -29,8 +30,8 @@ endif;
 ?>
 
 <?php $removeText = $escapeAttr($translate('Remove from selection')); // @translate ?>
-<h3><a href="#" class="selection-list-toggle"><?= $translate('Selected resources') // @translate ?></a></h3>
-<div class="selection-list" style="display:none;">
+<h3><a href="#" class="selection-list-toggle <?php echo $open ? 'active' : '' ?>"><?= $translate('Selected resources') // @translate ?></a></h3>
+    <div class="selection-list <?php echo $open ? 'active' : '' ?>">
     <ul class="selection-resources" data-text-remove="<?= $removeText ?>">
         <?php foreach ($container->records as $record): ?>
         <li data-id="<?= $record['id'] ?>">
