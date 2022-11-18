@@ -7,38 +7,61 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Solr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-07 00:00+0000\n"
-"PO-Revision-Date: 2022-03-07 00:00+0000\n"
-"Last-Translator: Daniel Berthereau <Daniel.fr@Berthereau.net>\n"
+"POT-Creation-Date: 2022-11-18 13:35+0100\n"
+"PO-Revision-Date: 2022-11-18 13:41+0100\n"
+"Last-Translator: Julian Maurice <julian.maurice@biblibre.com>\n"
 "Language-Team: French\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 2.4.2\n"
 
-#: Module.php:151 view/common/selection-item.phtml:26
-#: view/common/selection-link.phtml:11 view/guest/site/guest/selection.phtml:64
+#: Module.php:138 view/common/selection-link.phtml:11
+#: view/common/selection-resource.phtml:26
+#: view/guest/site/guest/selection.phtml:59
 msgid "Selection"
 msgstr "Sélection"
 
-#: src/Controller/Site/SelectionController.php:73
-#: src/Controller/Site/SelectionController.php:88
+#: src/Controller/Site/SelectionController.php:71
 msgid "Already in"
 msgstr "Déjà ajouté"
 
-#: src/Generic/AbstractModule.php:598
+#: src/Generic/AbstractModule.php:66 src/Generic/AbstractModule.php:740
 #, php-format
 msgid "This module requires the module \"%s\"."
 msgstr "Ce module requiert le module \"%s\"."
 
-#: src/Generic/AbstractModule.php:618
+#: src/Generic/AbstractModule.php:73
 #, php-format
 msgid "This module requires modules \"%s\"."
 msgstr "Ce module requiert les modules \"%s\"."
 
-#: src/Generic/AbstractModule.php:686
+#: src/Generic/AbstractModule.php:80
+msgid "This module has resources that cannot be installed."
+msgstr "Ce module a des ressources qui ne peuvent pas être installées."
+
+#: src/Generic/AbstractModule.php:87
+msgid ""
+"This module cannot install its tables, because they exist already. Try to "
+"remove them first."
+msgstr ""
+"Ce module ne peut pas installer ses tables, parce qu'elles existent déjà. "
+"Essayez de les supprimer d'abord."
+
+#: src/Generic/AbstractModule.php:328
+#, php-format
+msgid "The module removed tables \"%s\" from a previous broken install."
+msgstr ""
+"Le module a supprimé les tables \"%s\" d'une précédente installation cassée."
+
+#: src/Generic/AbstractModule.php:735
+#, php-format
+msgid "This module requires the module \"%s\", version %s or above."
+msgstr "Ce module requiert le module \"%s\", version %s ou supérieure."
+
+#: src/Generic/AbstractModule.php:832
 #, php-format
 msgid ""
 "The module \"%s\" was automatically deactivated because the dependencies are "
@@ -51,28 +74,28 @@ msgstr ""
 msgid "Add to selection"
 msgstr "Ajouter à la sélection"
 
-#: view/common/selection-button.phtml:13 view/common/selection-list.phtml:34
+#: view/common/selection-button.phtml:13 view/common/selection-list.phtml:31
 msgid "Remove from selection"
 msgstr "Retirer de la sélection"
 
-#: view/common/selection-list.phtml:35
+#: view/common/selection-list.phtml:32
 msgid "Selected resources"
 msgstr "Ressources sélectionnées"
 
-#: view/common/selection-list.phtml:45
+#: view/common/selection-list.phtml:42
 msgid "No selection"
 msgstr "Pas de sélection"
 
-#: view/common/selection-list.phtml:49
+#: view/common/selection-list.phtml:46
 msgid "Download selection"
 msgstr "Télécharger la sélection"
 
-#: view/guest/site/guest/selection.phtml:67
+#: view/guest/site/guest/selection.phtml:62
 #, php-format
 msgid "%d items, %d media"
 msgstr "%d contenus, %d médias"
 
-#: view/guest/site/guest/selection.phtml:115
+#: view/guest/site/guest/selection.phtml:110
 msgid "The selection is empty."
 msgstr "La sélection est vide."
 
@@ -98,16 +121,62 @@ msgstr "Sélection"
 msgid "Enable session selection for visitors"
 msgstr "Activer la sélection pour les visiteurs"
 
-#: src/Form/SiteSettingsFieldset.php:31
-msgid "For authenticated users, fill the main selection directly"
+#: src/Form/SiteSettingsFieldset.php:22
+msgid "The selection is automatically saved for logged users."
 msgstr ""
-"Pour les utilisateurs authentifiés, ajouter directement à la sélection "
-"principale"
+"La sélection est enregistrée automatiquement pour les utilisateurs connectés."
 
 #: src/Site/Navigation/Link/Selection.php:23
 #, php-format
 msgid "Invalid navigation: link without label (%s)"
 msgstr "Navigation invalide : lien sans libellé (%s)"
+
+#: src/Api/Adapter/SelectionResourceAdapter.php:218
+msgid "A selection resource must have an owner."
+msgstr "Une ressource de sélection doit avoir un propriétaire."
+
+#: src/Api/Adapter/SelectionResourceAdapter.php:222
+msgid "A selection resource must have a resource."
+msgstr "Une ressource de sélection doit avoir une ressource."
+
+#: src/Api/Adapter/SelectionResourceAdapter.php:228
+msgid "A selection resource must have the same owner than the selection."
+msgstr ""
+"Une ressource de sélection doit avoir le même propriétaire que la sélection."
+
+#: src/Api/Adapter/SelectionResourceAdapter.php:235
+msgid "A resource must be unique inside a selection."
+msgstr "Une ressource doit être unique à l'intérieur d'une sélection."
+
+#: src/Api/Adapter/SelectionResourceAdapter.php:238
+msgid ""
+"A selection resource must be unique for the owner when there is no selection."
+msgstr ""
+"Une sélection de ressource doit être unique pour le propriétaire quand il "
+"n'y a pas de sélection."
+
+#: src/Api/Adapter/SelectionAdapter.php:151
+msgid "A selection must have an owner."
+msgstr "Une sélection doit avoir un propriétaire."
+
+#: src/Api/Adapter/SelectionAdapter.php:156
+msgid "A selection must have a label."
+msgstr "Une sélection doit avoir un libellé."
+
+#: src/Api/Adapter/SelectionAdapter.php:158
+msgid "The label is already taken by the owner."
+msgstr "Le libellé est déjà pris par le propriétaire."
+
+#: src/Api/Adapter/SelectionAdapter.php:162
+msgid "The selection cannot have selection resources when a query is set."
+msgstr ""
+"La sélection ne peut pas avoir de ressources de sélection quand une requête "
+"est définie."
+
+#~ msgid "For authenticated users, fill the main selection directly"
+#~ msgstr ""
+#~ "Pour les utilisateurs authentifiés, ajouter directement à la sélection "
+#~ "principale"
 
 #~ msgid "Unselect"
 #~ msgstr "Retirer"
