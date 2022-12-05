@@ -243,18 +243,6 @@
                     // TODO Add events to update select, etc.
                     window.location.reload();
                     return false;
-                    // Path is checked and does not contain forbidden characters.
-                    const parent = data.data.group && data.data.group.path
-                        ? $('.selection-structure .selection-group[data-path="' + data.data.group.path + '"]')
-                        : $('.selection-structure');
-                    parent.append($('.selection-structure').data('template-group')
-                        .replace('__GROUP_PATH__', data.data.group.path + '/' + data.data.group.id)
-                        .replace('__GROUP_NAME__',
-                            (data.data.group.path && data.data.group.path.length ? '<span>' + data.data.group.path.substring(1).replaceAll('/', '</span><span>') + '</span>' : '')
-                            + '<span>' + data.data.group.id + '</span>'
-                        )
-                        .replace('__GROUP_RESOURCES__', '')
-                    );
                 } else if (data.status === 'fail') {
                     alert(data.data.message ? data.data.message : 'An error occurred.');
                 } else {
@@ -305,9 +293,11 @@
                 list.find('li[data-id=' + selectionResource.id + ']').remove();
             }
             if (list.find('li').length) {
-                $('.selection-empty').removeClass('active');
+                $('.selection-empty').addClass('inactive').hide();
+                $('.selection-count').removeClass('inactive').show();
             } else {
-                $('.selection-empty').addClass('active');
+                $('.selection-count').addClass('inactive').hide();
+                $('.selection-empty').removeClass('inactive').show();
             }
         }
 
@@ -318,8 +308,8 @@
             }
             list.find('li[data-id=' + selectionResource.id + ']').remove();
             if (!list.find('li').length) {
-                $('.selection-list.selections').addClass('inactive').hide();
-                $('.selection-list.selection-empty').removeClass('inactive').show();
+                $('.selection-count').addClass('inactive').hide();
+                $('.selection-empty').removeClass('inactive').show();
             }
         }
 

@@ -87,9 +87,15 @@ $selectedResourceModel = [
 
 <?= $this->pageTitle($selection && ($label = $selection->label()) ? $label : $translate('Selection'), 2) ?>
 
-<div class="selection-list selections<?= count($selectionResources) ? '' : ' inactive" style="display:none' ?>">
+<div class="selection-list selections">
 
-    <h3><?= sprintf($translate('%d items, %d media'), count($resourcesByType['items']), count($resourcesByType['media'])) ?></h3>
+    <?php if (count($selectedResources)): ?>
+    <h3 class="selection-count"<?= count($selectionResources) ? '' : ' inactive" style="display:none' ?>"><?= sprintf($translate('%d items, %d media'), count($resourcesByType['items']), count($resourcesByType['media'])) ?></h3>
+    <?php else: ?>
+    <p class="selection-empty<?= count($selectionResources) ? ' inactive" style="display:none' : '' ?>">
+        <?= $translate('The selection is empty.') // @translate ?>
+    </p>
+    <?php endif; ?>
 
     <div class="selection-list-actions">
         <ul class="actions">
@@ -139,12 +145,6 @@ $selectedResourceModel = [
     </ul>
     <?php $this->trigger('view.browse.after'); ?>
 
-</div>
-
-<div class="selection-list selection-empty<?= count($selectionResources) ? ' inactive" style="display:none' : '' ?>">
-    <p>
-        <?= $translate('The selection is empty.') // @translate ?>
-    </p>
 </div>
 
 <?php // Common actions. ?>
