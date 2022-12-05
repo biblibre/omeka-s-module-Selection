@@ -32,6 +32,8 @@ namespace Selection\Controller\Site;
 
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
+use Omeka\Entity\User;
+use Selection\Api\Representation\SelectionRepresentation;
 
 class GuestBoardController extends AbstractActionController
 {
@@ -52,6 +54,15 @@ class GuestBoardController extends AbstractActionController
 
         $query = $this->params()->fromQuery();
         $query['owner_id'] = $user->getId();
+
+        $selectionId = $query['selection_id'] ?? null;
+        try {
+            $selection = $selectionId
+                ? $this->api()->read('selections', ['id' => $selectionId])->getContent()
+                : $this->firstStaticSelection($user);
+        } catch (\Exception $e) {
+            $selection = null;
+        }
 
         $selectionResources = $this->api()->search('selection_resources', $query)->getContent();
 
@@ -83,11 +94,26 @@ class GuestBoardController extends AbstractActionController
 
         $view = new ViewModel([
             'site' => $this->currentSite(),
+            'selection' => $selection,
             'selectionResources' => $selectionResources,
             'resources' => $resources,
             'resourcesByType' => $resourcesByType,
         ]);
         return $view
             ->setTemplate('guest/site/guest/selection-resource-browse');
+    }
+
+
+    /**
+     * Get default selection, the first non-dynamic one.
+     *
+     * Unlike SelectionController, don't create it when empty.
+     */
+    protected function firstStaticSelection(User $user): ?SelectionRepresentation
+    {
+        return $this->api()->searchOne('selections', [
+            'owner' => $user->getId(),
+            'is_dynamic' => false,
+        ])->getContent();
     }
 }

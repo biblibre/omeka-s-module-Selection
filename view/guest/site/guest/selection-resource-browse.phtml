@@ -30,6 +30,7 @@
 /**
  * @var \Laminas\View\Renderer\PhpRenderer $this
  * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Selection\Api\Representation\SelectionRepresentation $selection
  * @var \Selection\Api\Representation\SelectionResourceRepresentation[] $selectionResources
  * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $resources
  * @var array $resourcesByType
@@ -62,13 +63,13 @@ $resourceTypesToClasses = [
 $removeText = $escapeAttr($translate('Remove from selection'));
 ?>
 
-<?= $this->pageTitle($translate('Selection'), 2) // @translate ?>
+<?= $this->pageTitle($selection && ($label = $selection->label()) ? $label : $translate('Selection'), 2) ?>
 
 <?php if (count($selectionResources)): ?>
 
 <div class="selection-list selections">
 
-    <h3><?= sprintf($translate('%d items, %d media'), count($resourcesByType['items']), count($resourcesByType['media'])) // @translate ?></h3>
+    <h3><?= sprintf($translate('%d items, %d media'), count($resourcesByType['items']), count($resourcesByType['media'])) ?></h3>
 
     <?php $this->trigger('view.browse.before'); ?>
     <ul class="resource-list selection-resources">

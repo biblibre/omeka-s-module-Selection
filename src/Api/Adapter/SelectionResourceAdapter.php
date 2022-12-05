@@ -105,6 +105,8 @@ class SelectionResourceAdapter extends AbstractEntityAdapter
             $selectionId = (int) $query['selection_id'];
             // Allow to get the selection resources that are not in a specific
             // selection, i.e. in the unlabelised default selection.
+            // Note: as soon as a structure is created, all resources without a
+            // selection are attached to it.
             if ($selectionId) {
                 $selectionAlias = $this->createAlias();
                 $qb->innerJoin(
