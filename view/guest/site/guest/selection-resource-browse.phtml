@@ -32,6 +32,7 @@
  * @var \Omeka\Api\Representation\SiteRepresentation $site
  * @var \Selection\Api\Representation\SelectionResourceRepresentation[] $selectionResources
  * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $resources
+ * @var array $resourcesByType
  */
 
 $plugins = $this->getHelperPluginManager();
@@ -50,11 +51,13 @@ $this->headScript()
 $headingTerm = $this->siteSetting('browse_heading_property_term', 'dcterms:title');
 $bodyTerm = $this->siteSetting('browse_body_property_term', 'dcterms:description');
 
-// Order resources by type.
-$resourcesByType = ['item-set' => [], 'item' => [], 'media' => [], 'annotation' => []];
-foreach ($resources as $resource) {
-    $resourcesByType[$resource->getControllerName()][] = $resource;
-}
+$resourceTypesToClasses = [
+    'items' => 'item',
+    'item_sets' => 'item-set',
+    'media' => 'media',
+    'annotations' => 'annotation',
+    'resources' => 'resource',
+];
 
 $removeText = $escapeAttr($translate('Remove from selection'));
 ?>
@@ -65,7 +68,7 @@ $removeText = $escapeAttr($translate('Remove from selection'));
 
 <div class="selection-list selections">
 
-    <h3><?= sprintf($translate('%d items, %d media'), count($resourcesByType['item']), count($resourcesByType['media'])) // @translate ?></h3>
+    <h3><?= sprintf($translate('%d items, %d media'), count($resourcesByType['items']), count($resourcesByType['media'])) // @translate ?></h3>
 
     <?php $this->trigger('view.browse.before'); ?>
     <ul class="resource-list selection-resources">
@@ -73,7 +76,7 @@ $removeText = $escapeAttr($translate('Remove from selection'));
         $defaultHeading = ['default' => $translate('[Untitled]')];
         foreach ($resourcesByType as $resourceType => $resourceList):
             foreach ($resourceList as $resource):
-                if ($resourceType === 'item') {
+                if ($resourceType === 'items') {
                     $heading = $resource->value($headingTerm, $defaultHeading);
                 } else {
                     $heading = $resource->value($headingTerm);
@@ -96,7 +99,7 @@ $removeText = $escapeAttr($translate('Remove from selection'));
                 }
                 $body = $resource->value($bodyTerm);
                 ?>
-        <li class="<?= $resourceType ?> resource">
+        <li class="<?= $resourceTypesToClasses[$resourceType] ?> resource">
             <?= $resource->linkRaw($thumbnail($resource, 'medium')) ?>
             <h4><?= $resource->link($heading) ?></h4>
             <?php if ($body): ?>

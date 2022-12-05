@@ -46,24 +46,48 @@ class GuestBoardController extends AbstractActionController
     {
         $user = $this->identity();
 
-        if (isset($user)) {
-            $query = $this->params()->fromQuery();
-            $query['owner_id'] = $user->getId();
-
-            $selectionResources = $this->api()->search('selection_resources', $query)->getContent();
-
-            $resources = [];
-            foreach ($selectionResources as $selectionResource) {
-                $resources[] = $selectionResource->resource();
-            }
-
-            $view = new ViewModel([
-                'site' => $this->currentSite(),
-                'selectionResources' => $selectionResources,
-                'resources' => $resources,
-            ]);
-            return $view
-                ->setTemplate('guest/site/guest/selection-resource-browse');
+        if (!isset($user)) {
+            return;
         }
+
+        $query = $this->params()->fromQuery();
+        $query['owner_id'] = $user->getId();
+
+        $selectionResources = $this->api()->search('selection_resources', $query)->getContent();
+
+        $classesToTypes = [
+            \Omeka\Api\Representation\ItemRepresentation::class => 'items',
+            \Omeka\Api\Representation\ItemSetRepresentation::class => 'item_sets',
+            \Omeka\Api\Representation\MediaRepresentation::class => 'media',
+            \Annotate\Api\Representation\AnnotationRepresentation::class => 'annotations',
+        ];
+
+       $selecteds = [];
+       $resources = [];
+       $resourcesByType = [
+           'items' => [],
+           'item_sets' => [],
+           'media' => [],
+           'annotations' => []
+       ];
+       foreach ($selectionResources as $selectionResource) {
+           $resource = $selectionResource->resource();
+           $resourceType = $classesToTypes[get_class($resource)] ?? 'resources';
+           $resourceId = $resource->id();
+           $typeAndId = $resourceType . '/' . $resourceId;
+           $selecteds[$typeAndId] = $selectionResource;
+           $resources[$typeAndId] = $resource;
+           $resourcesByType[$resourceType][$resourceId] = $resource;
+       }
+       $selectionResources = $selecteds;
+
+        $view = new ViewModel([
+            'site' => $this->currentSite(),
+            'selectionResources' => $selectionResources,
+            'resources' => $resources,
+            'resourcesByType' => $resourcesByType,
+        ]);
+        return $view
+            ->setTemplate('guest/site/guest/selection-resource-browse');
     }
 }

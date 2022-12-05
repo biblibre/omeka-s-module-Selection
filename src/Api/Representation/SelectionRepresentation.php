@@ -152,9 +152,37 @@ class SelectionRepresentation extends AbstractEntityRepresentation
 
         $resources = [];
         $resourceAdapter = $this->getAdapter('resources');
+        /** @var \Selection\Entity\SelectionResource $selectionResourceEntity */
         foreach ($this->resource->getSelectionResources() as $selectionResourceEntity) {
             $resource = $selectionResourceEntity->getResource();
             $resources[$resource->getId()] = $resourceAdapter->getRepresentation($resource);
+        }
+        return $resources;
+    }
+
+    /**
+     * List resources by type directly without check of selection elements.
+     */
+    public function resourcesByType(): array
+    {
+        if ($this->isDynamic()) {
+            return $this->dynamicResources();
+        }
+
+        $classesToNames = [
+            \Omeka\Entity\Item::class => 'items',
+            \Omeka\Entity\ItemSet::class => 'item_sets',
+            \Omeka\Entity\Media::class => 'media',
+            \Annotate\Entity\Annotation::class => 'annotations',
+        ];
+
+        $resources = [];
+        $resourceAdapter = $this->getAdapter('resources');
+        /** @var \Selection\Entity\SelectionResource $selectionResourceEntity */
+        foreach ($this->resource->getSelectionResources() as $selectionResourceEntity) {
+            $resource = $selectionResourceEntity->getResource();
+            $resourceName = $classesToNames[$resource->getResourceId()] ?? 'resources';
+            $resources[$resourceName][$resource->getId()] = $resourceAdapter->getRepresentation($resource);
         }
         return $resources;
     }
