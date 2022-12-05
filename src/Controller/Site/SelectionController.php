@@ -728,7 +728,17 @@ class SelectionController extends AbstractActionController
             ]);
         }
 
-        $selecteds = $structure[$path]['resources'] ?? [];
+        // Get selected resources in all children groups.
+        $selecteds = [];
+        foreach ($structure as $sFullPath => $sGroup) {
+            if (strpos($sFullPath . '/', $path . '/') === 0) {
+                if (!empty($sGroup['resources'])) {
+                    $selecteds = array_merge($selecteds, array_values($sGroup['resources']));
+                }
+                unset($structure[$sFullPath]);
+            }
+        }
+
         if ($selecteds) {
             $selectionResourceIds = [];
             foreach ($selection->selectionResources() as $selectionResource) {
@@ -740,7 +750,6 @@ class SelectionController extends AbstractActionController
                 $api->batchDelete('selection_resources', $selectionResourceIds);
             }
         }
-        unset($structure[$path]);
 
         try {
             $api->update('selections', $selection->id(), [
