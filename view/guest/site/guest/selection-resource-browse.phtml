@@ -65,13 +65,22 @@ $removeText = $escapeAttr($translate('Remove from selection'));
 
 <?= $this->pageTitle($selection && ($label = $selection->label()) ? $label : $translate('Selection'), 2) ?>
 
-<?php if (count($selectionResources)): ?>
-
-<div class="selection-list selections">
+<div class="selection-list selections<?= count($selectionResources) ? '' : ' inactive" style="display:none' ?>">
 
     <h3><?= sprintf($translate('%d items, %d media'), count($resourcesByType['items']), count($resourcesByType['media'])) ?></h3>
 
     <?php $this->trigger('view.browse.before'); ?>
+
+    <ul class="resource-list selection-resources selection-structure">
+        <?php foreach ($selection ? $selection->structure() : [] as $group): ?>
+        <li class="selection-group">
+            <div>
+                <span class="group-name"><?= $escape($group['id']) ?></span>
+            </div>
+        </li>
+        <?php endforeach; ?>
+    </ul>
+
     <ul class="resource-list selection-resources">
         <?php
         $defaultHeading = ['default' => $translate('[Untitled]')];
@@ -116,8 +125,6 @@ $removeText = $escapeAttr($translate('Remove from selection'));
     <?php $this->trigger('view.browse.after'); ?>
 
 </div>
-
-<?php endif; ?>
 
 <div class="selection-list selection-empty<?= count($selectionResources) ? ' inactive" style="display:none' : '' ?>">
     <p>
