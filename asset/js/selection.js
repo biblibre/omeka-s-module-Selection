@@ -110,6 +110,47 @@
         });
 
         /**
+         * Rename a group.
+         *
+         * @todo Factorize: this is nearly the same than addGroup.
+         */
+        $('body').on('click', '.selection-list .rename-group', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const button = $(this);
+            const msg = button.closest('.selection-structure').data('msg-group-name') ? button.closest('.selection-structure').data('msg-group-name') : button.text();
+            var groupDestination = prompt(msg);
+            if (!groupDestination || !groupDestination.trim().length) {
+                return;
+            }
+            const selectionGroup = button.closest('.selection-group');
+            const path = selectionGroup.data('path') ? selectionGroup.data('path') : null;
+            const groupName = path ? path.substring(path.lastIndexOf('/') + 1) : null;
+            if (!groupName || !groupName.length || groupName === '/' || groupName=== groupDestination) {
+                return;
+            }
+            const url = button.attr('data-url');
+            $.ajax({
+                url: url,
+                data: {
+                    group: path,
+                    destination: groupDestination.trim(),
+                },
+            })
+            .done(function(data) {
+                if (data.status === 'success') {
+                    // TODO Add events to update select, etc.
+                    window.location.reload();
+                    return false;
+                } else if (data.status === 'fail') {
+                    alert(data.data.message ? data.data.message : 'An error occurred.');
+                } else {
+                    alert(data.message ? data.message : 'An error occurred.');
+                }
+            });
+        });
+
+        /**
          * Prepare/remove the selector used to move a group or a resource.
          */
         $('body').on('click', '.selection-list .move-group, .selection-list .move-resource', function(e) {

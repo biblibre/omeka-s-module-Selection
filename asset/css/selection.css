@@ -19,6 +19,9 @@
     .selection-list .move-resource::after {
         content:"▷";
     }
+    .selection-list .rename-group::after {
+        content:"⁄";
+    }
     a.selection-list-toggle:link,
     a.selection-list-toggle:visited {
         color: #000;
@@ -35,6 +38,7 @@
     }
     .selection-list .add-group::after,
     .selection-list .move-group::after,
+    .selection-list .rename-group::after,
     .selection-list .move-resource::after,
     .selection-list .selection-delete::after {
         padding-left: 1em;

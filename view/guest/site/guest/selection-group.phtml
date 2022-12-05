@@ -24,6 +24,7 @@ $baseUrl = pathinfo($url('site/selection-id', ['id' => $selection ? $selection->
         <span class="group-name">__GROUP_NAME__</span>
         <ul class="actions">
             <li><button type="button" class="add-group" data-url="<?= $baseUrl  ?>/add-group"><?= $escape($translate('Add a sub-group')) ?></button></li>
+            <li><button type="button" class="rename-group" data-url="<?= $baseUrl ?>/rename-group"><?= $escape($translate('Rename group')) ?></button></li>
             <li><button type="button" class="move-group" data-url="<?= $baseUrl ?>/move"><?= $escape($translate('Move resources')) ?></button></li>
         </ul>
     </div>

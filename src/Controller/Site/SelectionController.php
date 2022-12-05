@@ -526,6 +526,154 @@ class SelectionController extends AbstractActionController
     }
 
     /**
+     * Rename a group (last part) in a selection.
+     *
+     * @todo Factorize with addGroupAction.
+     */
+    public function renameGroupAction()
+    {
+        if (!$this->getRequest()->isXmlHttpRequest()) {
+            return $this->jsonErrorNotFound();
+        }
+
+        $siteSettings = $this->siteSettings();
+        $allowVisitor = $siteSettings->get('selection_visitor_allow', true);
+        $user = $this->identity();
+        // TODO Manage group for visitor by session.
+        if (!$allowVisitor || !$user) {
+            return $this->jsonErrorNotFound();
+        }
+
+        $path = trim((string) $this->params()->fromQuery('group'));
+        $currentGroupName = basename($path);
+        if (!strlen($currentGroupName)) {
+            return new JsonModel([
+                'status' => 'error',
+                'data' => [
+                    'message' => $this->translate('No group set.'), // @translate
+                ],
+            ]);
+        }
+
+        $groupName = trim((string) $this->params()->fromQuery('destination'));
+        if (!strlen($groupName)) {
+            return new JsonModel([
+                'status' => 'error',
+                'data' => [
+                    'message' => $this->translate('No group set.'), // @translate
+                ],
+            ]);
+        }
+
+        $invalidCharacters = '/\\?<>*%|"`&';
+        $invalidCharactersRegex = '~/|\\|\?|<|>|\*|\%|\||"|`|&~';
+        if  ($groupName === '/'
+            || $groupName === '\\'
+            || $groupName === '.'
+            || $groupName === '..'
+            || preg_match($invalidCharactersRegex, $groupName)
+        ) {
+            return new JsonModel([
+                'status' => 'fail',
+                'data' => [
+                    'message' => sprintf(
+                        $this->translate('The group name contains invalid characters (%s).'), // @translate
+                        $invalidCharacters
+                    ),
+                ],
+            ]);
+        }
+
+        if ($currentGroupName === $groupName) {
+            return new JsonModel([
+                'status' => 'fail',
+                'data' => [
+                    'message' => sprintf(
+                        $this->translate('The group name is unchanged.'), // @translate
+                        $invalidCharacters
+                    ),
+                ],
+            ]);
+        }
+
+        $api = $this->api();
+
+        /** @var \Selection\Api\Representation\SelectionRepresentation $selection */
+        $id = (int) $this->params()->fromRoute('id');
+        if (empty($id)) {
+            $selection = $this->defaultStaticSelection($user);
+        } else {
+            try {
+                $selection = $api->read('selections', ['owner' => $user->getId()])->getContent();
+            } catch (\Exception $e) {
+                return $this->jsonErrorNotFound();
+            }
+        }
+
+        // Add the group only if it does not exist.
+        $structure = $selection->structure();
+
+        // Check the parent for security.
+        $hasParent = strlen($path);
+        if ($hasParent && !isset($structure[$path])) {
+            return new JsonModel([
+                'status' => 'fail',
+                'data' => [
+                    'message' => $this->translate('The parent group does not exist.'), // @translate
+                ],
+            ]);
+        }
+
+        $currentFullPath = $path;
+        $parentPath = dirname($path) === '/' ? '' : dirname($path);
+
+        $fullPath = "$parentPath/$groupName";
+        if (isset($structure[$fullPath])) {
+            return new JsonModel([
+                'status' => 'fail',
+                'data' => [
+                    'message' => $this->translate('The group exists already.'), // @translate
+                ],
+            ]);
+        }
+
+        // Rename the group and all children: even if each group is managed as a
+        // full path, this is a structure.
+        $s = [];
+        foreach ($structure as $sFullPath=> $sGroup) {
+            if ($sFullPath === $currentFullPath) {
+                $sGroup['id'] = $groupName;
+                $s[$fullPath] = $sGroup;
+            } elseif (mb_strpos($sFullPath, $currentFullPath . '/') === 0) {
+                $sGroup['path'] = $fullPath;
+                $s[$fullPath . '/' . $sGroup['id']] = $sGroup;
+            } else {
+                $s[$sFullPath] = $sGroup;
+            }
+        }
+        $structure = $s;
+
+        try {
+            $api->update('selections', $selection->id(), [
+                'o:structure' => $structure,
+            ], [], ['isPartial' => true])->getContent();
+        } catch (\Exception $e) {
+            return new JsonModel([
+                'status' => 'errof',
+                'message' => $this->translate('An internal error occurred.'), // @translate
+            ]);
+        }
+
+        return new JsonModel([
+            'status' => 'success',
+            'data' => [
+                'selection' => $selection,
+                'structure' => $selection->structure(),
+            ],
+        ]);
+    }
+
+    /**
      * Get selected resources from the query and prepare them.
      */
     protected function requestedResources()
