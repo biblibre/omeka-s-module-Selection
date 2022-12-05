@@ -1,0 +1,70 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Selection\Api\Representation\SelectionRepresentation $selection
+ * // Helpers.
+ * @var \Laminas\View\Helper\Url $url
+ * @var \Omeka\View\Helper\I18n $i18n
+ * @var \Laminas\View\Helper\EscapeHtml $escape
+ * @var \Laminas\I18n\View\Helper\Translate $translate
+ * @var \Omeka\View\Helper\Thumbnail $thumbnail
+ * @var \Laminas\View\Helper\EscapeHtmlAttr $escapeAttr
+ * // Static vars.
+ * @var string $headingTerm
+ * @var string $bodyTerm
+ * @var array $defaultHeading
+ * @var string $removeText
+ * @var string $moveText
+ * // Individual resource.
+ * @var string $resourceType
+ * @var \Omeka\Api\Representation\AbstractEntityRepresentation $resource
+ */
+
+// Partial loop template used by selection-resource-browse.
+
+if (!$resource) return;
+
+$resourceTypesToClasses = [
+    'items' => 'item',
+    'item_sets' => 'item-set',
+    'media' => 'media',
+    'annotations' => 'annotation',
+    'resources' => 'resource',
+];
+
+if ($resourceType === 'items') {
+    $heading = $resource->value($headingTerm, $defaultHeading);
+} else {
+    $heading = $resource->value($headingTerm);
+    if (!$heading) {
+        // There is no media->position().
+        $mediaId = $resource->id();
+        $position = 0;
+        foreach ($resource->item()->media() as $media) {
+            ++$position;
+            if ($media->id() === $mediaId) {
+                break;
+            }
+        }
+        $heading = sprintf('%1$s (%2$d)', $resource->item()->value($headingTerm, $defaultHeading), $position);
+    }
+}
+$body = $resource->value($bodyTerm);
+?>
+
+<li class="selection-resource resource <?= $resourceTypesToClasses[$resourceType] ?>">
+    <?= $resource->linkRaw($thumbnail($resource, 'medium')) ?>
+    <h4><?= $resource->link($heading) ?></h4>
+    <?php if ($body): ?>
+    <div class="description">
+        <?= $body ?>
+    </div>
+    <?php endif; ?>
+    <ul class="actions">
+        <?php if ($selection && $selection->structure()): ?>
+        <li><button type="button" class="move-resource move-icon" data-url="<?= $url('site/selection-id', ['id' => $resource->id(), 'action' => 'move'], true) ?>"><?= $moveText ?></button></li>
+        <?php endif; ?>
+        <li><button type="button" class="selection-delete delete-icon" data-url="<?= $url('site/selection-id', ['id' => $resource->id(), 'action' => 'delete'], true) ?>"><?= $removeText ?></button></li>
+    </ul>
+</li>

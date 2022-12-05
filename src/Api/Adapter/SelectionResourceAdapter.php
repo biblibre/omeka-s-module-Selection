@@ -169,7 +169,12 @@ class SelectionResourceAdapter extends AbstractEntityAdapter
     ): void {
         /** @var \Selection\Entity\SelectionResource $entity */
 
-        // The selected resource is not updatable, it would be non-sense.
+        // The selected resource is not updatable, except for the selection
+        // itself when previous one was empty. In other cases, there should be
+        // no selected resources
+        $setSelection = $request->getOperation() === Request::CREATE
+            || ($request->getOperation() === Request::UPDATE && !$entity->getSelection());
+
         if ($request->getOperation() === Request::CREATE) {
             $this->hydrateOwner($request, $entity);
             if ($this->shouldHydrate($request, 'o:resource')) {
@@ -181,43 +186,48 @@ class SelectionResourceAdapter extends AbstractEntityAdapter
                     $entity->setResource($resourceEntity);
                 }
             }
-            if ($this->shouldHydrate($request, 'o:selection')) {
-                $selection = $request->getValue('o:selection');
-                if (is_array($selection)) {
-                    $selectionEntity = null;
-                    if (!empty($selection['o:id']) && is_numeric($selection['o:id'])) {
-                        $selectionEntity = $this->getAdapter('selections')->findEntity((int) $selection['o:id']);
-                    } elseif (isset($selection['o:label'])) {
-                        $label = trim((string) $selection['o:label']);
-                        if (strlen($label)) {
-                            // To simplify client requests to api, the selection
-                            // is automatically created if a label is set.
-                            try {
-                                $selectionEntity = $this->getAdapter('selections')->findEntity([
-                                    'owner' => $entity->getOwner(),
-                                    'label' => $label,
-                                    'is_dynamic' => false,
-                                ]);
-                            } catch (\Omeka\Api\Exception\NotFoundException $e) {
-                                $selectionEntity = null;
-                            }
-                            if (!$selectionEntity) {
-                                $comment = trim($selection['o:comment'] ?? '') ?: null;
-                                $selectionEntity = new Selection();
-                                $selectionEntity
-                                    ->setOwner($entity->getOwner())
-                                    ->setLabel($label)
-                                    ->setComment($comment);
-                                $this->getEntityManager()->persist($selectionEntity);
-                            }
+            $entity->setCreated(new DateTime('now'));
+        }
+
+        if ($setSelection
+            && $this->shouldHydrate($request, 'o:selection')
+        ) {
+            $selection = $request->getValue('o:selection');
+            $selectionEntity = null;
+            if (is_null($selection)) {
+                // Nothing to do. No update.
+            } elseif (is_array($selection)) {
+                if (!empty($selection['o:id']) && is_numeric($selection['o:id'])) {
+                    $selectionEntity = $this->getAdapter('selections')->findEntity((int) $selection['o:id']);
+                } elseif (isset($selection['o:label'])) {
+                    $label = trim((string) $selection['o:label']);
+                    if (strlen($label)) {
+                        // To simplify client requests to api, the selection
+                        // is automatically created if a label is set.
+                        try {
+                            $selectionEntity = $this->getAdapter('selections')->findEntity([
+                                'owner' => $entity->getOwner(),
+                                'label' => $label,
+                                'is_dynamic' => false,
+                            ]);
+                        } catch (\Omeka\Api\Exception\NotFoundException $e) {
+                            $selectionEntity = null;
+                        }
+                        if (!$selectionEntity) {
+                            $comment = trim($selection['o:comment'] ?? '') ?: null;
+                            $selectionEntity = new Selection();
+                            $selectionEntity
+                                ->setOwner($entity->getOwner())
+                                ->setLabel($label)
+                                ->setComment($comment);
+                            $this->getEntityManager()->persist($selectionEntity);
                         }
                     }
-                    if ($selectionEntity && $selectionEntity instanceof Selection) {
-                        $entity->setSelection($selectionEntity);
-                    }
+                }
+                if ($selectionEntity) {
+                    $entity->setSelection($selectionEntity);
                 }
             }
-            $entity->setCreated(new DateTime('now'));
         }
     }
 
@@ -250,6 +260,18 @@ class SelectionResourceAdapter extends AbstractEntityAdapter
             $errorStore->addError('o:resource', 'A selection resource must be unique for the owner when there is no selection.'); // @translate
         }
         parent::validateEntity($entity, $errorStore);
+    }
+
+    public function preprocessBatchUpdate(array $data, Request $request)
+    {
+        $rawData = $request->getContent();
+        $data = parent::preprocessBatchUpdate($data, $request);
+
+        if (array_key_exists('o:selection', $rawData)) {
+            $data['o:selection'] = $rawData['o:selection'];
+        }
+
+        return $data;
     }
 
     /**

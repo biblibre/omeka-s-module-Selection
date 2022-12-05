@@ -240,6 +240,132 @@ class SelectionController extends AbstractActionController
         ]);
     }
 
+    public function moveAction()
+    {
+        if (!$this->getRequest()->isXmlHttpRequest()) {
+            return $this->jsonErrorNotFound();
+        }
+
+        $siteSettings = $this->siteSettings();
+        $allowVisitor = $siteSettings->get('selection_visitor_allow', true);
+        $user = $this->identity();
+        // TODO Manage group for visitor by session.
+        if (!$allowVisitor || !$user) {
+            return $this->jsonErrorNotFound();
+        }
+
+        $resources = $this->requestedResources();
+        if (empty($resources['has_result'])) {
+            return $this->jsonErrorNotFound();
+        }
+        $isMultiple = $resources['is_multiple'];
+        $resources = $resources['resources'];
+
+        $api = $this->api();
+        $results = [];
+        $userId = $user ? $user->getId() : false;
+
+        // When a user is set, the session and the database are sync.
+        // TODO Manage session container.
+
+        /** @var \Selection\Api\Representation\SelectionRepresentation $selection */
+        $id = (int) $this->params()->fromRoute('id');
+        if (empty($id)) {
+            $selection = $this->defaultStaticSelection($user);
+        } else {
+            try {
+                $selection = $api->read('selections', ['owner' => $user->getId()])->getContent();
+            } catch (\Exception $e) {
+                return $this->jsonErrorNotFound();
+            }
+        }
+
+        // Add the group only if it does not exist.
+        $structure = $selection->structure();
+
+        $source = trim((string) $this->params()->fromQuery('source'));
+        $destination = trim((string) $this->params()->fromQuery('destination'));
+        if ($source === $destination) {
+            return new JsonModel([
+                'status' => 'fail',
+                'data' => [
+                    'message' => $this->translate('The group is unchanged.'), // @translate
+                ],
+            ]);
+        }
+
+        if (strlen($source) && !isset($structure[$source])) {
+            return new JsonModel([
+                'status' => 'error',
+                'message' => sprintf(
+                    $this->translate('The group "%s" does not exist.'), // @translate
+                    str_replace('/', ' / ', $source)
+                ),
+            ]);
+        }
+
+        if (strlen($destination) && !isset($structure[$destination])) {
+            return new JsonModel([
+                'status' => 'error',
+                'message' => sprintf(
+                    $this->translate('The destination group "%s" does not exist.'), // @translate
+                    str_replace('/', ' / ', $destination)
+                ),
+            ]);
+        }
+
+        /** TODO Optimize process: only the resource id is needed, not the full resources. */
+        $sourceResources = $selection->resourcesForGroup($source);
+        if (!$sourceResources) {
+            return new JsonModel([
+                'status' => 'fail',
+                'data' => [
+                    'message' => $this->translate('There are no resources to move.'), // @translate
+                ],
+            ]);
+        }
+
+        if (strlen($destination) && !isset($structure[$destination])) {
+            return new JsonModel([
+                'status' => 'error',
+                'message' => sprintf(
+                    $this->translate('The destination group "%s" does not exist.'), // @translate
+                    str_replace('/', ' / ', $destination)
+                ),
+            ]);
+        }
+
+        // Do the move.
+        unset($structure[$source]['resources']);
+        if (strlen($destination)) {
+            if (empty($structure[$destination]['resources'])) {
+                $structure[$destination]['resources'] = array_keys($sourceResources);
+            } else {
+                $structure[$destination]['resources'] += array_keys($sourceResources);
+            }
+        }
+
+        try {
+            $api->update('selections', $selection->id(), [
+                'o:structure' => $structure,
+            ], [], ['isPartial' => true])->getContent();
+        } catch (\Exception $e) {
+            return new JsonModel([
+                'status' => 'errof',
+                'message' => $this->translate('An internal error occurred.'), // @translate
+            ]);
+        }
+
+        return new JsonModel([
+            'status' => 'success',
+            'data' => [
+                'selection' => $selection,
+                'source' => $structure[$source] ?? null,
+                'group' =>  $structure[$destination] ?? null,
+            ],
+        ]);
+    }
+
     public function addGroupAction()
     {
         if (!$this->getRequest()->isXmlHttpRequest()) {
@@ -281,6 +407,7 @@ class SelectionController extends AbstractActionController
 
         $api = $this->api();
 
+        /** @var \Selection\Api\Representation\SelectionRepresentation $selection */
         $id = (int) $this->params()->fromRoute('id');
         if (empty($id)) {
             $selection = $this->defaultStaticSelection($user);
@@ -424,9 +551,15 @@ class SelectionController extends AbstractActionController
 
     /**
      * Get default selection, the first non-dynamic one or a new one when none.
+     *
+     * When there is a new selection, all selected resources without selection
+     * are moved inside it.
+     *
+     * @todo Simplify: require a selection for the first selected resouce (and manage anonymous visitor).
      */
     protected function defaultStaticSelection(User $user): SelectionRepresentation
     {
+        /** @var \Omeka\Api\Manager $api */
         $api = $this->api();
         $selection = $api->searchOne('selections', [
             'owner' => $user->getId(),
@@ -437,6 +570,15 @@ class SelectionController extends AbstractActionController
                 'o:owner' => ['o:id' => $user->getId()],
                 'o:label' => $this->translate('My selection'), // @translate
             ])->getContent();
+            $selecteds = $api->search('selection_resources', [
+                'owner_id' => $user->getId(),
+                'selection' => 0,
+            ], ['returnScalar' => 'id'])->getContent();
+            if ($selecteds) {
+                $api->batchUpdate('selection_resources', $selecteds, [
+                    'o:selection' => ['o:id' => $selection->id()],
+                ]);
+            }
         }
         return $selection;
     }

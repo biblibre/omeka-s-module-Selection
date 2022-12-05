@@ -168,6 +168,39 @@ class SelectionRepresentation extends AbstractEntityRepresentation
     }
 
     /**
+     * Get list of resources belonging to a group or no group.
+     *
+     * @return \Omeka\Api\Representation\AbstractResourceEntityRepresentation[]
+     */
+    public function resourcesForGroup(?string $group): array
+    {
+        if ($this->isDynamic()) {
+            return [];
+        }
+
+        $structure = $this->structure();
+        if (!$structure) {
+            return [];
+        }
+
+        $group = (string) $group;
+
+        // Get the selected resources or the remaining ones.
+        // TODO Optimize process to prepare only needed resources (api call with ids? But types are various).
+        if (strlen($group)) {
+            $resourceIds = $structure[$group]['resources'] ?? [];
+            return $resourceIds
+                ? array_intersect_key($this->resources(), array_flip($resourceIds))
+                : [];
+        } else {
+            $resourceIds = array_merge(...array_column($structure, 'resources'));
+            return $resourceIds
+                ? array_diff_key($this->resources(), array_flip($resourceIds))
+                : $this->resources();
+        }
+    }
+
+    /**
      * List resources by type directly without check of selection elements.
      */
     public function resourcesByType(): array

@@ -17,6 +17,7 @@ $translate = $plugins->get('translate');
 $escapeAttr = $plugins->get('escapeHtmlAttr');
 
 $urlAddGroup = $url('site/selection-id', ['id' => $selection ? $selection->id() : 0, 'action' => 'add-group'], true);
+$urlMoveResources = $url('site/selection-id', ['id' => $selection ? $selection->id() : 0, 'action' => 'move'], true);
 ?>
 
 <li class="selection-group" data-path="__GROUP_PATH__">
@@ -24,6 +25,10 @@ $urlAddGroup = $url('site/selection-id', ['id' => $selection ? $selection->id() 
         <span class="group-name">__GROUP_NAME__</span>
         <ul class="actions">
             <li><button type="button" class="add-group" data-url="<?= $escapeAttr($urlAddGroup) ?>"><?= $escape($translate('Add a sub-group')) ?></button></li>
+            <li><button type="button" class="move-group" data-url="<?= $escapeAttr($urlMoveResources) ?>"><?= $escape($translate('Move resources')) ?></button></li>
         </ul>
     </div>
+    <ul class="resource-list selection-resources">
+        __GROUP_RESOURCES__
+    </ul>
 </li>

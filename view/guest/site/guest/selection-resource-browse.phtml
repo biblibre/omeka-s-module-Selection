@@ -38,10 +38,13 @@
 
 $plugins = $this->getHelperPluginManager();
 $url = $plugins->get('url');
+$i18n = $plugins->get('i18n');
 $partial = $plugins->get('partial');
+$escape = $plugins->get('escapeHtml');
 $translate = $plugins->get('translate');
 $thumbnail = $plugins->get('thumbnail');
 $escapeAttr = $plugins->get('escapeHtmlAttr');
+$partialLoop = $plugins->get('partialLoop');
 
 $this->headLink()
     ->appendStylesheet($this->assetUrl('css/selection.css', 'Selection'));
@@ -53,15 +56,33 @@ $this->htmlElement('body')->appendAttribute('class', 'selection resource browse'
 $headingTerm = $this->siteSetting('browse_heading_property_term', 'dcterms:title');
 $bodyTerm = $this->siteSetting('browse_body_property_term', 'dcterms:description');
 
-$resourceTypesToClasses = [
-    'items' => 'item',
-    'item_sets' => 'item-set',
-    'media' => 'media',
-    'annotations' => 'annotation',
-    'resources' => 'resource',
+$selectedResources = $selection ? $selection->resources() : [];
+
+$classesToTypes = [
+    \Omeka\Api\Representation\ItemRepresentation::class => 'items',
+    \Omeka\Api\Representation\ItemSetRepresentation::class => 'item_sets',
+    \Omeka\Api\Representation\MediaRepresentation::class => 'media',
+    \Annotate\Api\Representation\AnnotationRepresentation::class => 'annotations',
 ];
 
-$removeText = $escapeAttr($translate('Remove from selection'));
+// All data needed to display each selected resource quickly via partialLoop.
+$selectedResourceModel = [
+    'site' => $site,
+    'selection' => $selection,
+    'url' => $url,
+    'i18n' => $i18n,
+    'escape' => $escape,
+    'translate' => $translate,
+    'thumbnail' => $thumbnail,
+    'escapeAttr' => $escapeAttr,
+    'headingTerm' => $headingTerm,
+    'bodyTerm' => $bodyTerm,
+    'defaultHeading' => ['default' => $translate('[Untitled]')],
+    'moveText' => $escapeAttr($translate('Move')),
+    'removeText' => $escapeAttr($translate('Remove from selection')),
+    'resourceType' => null,
+    'resource' => null,
+];
 ?>
 
 <?= $this->pageTitle($selection && ($label = $selection->label()) ? $label : $translate('Selection'), 2) ?>
@@ -80,58 +101,41 @@ $removeText = $escapeAttr($translate('Remove from selection'));
 
     <?php $this->trigger('view.browse.before'); ?>
 
+    <?php // Groups and selected resources inside them. ?>
     <?php $templateGroup = $partial('guest/site/guest/selection-group'); ?>
     <ul class="resource-list selection-resources selection-structure" data-msg-add-group="<?= $translate('Set group name') ?>" data-template-group="<?= $escapeAttr($templateGroup) ?>">
         <?php
         foreach ($selection ? $selection->structure() : [] as $groupFullPath => $group):
+            $selectedResourceModels = [];
+            foreach ($group['resources'] ?? [] as $resourceId) {
+                $resource = $selectedResources[$resourceId] ?? null;
+                unset($selectedResources[$resourceId]);
+                if (!$resource) continue;
+                $selectedResourceModel['resource'] = $resource;
+                $selectedResourceModel['resourceType'] = $classesToTypes[get_class($resource)] ?? 'resources';
+                $selectedResourceModels[] = $selectedResourceModel;
+            }
             $replace = [
                 '__GROUP_PATH__' => $escapeAttr($groupFullPath),
                 '__GROUP_NAME__' => '<span>' . str_replace('/', '</span><span>', ltrim($groupFullPath, '/')) . '</span>',
+                '__GROUP_RESOURCES__' => $selectedResourceModels
+                    ? $partialLoop('guest/site/guest/selection-group-resource', $selectedResourceModels)
+                    : '',
             ]; ?>
         <?= str_replace(array_keys($replace), array_values($replace), $templateGroup) ?>
         <?php endforeach; ?>
     </ul>
 
+    <?php // Remaining selected resources without group. ?>
     <ul class="resource-list selection-resources">
         <?php
-        $defaultHeading = ['default' => $translate('[Untitled]')];
-        foreach ($resourcesByType as $resourceType => $resourceList):
-            foreach ($resourceList as $resource):
-                if ($resourceType === 'items') {
-                    $heading = $resource->value($headingTerm, $defaultHeading);
-                } else {
-                    $heading = $resource->value($headingTerm);
-                    if (!$heading):
-                        // There is no media->position().
-                        $mediaId = $resource->id();
-                        $position = 0;
-                        foreach ($resource->item()->media() as $media):
-                            ++$position;
-                            if ($media->id() === $mediaId):
-                                break;
-                            endif;
-                        endforeach;
-                        $heading = sprintf(
-                            '%s (%d)',
-                            $resource->item()->value($headingTerm, $defaultHeading),
-                            $position
-                        );
-                    endif;
-                }
-                $body = $resource->value($bodyTerm);
-                ?>
-        <li class="<?= $resourceTypesToClasses[$resourceType] ?> resource">
-            <?= $resource->linkRaw($thumbnail($resource, 'medium')) ?>
-            <h4><?= $resource->link($heading) ?></h4>
-            <?php if ($body): ?>
-            <div class="description">
-                <?= $body ?>
-            </div>
-            <?php endif; ?>
-            <button type="button" class="selection-delete delete-icon" data-url="<?= $url('site/selection-id', ['id' => $resource->id(), 'action' => 'delete'], true) ?>"><?= $removeText ?></button>
-        </li>
-            <?php endforeach; ?>
-        <?php endforeach; ?>
+        $selectedResourceModels = [];
+        foreach ($selectedResources  as $resourceId => $resource) {
+            $selectedResourceModel['resource'] = $resource;
+            $selectedResourceModel['resourceType'] = $classesToTypes[get_class($resource)] ?? 'resources';
+            $selectedResourceModels[] = $selectedResourceModel;
+        } ?>
+        <?= $partialLoop('guest/site/guest/selection-group-resource', $selectedResourceModels) ?>
     </ul>
     <?php $this->trigger('view.browse.after'); ?>
 
@@ -141,4 +145,14 @@ $removeText = $escapeAttr($translate('Remove from selection'));
     <p>
         <?= $translate('The selection is empty.') // @translate ?>
     </p>
+</div>
+
+<?php // Common actions. ?>
+<div id="selector-group" class="selector-group inactive" style="display:none;">
+    <select name="group" aria-label="<?= $translate('Select a group') ?>">
+        <option value=""></option>
+        <?php foreach ($selection ? array_keys($selection->structure()) : [] as $groupFullPath): ?>
+        <option value="<?= $groupFullPath ?>"><?= str_replace('/', ' / ', $groupFullPath) ?></option>
+        <?php endforeach ?>
+    </select>
 </div>

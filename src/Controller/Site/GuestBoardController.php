@@ -66,6 +66,7 @@ class GuestBoardController extends AbstractActionController
 
         $selectionResources = $this->api()->search('selection_resources', $query)->getContent();
 
+        // TODO Output only selection and use SelectionRepresentation.
         $classesToTypes = [
             \Omeka\Api\Representation\ItemRepresentation::class => 'items',
             \Omeka\Api\Representation\ItemSetRepresentation::class => 'item_sets',

@@ -82,7 +82,7 @@ return  [
                             'route' => '/selection[/:action]',
                             'constraints' => [
                                 // Set groups first for regex.
-                                'action' => 'add-group|add|delete|toggle',
+                                'action' => 'add-group|add|delete|move|toggle',
                             ],
                             'defaults' => [
                                 '__NAMESPACE__' => 'Selection\Controller\Site',
@@ -96,7 +96,7 @@ return  [
                         'options' => [
                             'route' => '/selection/:id[/:action]',
                             'constraints' => [
-                                'action' => 'add-group|add|delete|toggle',
+                                'action' => 'add-group|add|delete|move|toggle',
                                 // The id is the resource id, except for groups.
                                 'id' => '\d+',
                             ],

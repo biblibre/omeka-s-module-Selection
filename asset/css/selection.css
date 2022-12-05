@@ -9,8 +9,15 @@
         list-style-type: none;
         padding-left: 0;
     }
+    .selection-list .selection-group .selection-resources {
+        padding-left: 2em;
+    }
     .selection-list .add-group::after {
         content:"+";
+    }
+    .selection-list .move-group::after,
+    .selection-list .move-resource::after {
+        content:"▷";
     }
     a.selection-list-toggle:link,
     a.selection-list-toggle:visited {
@@ -23,12 +30,13 @@
     .selection-list-toggle.active::after {
         content:"⊟";
     }
-    button.selection-delete::after,
-    span.selection-delete::after {
+    .selection-list .selection-delete::after {
         content:"X";
     }
-    .add-group::after,
-    .selection-delete::after {
+    .selection-list .add-group::after,
+    .selection-list .move-group::after,
+    .selection-list .move-resource::after,
+    .selection-list .selection-delete::after {
         padding-left: 1em;
     }
     .selection-list.selections.inactive,
