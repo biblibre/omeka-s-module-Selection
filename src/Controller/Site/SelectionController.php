@@ -72,8 +72,16 @@ class SelectionController extends AbstractActionController
         // When a user is set, the session and the database are sync.
         $container = $this->selectionContainer();
 
+        $id = (int) $this->params()->fromRoute('id');
+        $selection = $this->getSelection($id);
+        if ($id && !$selection) {
+            return $this->jsonErrorNotFound();
+        } elseif ($user && !$selection) {
+            $selection = $this->defaultStaticSelection($user);
+        }
+
         foreach ($resources as $resourceId => $resource) {
-            $data = $this->selectionResourceForResource($resource, true);
+            $data = $this->selectionResourceForResource($resource, true, $selection);
             if (isset($container->records[$resourceId])) {
                 $data['status'] = 'fail';
                 $data['data'] = [
@@ -84,9 +92,15 @@ class SelectionController extends AbstractActionController
                 $data['status'] = 'success';
                 if ($userId) {
                     try {
-                        $api->create('selection_resources', ['o:owner' => ['o:id' => $userId], 'o:resource' => ['o:id' => $resourceId]])->getContent();
+                        $api->create('selection_resources', [
+                            'o:owner' => ['o:id' => $userId],
+                            'o:resource' => ['o:id' => $resourceId],
+                            'o:selection' => ['o:id' => $selection->id()],
+                        ])->getContent();
                     } catch (\Exception $e) {
                     }
+                } else {
+                    $selection = null;
                 }
             }
             $results[$resourceId] = $data;
@@ -94,10 +108,12 @@ class SelectionController extends AbstractActionController
 
         if ($isMultiple) {
             $data = [
+                'selection' => $selection ? $selection->getReference() : null,
                 'selection_resources' => $results,
             ];
         } else {
             $data = [
+                'selection' => $selection ? $selection->getReference() : null,
                 'selection_resource' => reset($results),
             ];
         }
@@ -138,25 +154,38 @@ class SelectionController extends AbstractActionController
         // When a user is set, the session and the database are sync.
         $container = $this->selectionContainer();
 
+        $id = (int) $this->params()->fromRoute('id');
+        $selection = $this->getSelection($id);
+        if ($id && !$selection) {
+            return $this->jsonErrorNotFound();
+        }
+
         foreach ($resources as $resourceId => $resource) {
-            $data = $this->selectionResourceForResource($resource, false);
+            $data = $this->selectionResourceForResource($resource, false, $selection);
             $data['status'] = 'success';
             unset($container->records[$resourceId]);
             if ($userId) {
                 try {
-                    $api->delete('selection_resources', ['owner' => $userId, 'resource' => $resourceId]);
+                    $api->delete('selection_resources', $selection
+                        ? [ 'owner' => $userId, 'resource' => $resourceId, 'selection' => $selection->id()]
+                        : [ 'owner' => $userId, 'resource' => $resourceId],
+                    );
                 } catch (\Exception $e) {
                 }
+            } else {
+                $selection = null;
             }
             $results[$resourceId] = $data;
         }
 
         if ($isMultiple) {
             $data = [
+                'selection' => $selection ? $selection->getReference() : null,
                 'selection_resources' => $results,
             ];
         } else {
             $data = [
+                'selection' => $selection ? $selection->getReference() : null,
                 'selection_resource' => reset($results),
             ];
         }
@@ -206,28 +235,46 @@ class SelectionController extends AbstractActionController
                 $add[$resourceId] = $resource;
             }
         }
+
+        $id = (int) $this->params()->fromRoute('id');
+        $selection = $this->getSelection($id);
+        if ($id && !$selection) {
+            return $this->jsonErrorNotFound();
+        }
+
+        if ($add && $user && !$selection) {
+            $selection = $this->defaultStaticSelection($user);
+        }
+
         /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $add */
         foreach ($add as $resourceId => $resource) {
-            $data = $this->selectionResourceForResource($resource, true);
+            $data = $this->selectionResourceForResource($resource, true, $selection);
             $data['status'] = 'success';
             $container->records[$resourceId] = $data;
             $results[$resourceId] = $data;
             if ($userId) {
                 try {
-                    $api->create('selection_resources', ['o:owner' => ['o:id' => $userId], 'o:resource' => ['o:id' => $resourceId]])->getContent();
+                    $api->create('selection_resources', [
+                        'o:owner' => ['o:id' => $userId],
+                        'o:resource' => ['o:id' => $resourceId],
+                        'o:selection' => ['o:id' => $selection->id()],
+                    ])->getContent();
                 } catch (\Exception $e) {
                 }
             }
         }
         /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $delete */
         foreach ($delete as $resourceId => $resource) {
-            $data = $this->selectionResourceForResource($resource, false);
+            $data = $this->selectionResourceForResource($resource, false, $selection);
             $data['status'] = 'success';
             unset($container->records[$resourceId]);
             $results[$resourceId] = $data;
             if ($userId) {
                 try {
-                    $api->delete('selection_resources', ['owner' => $userId, 'resource' => $resourceId]);
+                    $api->delete('selection_resources', $selection
+                        ? [ 'owner' => $userId, 'resource' => $resourceId, 'selection' => $selection->id()]
+                        : [ 'owner' => $userId, 'resource' => $resourceId],
+                    );
                 } catch (\Exception $e) {
                 }
             }
@@ -235,10 +282,12 @@ class SelectionController extends AbstractActionController
 
         if ($isMultiple) {
             $data = [
+                'selection' => $selection ? $selection->getReference() : null,
                 'selection_resources' => $results,
             ];
         } else {
             $data = [
+                'selection' => $selection ? $selection->getReference() : null,
                 'selection_resource' => reset($results),
             ];
         }
@@ -280,16 +329,13 @@ class SelectionController extends AbstractActionController
         // When a user is set, the session and the database are sync.
         // TODO Manage session container.
 
-        /** @var \Selection\Api\Representation\SelectionRepresentation $selection */
+
         $id = (int) $this->params()->fromRoute('id');
-        if (empty($id)) {
+        $selection = $this->getSelection($id);
+        if ($id && !$selection) {
+            return $this->jsonErrorNotFound();
+        } elseif ($user && !$selection) {
             $selection = $this->defaultStaticSelection($user);
-        } else {
-            try {
-                $selection = $api->read('selections', ['owner' => $user->getId()])->getContent();
-            } catch (\Exception $e) {
-                return $this->jsonErrorNotFound();
-            }
         }
 
         // Add the group only if it does not exist.
@@ -390,9 +436,9 @@ class SelectionController extends AbstractActionController
         return new JsonModel([
             'status' => 'success',
             'data' => [
-                'selection' => $selection,
+                'selection' => $selection ? $selection->getReference() : null,
                 'source' => $structure[$source] ?? null,
-                'group' =>  $structure[$destination] ?? null,
+                'group' => $structure[$destination] ?? null,
             ],
         ]);
     }
@@ -448,14 +494,11 @@ class SelectionController extends AbstractActionController
 
         /** @var \Selection\Api\Representation\SelectionRepresentation $selection */
         $id = (int) $this->params()->fromRoute('id');
-        if (empty($id)) {
+        $selection = $this->getSelection($id);
+        if ($id && !$selection) {
+            return $this->jsonErrorNotFound();
+        } elseif ($user && !$selection) {
             $selection = $this->defaultStaticSelection($user);
-        } else {
-            try {
-                $selection = $api->read('selections', ['owner' => $user->getId()])->getContent();
-            } catch (\Exception $e) {
-                return $this->jsonErrorNotFound();
-            }
         }
 
         // Add the group only if it does not exist.
@@ -519,7 +562,7 @@ class SelectionController extends AbstractActionController
         return new JsonModel([
             'status' => 'success',
             'data' => [
-                'selection' => $selection,
+                'selection' => $selection ? $selection->getReference() : null,
                 'group' => $group,
             ],
         ]);
@@ -598,16 +641,12 @@ class SelectionController extends AbstractActionController
 
         $api = $this->api();
 
-        /** @var \Selection\Api\Representation\SelectionRepresentation $selection */
         $id = (int) $this->params()->fromRoute('id');
-        if (empty($id)) {
+        $selection = $this->getSelection($id);
+        if ($id && !$selection) {
+            return $this->jsonErrorNotFound();
+        } elseif ($user && !$selection) {
             $selection = $this->defaultStaticSelection($user);
-        } else {
-            try {
-                $selection = $api->read('selections', ['owner' => $user->getId()])->getContent();
-            } catch (\Exception $e) {
-                return $this->jsonErrorNotFound();
-            }
         }
 
         // Add the group only if it does not exist.
@@ -667,7 +706,7 @@ class SelectionController extends AbstractActionController
         return new JsonModel([
             'status' => 'success',
             'data' => [
-                'selection' => $selection,
+                'selection' => $selection ? $selection->getReference() : null,
                 'structure' => $selection->structure(),
             ],
         ]);
@@ -704,16 +743,12 @@ class SelectionController extends AbstractActionController
 
         $api = $this->api();
 
-        /** @var \Selection\Api\Representation\SelectionRepresentation $selection */
         $id = (int) $this->params()->fromRoute('id');
-        if (empty($id)) {
+        $selection = $this->getSelection($id);
+        if ($id && !$selection) {
+            return $this->jsonErrorNotFound();
+        } elseif ($user && !$selection) {
             $selection = $this->defaultStaticSelection($user);
-        } else {
-            try {
-                $selection = $api->read('selections', ['owner' => $user->getId()])->getContent();
-            } catch (\Exception $e) {
-                return $this->jsonErrorNotFound();
-            }
         }
 
         // Remove the group only if it exists.
@@ -765,7 +800,7 @@ class SelectionController extends AbstractActionController
         return new JsonModel([
             'status' => 'success',
             'data' => [
-                'selection' => $selection,
+                'selection' => $selection ? $selection->getReference() : null,
                 'structure' => $selection->structure(),
             ],
         ]);
@@ -810,13 +845,12 @@ class SelectionController extends AbstractActionController
      * Format a resource for the container.
      *
      * Copy in \Selection\Mvc\Controller\Plugin\SelectionContainer::selectionResourceForResource()
-     *
-     * @param AbstractResourceEntityRepresentation $resource
-     * @param bool $isSelected
-     * @return array
      */
-    protected function selectionResourceForResource(AbstractResourceEntityRepresentation $resource, $isSelected)
-    {
+    protected function selectionResourceForResource(
+        AbstractResourceEntityRepresentation $resource,
+        bool $isSelected,
+        ?SelectionRepresentation $selection = null
+    ) {
         static $siteSlug;
         static $url;
         if (is_null($siteSlug)) {
@@ -827,12 +861,31 @@ class SelectionController extends AbstractActionController
             'id' => $resource->id(),
             'type' => $resource->getControllerName(),
             'url' => $resource->siteUrl($siteSlug, true),
-            'url_remove' => $url->fromRoute('site/selection', ['site-slug' => $siteSlug, 'action' => 'delete'], ['query' => ['id' => $resource->id()]]),
+            'url_remove' => $selection
+                ? $url->fromRoute('site/selection-id', ['site-slug' => $siteSlug, 'action' => 'delete', 'id' => $selection->id()], ['query' => ['id' => $resource->id()]])
+                : $url->fromRoute('site/selection', ['site-slug' => $siteSlug, 'action' => 'delete'], ['query' => ['id' => $resource->id()]]),
             // String is required to avoid error in container when the title is
             // a resource.
             'title' => (string) $resource->displayTitle(),
             'value' => $isSelected ? 'selected' : 'unselected',
         ];
+    }
+
+    /**
+     * Get selection from id.
+     */
+    protected function getSelection($id): ?SelectionRepresentation
+    {
+        /** @var \Selection\Api\Representation\SelectionRepresentation $selection */
+        $id = (int) $this->params()->fromRoute('id');
+        if (!$id) {
+            return null;
+        }
+        try {
+            return $this->api()->read('selections', ['id' => $id])->getContent();
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     /**
