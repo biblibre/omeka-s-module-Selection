@@ -113,7 +113,7 @@ class GuestBoardController extends AbstractActionController
     protected function firstStaticSelection(User $user): ?SelectionRepresentation
     {
         return $this->api()->searchOne('selections', [
-            'owner' => $user->getId(),
+            'owner_id' => $user->getId(),
             'is_dynamic' => false,
         ])->getContent();
     }

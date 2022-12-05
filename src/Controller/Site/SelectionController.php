@@ -1061,7 +1061,7 @@ class SelectionController extends AbstractActionController
         /** @var \Omeka\Api\Manager $api */
         $api = $this->api();
         $selection = $api->searchOne('selections', [
-            'owner' => $user->getId(),
+            'owner_id' => $user->getId(),
             'is_dynamic' => false,
         ])->getContent();
         if (!$selection) {
@@ -1071,7 +1071,7 @@ class SelectionController extends AbstractActionController
             ])->getContent();
             $selecteds = $api->search('selection_resources', [
                 'owner_id' => $user->getId(),
-                'selection' => 0,
+                'selection_id' => 0,
             ], ['returnScalar' => 'id'])->getContent();
             if ($selecteds) {
                 $api->batchUpdate('selection_resources', $selecteds, [

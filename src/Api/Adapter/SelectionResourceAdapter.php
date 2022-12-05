@@ -208,7 +208,7 @@ class SelectionResourceAdapter extends AbstractEntityAdapter
                             $selectionEntity = $this->getAdapter('selections')->findEntity([
                                 'owner' => $entity->getOwner(),
                                 'label' => $label,
-                                'is_dynamic' => false,
+                                'isDynamic' => false,
                             ]);
                         } catch (\Omeka\Api\Exception\NotFoundException $e) {
                             $selectionEntity = null;
