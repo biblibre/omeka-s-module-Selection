@@ -38,17 +38,17 @@
 
 $plugins = $this->getHelperPluginManager();
 $url = $plugins->get('url');
-$escape = $plugins->get('escapeHtml');
+$partial = $plugins->get('partial');
 $translate = $plugins->get('translate');
 $thumbnail = $plugins->get('thumbnail');
 $escapeAttr = $plugins->get('escapeHtmlAttr');
-
-$this->htmlElement('body')->appendAttribute('class', 'selection resource browse');
 
 $this->headLink()
     ->appendStylesheet($this->assetUrl('css/selection.css', 'Selection'));
 $this->headScript()
     ->appendFile($this->assetUrl('js/selection.js', 'Selection'), 'text/javascript', ['defer' => 'defer']);
+
+$this->htmlElement('body')->appendAttribute('class', 'selection resource browse');
 
 $headingTerm = $this->siteSetting('browse_heading_property_term', 'dcterms:title');
 $bodyTerm = $this->siteSetting('browse_body_property_term', 'dcterms:description');
@@ -80,13 +80,15 @@ $removeText = $escapeAttr($translate('Remove from selection'));
 
     <?php $this->trigger('view.browse.before'); ?>
 
-    <ul class="resource-list selection-resources selection-structure">
-        <?php foreach ($selection ? $selection->structure() : [] as $group): ?>
-        <li class="selection-group">
-            <div>
-                <span class="group-name"><?= $escape($group['id']) ?></span>
-            </div>
-        </li>
+    <?php $templateGroup = $partial('guest/site/guest/selection-group'); ?>
+    <ul class="resource-list selection-resources selection-structure" data-msg-add-group="<?= $translate('Set group name') ?>" data-template-group="<?= $escapeAttr($templateGroup) ?>">
+        <?php
+        foreach ($selection ? $selection->structure() : [] as $groupFullPath => $group):
+            $replace = [
+                '__GROUP_PATH__' => $escapeAttr($groupFullPath),
+                '__GROUP_NAME__' => '<span>' . str_replace('/', '</span><span>', ltrim($groupFullPath, '/')) . '</span>',
+            ]; ?>
+        <?= str_replace(array_keys($replace), array_values($replace), $templateGroup) ?>
         <?php endforeach; ?>
     </ul>
 

@@ -294,8 +294,23 @@ class SelectionController extends AbstractActionController
 
         // Add the group only if it does not exist.
         $structure = $selection->structure();
-        if (isset($structure["/$groupName"])) {
-            $group = $structure["/$groupName"];
+
+        $path = trim((string) $this->params()->fromQuery('path'));
+
+        // Check the parent for security.
+        $hasParent = strlen($path);
+        if ($hasParent && !isset($structure[$path])) {
+            return new JsonModel([
+                'status' => 'fail',
+                'data' => [
+                    'message' => $this->translate('The parent group does not exist.'), // @translate
+                ],
+            ]);
+        }
+
+        $fullPath = "$path/$groupName";
+        if (isset($structure[$fullPath])) {
+            $group = $structure[$fullPath];
             return new JsonModel([
                 'status' => 'fail',
                 'data' => [
@@ -304,11 +319,28 @@ class SelectionController extends AbstractActionController
             ]);
         }
 
-        $group = [
-            'id' => $groupName,
-            'path' => '/',
-        ];
-        $structure["/$groupName"] = $group;
+        // Insert the group inside the parent path.
+        if ($hasParent) {
+            $group = [
+                // path + id = full path.
+                'id' => $groupName,
+                'path' => $path,
+            ];
+            $s = [];
+            foreach ($structure as $sFullPath=> $sGroup) {
+                $s[$sFullPath] = $sGroup;
+                if ($sFullPath === $path) {
+                    $s[$fullPath] = $group;
+                }
+            }
+            $structure = $s;
+        } else {
+            $group = [
+                'id' => $groupName,
+                'path' => '/',
+            ];
+            $structure[$fullPath] = $group;
+        }
 
         try {
             $api->update('selections', $selection->id(), [

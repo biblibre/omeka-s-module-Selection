@@ -52,30 +52,37 @@
         /**
          * Add a group.
          */
-        $('body').on('click', '.selection-list-actions .add-group', function(e) {
+        $('body').on('click', '.selection-list .add-group', function(e) {
             e.preventDefault();
             e.stopPropagation();
             const button = $(this);
-            const msg = button.data('msg-group-name') ? button.data('msg-group-name') : button.text();
+            const msg = button.closest('.selection-structure').data('msg-group-name') ? button.closest('.selection-structure').data('msg-group-name') : button.text();
             var group = prompt(msg);
             if (!group || !group.length) {
                 return;
             }
+            const path = button.closest('.selection-group').data('path') ? button.closest('.selection-group').data('path') : null;
             const url = button.attr('data-url');
             $.ajax({
                 url: url,
                 data: {
                     group: group,
+                    path: path,
                 },
             })
             .done(function(data) {
                 if (data.status === 'success') {
-                    $('.selection-structure').append(`
-                    <li class="selection-group">
-                        <div>
-                            <span class="group-name">${data.data.group.id}</span>
-                        </div>
-                    </li>`);
+                    // Path is checked and does not contain forbidden characters.
+                    const parent = data.data.group.path
+                        ? $('.selection-structure .selection-group[data-path="' + data.data.group.path + '"]')
+                        : $('.selection-structure');
+                    parent.append($('.selection-structure').data('template-group')
+                        .replace('__GROUP_PATH__', data.data.group.path + '/' + data.data.group.id)
+                        .replace('__GROUP_NAME__',
+                            (data.data.group.path && data.data.group.path.length ? '<span>' + data.data.group.path.substring(1).replaceAll('/', '</span><span>') + '</span>' : '')
+                            + '<span>' + data.data.group.id + '</span>'
+                        )
+                    );
                 } else if (data.status === 'fail') {
                     alert(data.data.message ? data.data.message : 'An error occurred.');
                 } else {

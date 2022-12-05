@@ -5,11 +5,11 @@
     #content .media.resource:hover {
         border-bottom: 1px solid transparent;
     }
-    .selection-list-actions ul {
+    .selection-list ul {
         list-style-type: none;
         padding-left: 0;
     }
-    .selection-list-actions .add-group::after {
+    .selection-list .add-group::after {
         content:"+";
     }
     a.selection-list-toggle:link,
@@ -45,6 +45,11 @@
         text-align: inherit;
         vertical-align: inherit;
         margin-right: inherit;
+    }
+    .group-name span:not(:last-of-type)::after {
+        content:"/";
+        padding-left: .5em;
+        padding-right: .5em;
     }
     /* Note: regular font awesome icons are no more free. */
     .selection-update.selected {

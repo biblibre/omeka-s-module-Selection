@@ -1,0 +1,29 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Selection\Api\Representation\SelectionRepresentation $selection
+ * @var \Selection\Api\Representation\SelectionResourceRepresentation[] $selectionResources
+ * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $resources
+ * @var array $resourcesByType
+ */
+
+// Template used by selection-resource-browse.
+
+$plugins = $this->getHelperPluginManager();
+$url = $plugins->get('url');
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+
+$urlAddGroup = $url('site/selection-id', ['id' => $selection ? $selection->id() : 0, 'action' => 'add-group'], true);
+?>
+
+<li class="selection-group" data-path="__GROUP_PATH__">
+    <div>
+        <span class="group-name">__GROUP_NAME__</span>
+        <ul class="actions">
+            <li><button type="button" class="add-group" data-url="<?= $escapeAttr($urlAddGroup) ?>"><?= $escape($translate('Add a sub-group')) ?></button></li>
+        </ul>
+    </div>
+</li>
