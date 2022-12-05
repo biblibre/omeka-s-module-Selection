@@ -18,6 +18,7 @@
  * @var string $moveText
  * // Individual resource.
  * @var string $resourceType
+ * @var array $bulkExporters
  * @var \Omeka\Api\Representation\AbstractEntityRepresentation $resource
  */
 
@@ -55,10 +56,11 @@ $body = $resource->value($bodyTerm);
 // This is the base url, the query is added via js.
 $baseUrl = pathinfo($url('site/selection-id', ['id' => $selection ? $selection->id() : 0, 'action' => '__'], true), PATHINFO_DIRNAME);
 $resourceId = $resource->id();
+$siteSlug = $site->slug();
 ?>
 
 <li class="selection-resource resource <?= $resourceTypesToClasses[$resourceType] ?>" data-id="<?= $resourceId ?>">
-    <?= $resource->linkRaw($thumbnail($resource, 'medium')) ?>
+    <?= $resource->linkRaw($thumbnail($resource, 'square'), null, ['class' => 'resource-link']) ?>
     <h4><?= $resource->link($heading) ?></h4>
     <?php if ($body): ?>
     <div class="description">
@@ -67,8 +69,15 @@ $resourceId = $resource->id();
     <?php endif; ?>
     <ul class="actions">
         <?php if ($selection && $selection->structure()): ?>
-        <li><button type="button" class="move-resource move-icon" data-url="<?= $baseUrl ?>/move"><?= $moveText ?></button></li>
+        <li><button type="button" class="move-resource" data-url="<?= $baseUrl ?>/move"><?= $moveText ?></button></li>
         <?php endif; ?>
-        <li><button type="button" class="selection-delete delete-icon" data-url="<?= $baseUrl ?>/delete"><?= $deleteText ?></button></li>
+        <li><button type="button" class="selection-delete" data-url="<?= $baseUrl ?>/delete"><?= $deleteText ?></button></li>
+        <?php if ($bulkExporters):
+        foreach ($bulkExporters as $format => $label):
+            $urlFormat = $url('site/resource-id/output', ['site-slug' => $siteSlug, 'controller' => $resourceTypesToClasses[$resourceType], 'id' => $resourceId, 'action' => 'show', 'format' => $format]);
+        ?>
+        <li><a class="download-id" href="<?= $urlFormat ?>" download="download"><button type="button" class="export-group download-<?= $format ?>" data-url="<?= $urlFormat ?>"><?= $label ?></button></a></li>
+        <?php endforeach; ?>
+        <?php endif; ?>
     </ul>
 </li>

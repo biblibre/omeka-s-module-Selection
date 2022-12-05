@@ -1,4 +1,3 @@
-
 (function() {
     $(document).ready(function() {
 
@@ -220,15 +219,7 @@
             if (newPath === path) {
                 return;
             }
-            var id;
-            // Move a single resource or resources of a group.
-            if (selectionResource.length) {
-                id = selectionResource.attr('data-id');
-            } else {
-                id = [];
-                selectionGroup.find(':not(.selection-group) .selection-resource[data-id != ""]').toArray()
-                    .forEach(function(el) { id.push(el.dataset.id); });
-            }
+            const id = selectionResource.length ? selectionResource.attr('data-id') : resourceGroupIds(selectionGroup);
             const url = select.attr('data-url');
             $.ajax({
                 url: url,
@@ -250,12 +241,6 @@
                 }
             });
         });
-
-        /**
-         * Hide useless button on load.
-         */
-        $('.selection-group .selection-resources:not(:has(.selection-resource))').closest('.selection-group')
-            .find('.move-group').hide();
 
         const updateSelectionButton = function(selectionResource) {
             const button = $('.selection-update[data-id=' + selectionResource.id + ']');
@@ -317,6 +302,36 @@
             const urlSplit = url.split('?', 2);
             return urlSplit.length < 2 ? null : new URLSearchParams(urlSplit[1]).get(param);
         }
+
+        function resourceGroupIds(selectionGroup) {
+            ids = [];
+            selectionGroup.find(':not(.selection-group) .selection-resource[data-id != ""]').toArray()
+                .forEach(function(el) { ids.push(el.dataset.id); });
+            return ids;
+        }
+
+        /**
+         * Hide useless button on load.
+         */
+        const emptySelectionGroups = $('.selection-group .selection-resources:not(:has(.selection-resource))').closest('.selection-group');
+        emptySelectionGroups.find('.move-group, .export-group').hide();
+
+        /**
+         * Prepare ids for groups and buttons.
+         */
+        $('.selection-group .selection-resources .selection-resource').closest('.selection-group').toArray()
+            .forEach(function(selectionGroup) {
+                const ids = resourceGroupIds($(selectionGroup));
+                if (ids.length) {
+                    $(selectionGroup).data('id', ids.join(','));
+                    $(selectionGroup).find('a.download-id').toArray().forEach(function(el) {
+                        const url = $(el).prop('href');
+                        if (!getQueryParameter(url, 'id')) {
+                            $(el).prop('href', url + '?id=' + ids.join(','));
+                        }
+                    });
+                }
+            });
 
     });
 })();

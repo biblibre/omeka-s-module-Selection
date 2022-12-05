@@ -16,7 +16,9 @@ $escape = $plugins->get('escapeHtml');
 $translate = $plugins->get('translate');
 
 // This is the base url, the query is added via js.
-$baseUrl = pathinfo($url('site/selection-id', ['id' => $selection ? $selection->id() : 0, 'action' => '__'], true), PATHINFO_DIRNAME);
+$siteSlug = $site->slug();
+$baseUrl = dirname($url('site/selection-id', ['id' => $selection ? $selection->id() : 0, 'action' => '__'], true));
+$bulkExporters = $plugins->has('bulkExporters') ? $plugins->get('bulkExporters')() : null;
 ?>
 
 <li class="selection-group" data-path="__GROUP_PATH__">
@@ -27,6 +29,13 @@ $baseUrl = pathinfo($url('site/selection-id', ['id' => $selection ? $selection->
             <li><button type="button" class="rename-group" data-url="<?= $baseUrl ?>/rename-group"><?= $escape($translate('Rename group')) ?></button></li>
             <li><button type="button" class="delete-group" data-url="<?= $baseUrl ?>/delete-group"><?= $escape($translate('Delete group')) ?></button></li>
             <li><button type="button" class="move-group" data-url="<?= $baseUrl ?>/move"><?= $escape($translate('Move resources')) ?></button></li>
+            <?php if ($bulkExporters):
+            foreach ($bulkExporters as $format => $label):
+                $urlFormat = $url('site/resource/output', ['site-slug' => $siteSlug, 'controller' => 'resource', 'action' => 'browse', 'format' => $format]);
+            ?>
+            <li><a class="download-id" href="<?= $urlFormat ?>" download="download"><button type="button" class="export-group download-<?= $format ?>" data-url="<?= $urlFormat ?>"><?= $label ?></button></a></li>
+            <?php endforeach; ?>
+            <?php endif; ?>
         </ul>
     </div>
     <ul class="resource-list selection-resources">

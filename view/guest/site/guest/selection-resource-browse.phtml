@@ -46,6 +46,7 @@ $thumbnail = $plugins->get('thumbnail');
 $escapeAttr = $plugins->get('escapeHtmlAttr');
 $partialLoop = $plugins->get('partialLoop');
 
+// May be included in main layout.
 $this->headLink()
     ->appendStylesheet($this->assetUrl('css/selection.css', 'Selection'));
 $this->headScript()
@@ -55,6 +56,7 @@ $this->htmlElement('body')->appendAttribute('class', 'selection resource browse'
 
 $headingTerm = $this->siteSetting('browse_heading_property_term', 'dcterms:title');
 $bodyTerm = $this->siteSetting('browse_body_property_term', 'dcterms:description');
+$bulkExporters = $plugins->has('bulkExporters') ? $plugins->get('bulkExporters')() : null;
 
 $selectedResources = $selection ? $selection->resources() : [];
 
@@ -80,6 +82,7 @@ $selectedResourceModel = [
     'defaultHeading' => ['default' => $translate('[Untitled]')],
     'moveText' => $escapeAttr($translate('Move')),
     'deleteText' => $escapeAttr($translate('Remove from selection')),
+    'bulkExporters' => $bulkExporters,
     'resourceType' => null,
     'resource' => null,
 ];
@@ -89,10 +92,10 @@ $selectedResourceModel = [
 
 <div class="selection-list selections">
 
-    <?php if (count($selectedResources)): ?>
-    <h3 class="selection-count"<?= count($selectionResources) ? '' : ' inactive" style="display:none' ?>"><?= sprintf($translate('%d items, %d media'), count($resourcesByType['items']), count($resourcesByType['media'])) ?></h3>
+    <?php if (count($selectionResources)): ?>
+    <h3 class="selection-count"><?= sprintf($translate('%d items, %d media'), count($resourcesByType['items']), count($resourcesByType['media'])) ?></h3>
     <?php else: ?>
-    <p class="selection-empty<?= count($selectionResources) ? ' inactive" style="display:none' : '' ?>">
+    <p class="selection-empty">
         <?= $translate('The selection is empty.') // @translate ?>
     </p>
     <?php endif; ?>
