@@ -43,6 +43,7 @@ $partial = $plugins->get('partial');
 $escape = $plugins->get('escapeHtml');
 $translate = $plugins->get('translate');
 $thumbnail = $plugins->get('thumbnail');
+$siteSetting = $plugins->get('siteSetting');
 $escapeAttr = $plugins->get('escapeHtmlAttr');
 $partialLoop = $plugins->get('partialLoop');
 
@@ -54,8 +55,10 @@ $this->headScript()
 
 $this->htmlElement('body')->appendAttribute('class', 'selection resource browse');
 
-$headingTerm = $this->siteSetting('browse_heading_property_term', 'dcterms:title');
-$bodyTerm = $this->siteSetting('browse_body_property_term', 'dcterms:description');
+$lang = $this->lang();
+$filterLocale = (bool) $siteSetting('filter_locale_values');
+$headingTerm = $siteSetting('browse_heading_property_term', 'dcterms:title');
+$bodyTerm = $siteSetting('browse_body_property_term', 'dcterms:description');
 $bulkExporters = $plugins->has('bulkExporters') ? $plugins->get('bulkExporters')() : null;
 
 $selectedResources = $selection ? $selection->resources() : [];
@@ -79,7 +82,9 @@ $selectedResourceModel = [
     'escapeAttr' => $escapeAttr,
     'headingTerm' => $headingTerm,
     'bodyTerm' => $bodyTerm,
-    'defaultHeading' => ['default' => $translate('[Untitled]')],
+    'defaultHeading' => ['default' => $translate('[Untitled]'), 'lang' => ($filterLocale ? [$lang, ''] : null)],
+    'defaultBody' => ['lang' => ($filterLocale ? [$lang, ''] : null)],
+    'defaultLang' => $filterLocale ? [$lang, ''] : null,
     'moveText' => $escapeAttr($translate('Move')),
     'deleteText' => $escapeAttr($translate('Remove from selection')),
     'bulkExporters' => $bulkExporters,

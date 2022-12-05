@@ -14,6 +14,8 @@
  * @var string $headingTerm
  * @var string $bodyTerm
  * @var array $defaultHeading
+ * @var array $defaultBody
+ * @var array $defaultLang
  * @var string $deleteText
  * @var string $moveText
  * // Individual resource.
@@ -34,24 +36,8 @@ $resourceTypesToClasses = [
     'resources' => 'resource',
 ];
 
-if ($resourceType === 'items') {
-    $heading = $resource->value($headingTerm, $defaultHeading);
-} else {
-    $heading = $resource->value($headingTerm);
-    if (!$heading) {
-        // There is no media->position().
-        $mediaId = $resource->id();
-        $position = 0;
-        foreach ($resource->item()->media() as $media) {
-            ++$position;
-            if ($media->id() === $mediaId) {
-                break;
-            }
-        }
-        $heading = sprintf('%1$s (%2$d)', $resource->item()->value($headingTerm, $defaultHeading), $position);
-    }
-}
-$body = $resource->value($bodyTerm);
+$heading = $headingTerm ? $resource->value($headingTerm, $defaultHeading) : $resource->displayTitle(null, $defaultLang);
+$body = $bodyTerm ? $resource->value($bodyTerm, $defaultBody) : $resource->displayDescription(null, $defaultLang);
 
 // This is the base url, the query is added via js.
 $baseUrl = pathinfo($url('site/selection-id', ['id' => $selection ? $selection->id() : 0, 'action' => '__'], true), PATHINFO_DIRNAME);
