@@ -82,7 +82,7 @@ return  [
                             'route' => '/selection[/:action]',
                             'constraints' => [
                                 // Set groups first for regex.
-                                'action' => 'add-group|rename-group|add|delete|move|toggle',
+                                'action' => 'add-group|rename-group|delete-group|add|delete|move|toggle',
                             ],
                             'defaults' => [
                                 '__NAMESPACE__' => 'Selection\Controller\Site',
@@ -96,7 +96,7 @@ return  [
                         'options' => [
                             'route' => '/selection/:id[/:action]',
                             'constraints' => [
-                                'action' => 'add-group|rename-group|add|delete|move|toggle',
+                                'action' => 'add-group|rename-group|delete-group|add|delete|move|toggle',
                                 'id' => '\d+',
                             ],
                             'defaults' => [

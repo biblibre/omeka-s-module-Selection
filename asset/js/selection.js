@@ -151,6 +151,40 @@
         });
 
         /**
+         * Remove a group.
+         *
+         * @todo Factorize: this is nearly the same than addGroup.
+         */
+        $('body').on('click', '.selection-list .delete-group', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const button = $(this);
+            const selectionGroup = button.closest('.selection-group');
+            const path = selectionGroup.data('path') ? selectionGroup.data('path') : null;
+            if (!path || !path.length) {
+                return;
+            }
+            const url = button.attr('data-url');
+            $.ajax({
+                url: url,
+                data: {
+                    group: path,
+                },
+            })
+            .done(function(data) {
+                if (data.status === 'success') {
+                    // TODO Add events to update select, etc.
+                    window.location.reload();
+                    return false;
+                } else if (data.status === 'fail') {
+                    alert(data.data.message ? data.data.message : 'An error occurred.');
+                } else {
+                    alert(data.message ? data.message : 'An error occurred.');
+                }
+            });
+        });
+
+        /**
          * Prepare/remove the selector used to move a group or a resource.
          */
         $('body').on('click', '.selection-list .move-group, .selection-list .move-resource', function(e) {
@@ -262,8 +296,8 @@
                                 $('<span class="selection-delete">')
                                     .attr('data-id', selectionResource.id)
                                     .attr('data-url', selectionResource.url_remove)
-                                    .attr('title', list.attr('data-text-remove'))
-                                    .attr('aria-label', list.attr('data-text-remove'))
+                                    .attr('title', list.attr('data-text-delete'))
+                                    .attr('aria-label', list.attr('data-text-delete'))
                             )
                     );
                 }

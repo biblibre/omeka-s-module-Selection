@@ -14,7 +14,7 @@
  * @var string $headingTerm
  * @var string $bodyTerm
  * @var array $defaultHeading
- * @var string $removeText
+ * @var string $deleteText
  * @var string $moveText
  * // Individual resource.
  * @var string $resourceType
@@ -54,9 +54,10 @@ $body = $resource->value($bodyTerm);
 
 // This is the base url, the query is added via js.
 $baseUrl = pathinfo($url('site/selection-id', ['id' => $selection ? $selection->id() : 0, 'action' => '__'], true), PATHINFO_DIRNAME);
+$resourceId = $resource->id();
 ?>
 
-<li class="selection-resource resource <?= $resourceTypesToClasses[$resourceType] ?>" data-id="<?= $resource->id() ?>">
+<li class="selection-resource resource <?= $resourceTypesToClasses[$resourceType] ?>" data-id="<?= $resourceId ?>">
     <?= $resource->linkRaw($thumbnail($resource, 'medium')) ?>
     <h4><?= $resource->link($heading) ?></h4>
     <?php if ($body): ?>
@@ -68,6 +69,6 @@ $baseUrl = pathinfo($url('site/selection-id', ['id' => $selection ? $selection->
         <?php if ($selection && $selection->structure()): ?>
         <li><button type="button" class="move-resource move-icon" data-url="<?= $baseUrl ?>/move"><?= $moveText ?></button></li>
         <?php endif; ?>
-        <li><button type="button" class="selection-delete delete-icon" data-url="<?= $baseUrl ?>/delete"><?= $removeText ?></button></li>
+        <li><button type="button" class="selection-delete delete-icon" data-url="<?= $baseUrl ?>/delete"><?= $deleteText ?></button></li>
     </ul>
 </li>

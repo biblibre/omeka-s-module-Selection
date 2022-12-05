@@ -674,6 +674,95 @@ class SelectionController extends AbstractActionController
     }
 
     /**
+     * Delete a group in a selection.
+     *
+     * @todo Factorize with addGroupAction.
+     */
+    public function deleteGroupAction()
+    {
+        if (!$this->getRequest()->isXmlHttpRequest()) {
+            return $this->jsonErrorNotFound();
+        }
+
+        $siteSettings = $this->siteSettings();
+        $allowVisitor = $siteSettings->get('selection_visitor_allow', true);
+        $user = $this->identity();
+        // TODO Manage group for visitor by session.
+        if (!$allowVisitor || !$user) {
+            return $this->jsonErrorNotFound();
+        }
+
+        $path = trim((string) $this->params()->fromQuery('group'));
+        if (!strlen($path) || $path === '/') {
+            return new JsonModel([
+                'status' => 'error',
+                'data' => [
+                    'message' => $this->translate('No group set.'), // @translate
+                ],
+            ]);
+        }
+
+        $api = $this->api();
+
+        /** @var \Selection\Api\Representation\SelectionRepresentation $selection */
+        $id = (int) $this->params()->fromRoute('id');
+        if (empty($id)) {
+            $selection = $this->defaultStaticSelection($user);
+        } else {
+            try {
+                $selection = $api->read('selections', ['owner' => $user->getId()])->getContent();
+            } catch (\Exception $e) {
+                return $this->jsonErrorNotFound();
+            }
+        }
+
+        // Remove the group only if it exists.
+        $structure = $selection->structure();
+
+        if (!isset($structure[$path])) {
+            return new JsonModel([
+                'status' => 'fail',
+                'data' => [
+                    'message' => $this->translate('The group does not exist.'), // @translate
+                ],
+            ]);
+        }
+
+        $selecteds = $structure[$path]['resources'] ?? [];
+        if ($selecteds) {
+            $selectionResourceIds = [];
+            foreach ($selection->selectionResources() as $selectionResource) {
+                if (in_array($selectionResource->resource()->id(), $selecteds)) {
+                    $selectionResourceIds[] = $selectionResource->id();
+                }
+            }
+            if ($selectionResourceIds) {
+                $api->batchDelete('selection_resources', $selectionResourceIds);
+            }
+        }
+        unset($structure[$path]);
+
+        try {
+            $api->update('selections', $selection->id(), [
+                'o:structure' => $structure,
+            ], [], ['isPartial' => true])->getContent();
+        } catch (\Exception $e) {
+            return new JsonModel([
+                'status' => 'errof',
+                'message' => $this->translate('An internal error occurred.'), // @translate
+            ]);
+        }
+
+        return new JsonModel([
+            'status' => 'success',
+            'data' => [
+                'selection' => $selection,
+                'structure' => $selection->structure(),
+            ],
+        ]);
+    }
+
+    /**
      * Get selected resources from the query and prepare them.
      */
     protected function requestedResources()

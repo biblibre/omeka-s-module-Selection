@@ -22,6 +22,9 @@
     .selection-list .rename-group::after {
         content:"⁄";
     }
+    .selection-list .delete-group::after {
+        content:"X";
+    }
     a.selection-list-toggle:link,
     a.selection-list-toggle:visited {
         color: #000;
@@ -39,6 +42,7 @@
     .selection-list .add-group::after,
     .selection-list .move-group::after,
     .selection-list .rename-group::after,
+    .selection-list .delete-group::after,
     .selection-list .move-resource::after,
     .selection-list .selection-delete::after {
         padding-left: 1em;
