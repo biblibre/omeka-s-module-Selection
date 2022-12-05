@@ -1,6 +1,9 @@
 (function() {
     $(document).ready(function() {
 
+        /**
+         * Manage selection for multiple resource.
+         */
         $('body').on('click', '.selection-update, .selection-delete', function(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -18,10 +21,32 @@
             });
         });
 
+        /**
+         * Toggle selected/unselected for a resource.
+         */
         $('body').on('click', '.selection-list-toggle', function() {
             $(this).toggleClass('active');
             $('.selection-list').toggle().toggleClass('active');
             return false;
+        });
+
+        /**
+         * Remove a resource from the list of selected resources.
+         */
+        $('body').on('click', '.selection-resources .actions .delete', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const button = $(this);
+            const url = button.attr('data-url');
+            $.ajax(url)
+            .done(function(data) {
+                if (data.status === 'success') {
+                    const selectionResource = data.data.selection_resource;
+                    if (selectionResource.status === 'success' && selectionResource.value === 'unselected' ) {
+                        deleteSelectionFromList(selectionResource);
+                    }
+                }
+            });
         });
 
         const updateSelectionButton = function(selectionResource) {
@@ -63,6 +88,18 @@
                 $('.selection-empty').removeClass('active');
             } else {
                 $('.selection-empty').addClass('active');
+            }
+        }
+
+        const deleteSelectionFromList = function(selectionResource) {
+            const list = $('.selection-resources');
+            if (!list.length) {
+                return;
+            }
+            list.find('li[data-id=' + selectionResource.id + ']').remove();
+            if (!list.find('li').length) {
+                $('.selection-list.selections').addClass('inactive').hide();
+                $('.selection-list.selection-empty').removeClass('inactive').show();
             }
         }
 

@@ -35,9 +35,10 @@
  */
 
 $plugins = $this->getHelperPluginManager();
+$url = $plugins->get('url');
 $translate = $plugins->get('translate');
 $thumbnail = $plugins->get('thumbnail');
-$selectionButtonToggle = $this->plugin('selectionButtonToggle');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
 
 $this->htmlElement('body')->appendAttribute('class', 'selection resource browse');
 
@@ -54,59 +55,68 @@ $resourcesByType = ['item-set' => [], 'item' => [], 'media' => [], 'annotation' 
 foreach ($resources as $resource) {
     $resourcesByType[$resource->getControllerName()][] = $resource;
 }
+
+$removeText = $escapeAttr($translate('Remove from selection'));
 ?>
 
 <?= $this->pageTitle($translate('Selection'), 2) // @translate ?>
 
 <?php if (count($selectionResources)): ?>
-<h3><?= sprintf($translate('%d items, %d media'), count($resourcesByType['item']), count($resourcesByType['media'])) // @translate ?></h3>
 
-<?php $this->trigger('view.browse.before'); ?>
-<ul class="resource-list selection-resources">
-    <?php
-    $defaultHeading = ['default' => $translate('[Untitled]')];
-    foreach ($resourcesByType as $resourceType => $resourceList):
-        foreach ($resourceList as $resource):
-            if ($resourceType === 'item') {
-                $heading = $resource->value($headingTerm, $defaultHeading);
-            } else {
-                $heading = $resource->value($headingTerm);
-                if (!$heading):
-                    // There is no media->position().
-                    $mediaId = $resource->id();
-                    $position = 0;
-                    foreach ($resource->item()->media() as $media):
-                        ++$position;
-                        if ($media->id() === $mediaId):
-                            break;
-                        endif;
-                    endforeach;
-                    $heading = sprintf(
-                        '%s (%d)',
-                        $resource->item()->value($headingTerm, $defaultHeading),
-                        $position
-                    );
-                endif;
-            }
-            $body = $resource->value($bodyTerm);
-            ?>
-    <li class="<?= $resourceType ?> resource">
-        <?= $resource->linkRaw($thumbnail($resource, 'medium')) ?>
-        <h4><?= $resource->link($heading) ?></h4>
-        <?php if ($body): ?>
-        <div class="description">
-            <?= $body ?>
-        </div>
-        <?php endif; ?>
-        <?= $selectionButtonToggle($resource) ?>
-    </li>
+<div class="selection-list selections">
+
+    <h3><?= sprintf($translate('%d items, %d media'), count($resourcesByType['item']), count($resourcesByType['media'])) // @translate ?></h3>
+
+    <?php $this->trigger('view.browse.before'); ?>
+    <ul class="resource-list selection-resources">
+        <?php
+        $defaultHeading = ['default' => $translate('[Untitled]')];
+        foreach ($resourcesByType as $resourceType => $resourceList):
+            foreach ($resourceList as $resource):
+                if ($resourceType === 'item') {
+                    $heading = $resource->value($headingTerm, $defaultHeading);
+                } else {
+                    $heading = $resource->value($headingTerm);
+                    if (!$heading):
+                        // There is no media->position().
+                        $mediaId = $resource->id();
+                        $position = 0;
+                        foreach ($resource->item()->media() as $media):
+                            ++$position;
+                            if ($media->id() === $mediaId):
+                                break;
+                            endif;
+                        endforeach;
+                        $heading = sprintf(
+                            '%s (%d)',
+                            $resource->item()->value($headingTerm, $defaultHeading),
+                            $position
+                        );
+                    endif;
+                }
+                $body = $resource->value($bodyTerm);
+                ?>
+        <li class="<?= $resourceType ?> resource">
+            <?= $resource->linkRaw($thumbnail($resource, 'medium')) ?>
+            <h4><?= $resource->link($heading) ?></h4>
+            <?php if ($body): ?>
+            <div class="description">
+                <?= $body ?>
+            </div>
+            <?php endif; ?>
+            <button type="button" class="selection-delete delete-icon" data-url="<?= $url('site/selection-id', ['id' => $resource->id(), 'action' => 'delete'], true) ?>"><?= $removeText ?></button>
+        </li>
+            <?php endforeach; ?>
         <?php endforeach; ?>
-    <?php endforeach; ?>
-</ul>
-<?php $this->trigger('view.browse.after'); ?>
+    </ul>
+    <?php $this->trigger('view.browse.after'); ?>
 
-<?php else: ?>
-<p>
-    <?= $translate('The selection is empty.') // @translate ?>
-</p>
+</div>
+
 <?php endif; ?>
+
+<div class="selection-list selection-empty<?= count($selectionResources) ? ' inactive" style="display:none' : '' ?>">
+    <p>
+        <?= $translate('The selection is empty.') // @translate ?>
+    </p>
+</div>

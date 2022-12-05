@@ -16,16 +16,16 @@
     .selection-list-toggle.active::after {
         content:"⊟";
     }
+    button.selection-delete::after,
     span.selection-delete::after {
         content:"X";
     }
-    .selection-empty,
-    .selection-list {
-        display: none;
+    .selection-delete::after {
+        padding-left: 1em;
     }
-    .selection-empty.active,
-    .selection-list.active {
-        display: block;
+    .selection-list.selections.inactive,
+    .selection-list.selection-empty.inactive {
+        display: none;
     }
     span.selection-delete {
         cursor: pointer;
