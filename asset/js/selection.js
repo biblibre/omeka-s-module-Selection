@@ -93,6 +93,7 @@
                         ? $('.selection-structure .selection-group[data-path="' + data.data.group.path + '"]')
                         : $('.selection-structure');
                     parent.append($('.selection-structure').data('template-group')
+                        .replace('__GROUP_LEVEL__', data.data.group.path + '/' + data.data.group.id)
                         .replace('__GROUP_PATH__', data.data.group.path + '/' + data.data.group.id)
                         .replace('__GROUP_NAME__',
                             (data.data.group.path && data.data.group.path.length ? '<span>' + data.data.group.path.substring(1).replaceAll('/', '</span><span>') + '</span>' : '')
@@ -317,7 +318,7 @@
         emptySelectionGroups.find('.move-resource, .export-group').hide();
 
         /**
-         * Prepare ids for groups and buttons.
+         * Prepare initial ids for groups and buttons.
          */
         $('.selection-group .selection-resources .selection-resource').closest('.selection-group').toArray()
             .forEach(function(selectionGroup) {

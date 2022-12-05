@@ -125,6 +125,7 @@ $selectedResourceModel = [
                 $selectedResourceModels[] = $selectedResourceModel;
             }
             $replace = [
+                '__GROUP_LEVEL__' => substr_count($groupFullPath, '/'),
                 '__GROUP_PATH__' => $escapeAttr($groupFullPath),
                 '__GROUP_NAME__' => '<span>' . str_replace('/', '</span><span>', ltrim($groupFullPath, '/')) . '</span>',
                 '__GROUP_RESOURCES__' => $selectedResourceModels

@@ -21,7 +21,7 @@ $baseUrl = dirname($url('site/selection-id', ['id' => $selection ? $selection->i
 $bulkExporters = $plugins->has('bulkExporters') ? $plugins->get('bulkExporters')() : null;
 ?>
 
-<li class="selection-group" data-path="__GROUP_PATH__">
+<li class="selection-group group-level-__GROUP_LEVEL_" data-path="__GROUP_PATH__" data-level="__GROUP_LEVEL__">>
     <div>
         <span class="group-name">__GROUP_NAME__</span>
         <ul class="actions">
