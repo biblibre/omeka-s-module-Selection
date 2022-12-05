@@ -133,7 +133,7 @@
                 url: url,
                 data: {
                     group: path,
-                    destination: groupDestination.trim(),
+                    name: groupDestination.trim(),
                 },
             })
             .done(function(data) {
@@ -226,7 +226,7 @@
                 data: {
                     id: id,
                     group: path,
-                    destination: newPath,
+                    name: newPath,
                 },
             })
             .done(function(data) {
@@ -314,7 +314,7 @@
          * Hide useless button on load.
          */
         const emptySelectionGroups = $('.selection-group .selection-resources:not(:has(.selection-resource))').closest('.selection-group');
-        emptySelectionGroups.find('.move-group, .export-group').hide();
+        emptySelectionGroups.find('.move-resource, .export-group').hide();
 
         /**
          * Prepare ids for groups and buttons.

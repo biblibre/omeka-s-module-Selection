@@ -72,6 +72,7 @@ class SelectionController extends AbstractActionController
         // When a user is set, the session and the database are sync.
         $container = $this->selectionContainer();
 
+        /** @var \Selection\Api\Representation\SelectionRepresentation $selection */
         $id = (int) $this->params()->fromRoute('id');
         $selection = $this->getSelection($id);
         if ($id && !$selection) {
@@ -154,6 +155,7 @@ class SelectionController extends AbstractActionController
         // When a user is set, the session and the database are sync.
         $container = $this->selectionContainer();
 
+        /** @var \Selection\Api\Representation\SelectionRepresentation $selection */
         $id = (int) $this->params()->fromRoute('id');
         $selection = $this->getSelection($id);
         if ($id && !$selection) {
@@ -236,6 +238,7 @@ class SelectionController extends AbstractActionController
             }
         }
 
+        /** @var \Selection\Api\Representation\SelectionRepresentation $selection */
         $id = (int) $this->params()->fromRoute('id');
         $selection = $this->getSelection($id);
         if ($id && !$selection) {
@@ -329,7 +332,7 @@ class SelectionController extends AbstractActionController
         // When a user is set, the session and the database are sync.
         // TODO Manage session container.
 
-
+        /** @var \Selection\Api\Representation\SelectionRepresentation $selection */
         $id = (int) $this->params()->fromRoute('id');
         $selection = $this->getSelection($id);
         if ($id && !$selection) {
@@ -338,16 +341,15 @@ class SelectionController extends AbstractActionController
             $selection = $this->defaultStaticSelection($user);
         }
 
-        // Add the group only if it does not exist.
         $structure = $selection->structure();
 
         $source = trim((string) $this->params()->fromQuery('group'));
-        $destination = trim((string) $this->params()->fromQuery('destination'));
+        $destination = trim((string) $this->params()->fromQuery('name'));
         if ($source === $destination) {
             return new JsonModel([
                 'status' => 'fail',
                 'data' => [
-                    'message' => $this->translate('The group is unchanged.'), // @translate
+                    'message' => $this->translate('The group name is unchanged.'), // @translate
                 ],
             ]);
         }
@@ -388,37 +390,15 @@ class SelectionController extends AbstractActionController
             ]);
         }
 
-        // TODO Moe all resources of a group.
-        $moveAllResources = false;
-        if ($moveAllResources) {
+        if (strlen($source)) {
             $sourceResources = $selection->resourcesForGroup($source);
-            if (!$sourceResources) {
-                return new JsonModel([
-                    'status' => 'fail',
-                    'data' => [
-                        'message' => $this->translate('There are no resources to move.'), // @translate
-                    ],
-                ]);
-            }
-            unset($structure[$source]['resources']);
-            if (strlen($destination)) {
-                if (empty($structure[$destination]['resources'])) {
-                    $structure[$destination]['resources'] = array_keys($sourceResources);
-                } else {
-                    $structure[$destination]['resources'] += array_keys($sourceResources);
-                }
-            }
-        } else {
-            if (strlen($source)) {
-                $sourceResources = $selection->resourcesForGroup($source);
-                $structure[$source]['resources'] = array_keys(array_diff_key($sourceResources, $resources));
-            }
-            if (strlen($destination)) {
-                if (empty($structure[$destination]['resources'])) {
-                    $structure[$destination]['resources'] = array_keys($resources);
-                } else {
-                    $structure[$destination]['resources'] += array_keys($resources);
-                }
+            $structure[$source]['resources'] = array_keys(array_diff_key($sourceResources, $resources));
+        }
+        if (strlen($destination)) {
+            if (empty($structure[$destination]['resources'])) {
+                $structure[$destination]['resources'] = array_keys($resources);
+            } else {
+                $structure[$destination]['resources'] = array_merge(array_values($structure[$destination]['resources']), array_keys($resources));
             }
         }
 
@@ -572,6 +552,7 @@ class SelectionController extends AbstractActionController
      * Rename a group (last part) in a selection.
      *
      * @todo Factorize with addGroupAction.
+     * @todo Factorize with moveGroupAction.
      */
     public function renameGroupAction()
     {
@@ -591,17 +572,17 @@ class SelectionController extends AbstractActionController
         $currentGroupName = basename($path);
         if (!strlen($currentGroupName)) {
             return new JsonModel([
-                'status' => 'error',
+                'status' => 'fail',
                 'data' => [
                     'message' => $this->translate('No group set.'), // @translate
                 ],
             ]);
         }
 
-        $groupName = trim((string) $this->params()->fromQuery('destination'));
+        $groupName = trim((string) $this->params()->fromQuery('name'));
         if (!strlen($groupName)) {
             return new JsonModel([
-                'status' => 'error',
+                'status' => 'fail',
                 'data' => [
                     'message' => $this->translate('No group set.'), // @translate
                 ],
@@ -631,16 +612,14 @@ class SelectionController extends AbstractActionController
             return new JsonModel([
                 'status' => 'fail',
                 'data' => [
-                    'message' => sprintf(
-                        $this->translate('The group name is unchanged.'), // @translate
-                        $invalidCharacters
-                    ),
+                    'message' => $this->translate('The group name is unchanged.') // @translate
                 ],
             ]);
         }
 
         $api = $this->api();
 
+        /** @var \Selection\Api\Representation\SelectionRepresentation $selection */
         $id = (int) $this->params()->fromRoute('id');
         $selection = $this->getSelection($id);
         if ($id && !$selection) {
@@ -713,6 +692,186 @@ class SelectionController extends AbstractActionController
     }
 
     /**
+     * Move a group in a selection.
+     *
+     * @todo Factorize with addGroupAction.
+     * @todo Factorize with renameGroupAction.
+     */
+    public function moveGroupAction()
+    {
+        if (!$this->getRequest()->isXmlHttpRequest()) {
+            return $this->jsonErrorNotFound();
+        }
+
+        $siteSettings = $this->siteSettings();
+        $allowVisitor = $siteSettings->get('selection_visitor_allow', true);
+        $user = $this->identity();
+        // TODO Manage group for visitor by session.
+        if (!$allowVisitor || !$user) {
+            return $this->jsonErrorNotFound();
+        }
+
+        $source = trim((string) $this->params()->fromQuery('group'));
+        $groupName = basename($source);
+        if (!strlen($source) || !strlen($groupName)) {
+            return new JsonModel([
+                'status' => 'fail',
+                'data' => [
+                    'message' => $this->translate('No group set.'), // @translate
+                ],
+            ]);
+        }
+
+        $parentDestination = trim((string) $this->params()->fromQuery('name'));
+        if (!strlen($parentDestination)) {
+            $parentDestination = '/';
+        }
+
+        $destination = ($parentDestination === '/' ? '' : $parentDestination) . '/' . $groupName;
+        if ($source === $destination) {
+            return new JsonModel([
+                'status' => 'fail',
+                'data' => [
+                    'message' => $this->translate('The group name is unchanged.') // @translate
+                ],
+            ]);
+        }
+
+        if (mb_strpos($destination . '/', $source . '/') === 0) {
+            return new JsonModel([
+                'status' => 'fail',
+                'data' => [
+                    'message' => $this->translate('The group cannot be moved inside itself.') // @translate
+                ],
+            ]);
+        }
+
+        $api = $this->api();
+
+        /** @var \Selection\Api\Representation\SelectionRepresentation $selection */
+        $id = (int) $this->params()->fromRoute('id');
+        $selection = $this->getSelection($id);
+        if ($id && !$selection) {
+            return $this->jsonErrorNotFound();
+        } elseif ($user && !$selection) {
+            $selection = $this->defaultStaticSelection($user);
+        }
+
+        // Add the group only if it does not exist.
+        $structure = $selection->structure();
+
+        if (!isset($structure[$source])) {
+            return new JsonModel([
+                'status' => 'fail',
+                'data' => [
+                    'message' => sprintf(
+                        $this->translate('The group "%s" does not exist.'), // @translate
+                        str_replace('/', ' / ', $source)
+                    ),
+                ],
+            ]);
+        }
+
+        if ($parentDestination !== '/' && !isset($structure[$parentDestination])) {
+            return new JsonModel([
+                'status' => 'fail',
+                'data' => [
+                    'message' => sprintf(
+                        $this->translate('The group "%s" does not exist.'), // @translate
+                        str_replace('/', ' / ', $parentDestination)
+                    ),
+                ],
+            ]);
+        }
+
+        $sourceParentPath = dirname($source);
+        $sourceParentPathLength = strlen($sourceParentPath);
+
+        // The group and all sub-groups should be moved at the right place, so prepare them all.
+        // Note: normally, the tree of groups is logical: a branch is always
+        // after its parent branch.
+        $sourceGroups = [];
+        if ($parentDestination === '/') {
+            foreach ($structure as $sFullPath => $sGroup) {
+                if (strpos($sFullPath . '/', $source . '/') === 0) {
+                    $newPath = mb_substr($sGroup['path'], $sourceParentPathLength);
+                    $sGroup['path'] = $newPath === '' ? '/' : $newPath;
+                    $sourceGroups[$newPath . '/' . $sGroup['id']] = $sGroup;
+                    unset($structure[$sFullPath]);
+                }
+            }
+        } else {
+            foreach ($structure as $sFullPath => $sGroup) {
+                if (strpos($sFullPath . '/', $source . '/') === 0) {
+                    $newPath = $parentDestination
+                        . ($sGroup['path'] === '/' ? '' : mb_substr($sGroup['path'], $sourceParentPathLength));
+                    $sGroup['path'] = $newPath;
+                    $sourceGroups[$newPath . '/' . $sGroup['id']] = $sGroup;
+                    unset($structure[$sFullPath]);
+                }
+            }
+        }
+
+        $s = [];
+        // Append.
+        if (!isset($structure[$destination]) && $parentDestination === '/') {
+            $s = $structure + $sourceGroups;
+        }
+        // No merge.
+        elseif (!isset($structure[$destination])) {
+            foreach ($structure as $sFullPath=> $sGroup) {
+                $s[$sFullPath] = $sGroup;
+                if ($sFullPath === $parentDestination) {
+                    $s += $sourceGroups;
+                }
+            }
+        }
+        // Merge.
+        else {
+            foreach ($structure as $sFullPath=> $sGroup) {
+                if (isset($s[$sFullPath])) {
+                    continue;
+                }
+                $s[$sFullPath] = $sGroup;
+                if ($sFullPath === $parentDestination) {
+                    foreach ($sourceGroups as $sourceFullPath => $sourceGroup) {
+                        if (isset($structure[$sourceFullPath])) {
+                            $s[$sourceFullPath] = $structure[$sourceFullPath];
+                            if (empty($s[$sourceFullPath]['resources'])) {
+                                $s[$sourceFullPath]['resources'] = $sourceGroup['resources'] ?? [];
+                            } elseif (!empty($sourceGroup['resources'])) {
+                                $s[$sourceFullPath]['resources'] = array_merge(array_values($s[$sourceFullPath]['resources']), array_values($sourceGroup['resources']));
+                            }
+                        } else {
+                            $s[$sourceFullPath] = $sourceGroup;
+                        }
+                    }
+                }
+            }
+        }
+        $structure = $s;
+
+        try {
+            $api->update('selections', $selection->id(), [
+                'o:structure' => $structure,
+            ], [], ['isPartial' => true])->getContent();
+        } catch (\Exception $e) {
+            return new JsonModel([
+                'status' => 'errof',
+                'message' => $this->translate('An internal error occurred.'), // @translate
+            ]);
+        }
+
+        return new JsonModel([
+            'status' => 'success',
+            'data' => [
+                'selection' => $selection ? $selection->getReference() : null,
+                'structure' => $selection->structure(),
+            ],
+        ]);
+    }
+
+    /**
      * Delete a group in a selection.
      *
      * @todo Factorize with addGroupAction.
@@ -743,6 +902,7 @@ class SelectionController extends AbstractActionController
 
         $api = $this->api();
 
+        /** @var \Selection\Api\Representation\SelectionRepresentation $selection */
         $id = (int) $this->params()->fromRoute('id');
         $selection = $this->getSelection($id);
         if ($id && !$selection) {
