@@ -8,7 +8,7 @@ Selection (module for Omeka S)
 [Selection] is a module for [Omeka S] that allows any visitor to store selected
 resources through sessions. The selected resources can be saved in multiple
 selections with a label to simplify management. The selection can be dynamic too
-when a search query is used.
+when a search query is used. The selection can be organized in a structured way.
 
 Furthermore, when the module [Bulk Export] is installed, it is possible to
 export them instantly to common formats, included common spreadsheet formats.
