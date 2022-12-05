@@ -6,6 +6,7 @@ CREATE TABLE `selection` (
     `label` VARCHAR(190) NOT NULL,
     `comment` LONGTEXT DEFAULT NULL,
     `search_query` LONGTEXT DEFAULT NULL,
+    `structure` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json)',
     `created` DATETIME NOT NULL,
     `modified` DATETIME DEFAULT NULL,
     INDEX IDX_96A50CD77E3C61F9 (`owner_id`),

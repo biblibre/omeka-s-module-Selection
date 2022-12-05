@@ -65,30 +65,27 @@ class SelectionRepresentation extends AbstractEntityRepresentation
             }
         }
 
-        $json = [
+        $modified = $this->modified();
+
+        return [
             'o:owner' => $this->owner()->getReference(),
             'o:is_public' => $this->isPublic(),
             'o:is_dynamic' => $this->isDynamic(),
             'o:label' => $this->label(),
             'o:comment' => $this->comment(),
             'o:search_query' => $searchQuery,
+            'o:structure' => $this->structure(),
             'o:selection_resources' => $selectionResources,
             'o:resources' => $resources,
             'o:created' => [
                 '@value' => $this->getDateTime($this->created()),
                 '@type' => 'http://www.w3.org/2001/XMLSchema#dateTime',
             ],
-        ];
-
-        $modified = $this->modified();
-        if ($modified) {
-            $json['o:modified'] = [
+            'o:modified' => $modified ? [
                 '@value' => $this->getDateTime($modified),
                 '@type' => 'http://www.w3.org/2001/XMLSchema#dateTime',
-            ];
-        }
-
-        return $json;
+            ] : null,
+        ];
     }
 
     public function owner(): UserRepresentation
@@ -120,6 +117,16 @@ class SelectionRepresentation extends AbstractEntityRepresentation
     public function searchQuery(): ?string
     {
         return $this->resource->getSearchQuery();
+    }
+
+    /**
+     * The structure follows the flat format of jstree.
+     *
+     * @see https://www.jstree.com/docs/json/
+     */
+    public function structure(): array
+    {
+        return $this->resource->getStructure() ?? [];
     }
 
     /**

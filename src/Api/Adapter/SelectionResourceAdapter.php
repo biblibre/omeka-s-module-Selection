@@ -167,7 +167,9 @@ class SelectionResourceAdapter extends AbstractEntityAdapter
         EntityInterface $entity,
         ErrorStore $errorStore
     ): void {
-        // The selection is not updatable, it would be non-sense.
+        /** @var \Selection\Entity\SelectionResource $entity */
+
+        // The selected resource is not updatable, it would be non-sense.
         if ($request->getOperation() === Request::CREATE) {
             $this->hydrateOwner($request, $entity);
             if ($this->shouldHydrate($request, 'o:resource')) {

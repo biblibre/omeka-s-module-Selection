@@ -61,6 +61,7 @@ class SelectionAdapter extends AbstractEntityAdapter
         'label' => 'label',
         'comment' => 'comment',
         'search_query' => 'searchQuery',
+        'structure' => 'structure',
         'created' => 'created',
         'modified' => 'modified',
     ];
@@ -124,33 +125,48 @@ class SelectionAdapter extends AbstractEntityAdapter
         EntityInterface $entity,
         ErrorStore $errorStore
     ): void {
+        /** @var \Selection\Entity\Selection $entity */
+
         $this->hydrateOwner($request, $entity);
+
+        if ($this->shouldHydrate($request, 'o:is_public')) {
+            // Unlike resources, the selections are always private by default.
+            $entity->setIsPublic($request->getValue('o:is_public', false));
+        }
+
         if ($this->shouldHydrate($request, 'o:label')) {
             $entity->setLabel(trim((string) $request->getValue('o:label')));
         }
+
         if ($this->shouldHydrate($request, 'o:comment')) {
             $entity->setComment($request->getValue('o:comment'));
         }
+
         // The query is updatable: if not, check it at another layer.
         if ($this->shouldHydrate($request, 'o:search_query')) {
             $searchQuery = $this->cleanSearchQuery($request->getValue('o:search_query'));
             $entity->setSearchQuery($searchQuery);
         }
-        if ($this->shouldHydrate($request, 'o:is_public')) {
-            // Unlike resources, the selections are always private by default.
-            $entity->setIsPublic($request->getValue('o:is_public', false));
+
+        $hasSearchQuery = $entity->getSearchQuery();
+        if ($hasSearchQuery) {
+            $entity->setIsDynamic(true);
+            $entity->setStructure(null);
+            $this->removeSelectionResources($entity);
+        } else {
+            $entity->setIsDynamic(false);
+            if ($this->shouldHydrate($request, 'o:structure')) {
+                $entity->setStructure($request->getValue('o:structure') ?: null);
+            }
+            $this->hydrateSelectionResources($request, $entity);
         }
+
+        // Unlike core, don't set modified date the first time.
+        // $this->updateTimestamps($request, $entity);
         if (Request::CREATE === $request->getOperation()) {
             $entity->setCreated(new DateTime('now'));
         } else {
             $entity->setModified(new DateTime('now'));
-        }
-
-        $hasSearchQuery = $entity->getSearchQuery();
-        if ($hasSearchQuery) {
-            $this->removeSelectionResources($entity);
-        } else {
-            $this->hydrateSelectionResources($request, $entity);
         }
     }
 

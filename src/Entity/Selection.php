@@ -162,6 +162,16 @@ class Selection extends AbstractEntity
     protected $selectionResources;
 
     /**
+     * @var array
+     *
+     * @Column(
+     *     type="json",
+     *     nullable=true
+     * )
+     */
+    protected $structure;
+
+    /**
      * @var DateTime
      *
      * @Column(
@@ -212,10 +222,14 @@ class Selection extends AbstractEntity
         return (bool) $this->isPublic;
     }
 
+    public function setIsDynamic(bool $isDynamic): self
+    {
+        $this->isDynamic = (bool) $isDynamic;
+        return $this;
+    }
+
     public function isDynamic(): bool
     {
-        // There is no set value, so the flag is always checked against query.
-        $this->isDynamic = !empty($this->searchQuery);
         return $this->isDynamic;
     }
 
@@ -270,6 +284,17 @@ class Selection extends AbstractEntity
         return $this->getSelectionResources()->map(function ($selectionResource) {
             return $selectionResource->getResource();
         });
+    }
+
+    public function setStructure(?array $structure): self
+    {
+        $this->structure = $structure;
+        return $this;
+    }
+
+    public function getStructure(): ?array
+    {
+        return $this->structure;
     }
 
     public function setCreated(DateTime $dateTime): self
