@@ -94,7 +94,7 @@ $selectedResourceModel = [
     <div class="selection-list-actions">
         <ul class="actions">
             <li>
-                <button type="button" class="add-group" data-msg-add-group="<?= $translate('Set group name') ?>" data-url="<?= $url('site/selection-id', ['id' => $selection ? $selection->id() : 0, 'action' => 'add-group'], true) ?>"><?= $translate('Add a group') ?></button>
+                <button type="button" class="add-group" data-msg-group-name="<?= $translate('Set group name') ?>" data-url="<?= $url('site/selection-id', ['id' => $selection ? $selection->id() : 0, 'action' => 'add-group'], true) ?>"><?= $translate('Add a group') ?></button>
             </li>
         </ul>
     </div>

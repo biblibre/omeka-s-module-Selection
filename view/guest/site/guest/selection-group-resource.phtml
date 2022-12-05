@@ -51,9 +51,12 @@ if ($resourceType === 'items') {
     }
 }
 $body = $resource->value($bodyTerm);
+
+// This is the base url, the query is added via js.
+$baseUrl = pathinfo($url('site/selection-id', ['id' => $selection ? $selection->id() : 0, 'action' => '__'], true), PATHINFO_DIRNAME);
 ?>
 
-<li class="selection-resource resource <?= $resourceTypesToClasses[$resourceType] ?>">
+<li class="selection-resource resource <?= $resourceTypesToClasses[$resourceType] ?>" data-id="<?= $resource->id() ?>">
     <?= $resource->linkRaw($thumbnail($resource, 'medium')) ?>
     <h4><?= $resource->link($heading) ?></h4>
     <?php if ($body): ?>
@@ -63,8 +66,8 @@ $body = $resource->value($bodyTerm);
     <?php endif; ?>
     <ul class="actions">
         <?php if ($selection && $selection->structure()): ?>
-        <li><button type="button" class="move-resource move-icon" data-url="<?= $url('site/selection-id', ['id' => $resource->id(), 'action' => 'move'], true) ?>"><?= $moveText ?></button></li>
+        <li><button type="button" class="move-resource move-icon" data-url="<?= $baseUrl ?>/move"><?= $moveText ?></button></li>
         <?php endif; ?>
-        <li><button type="button" class="selection-delete delete-icon" data-url="<?= $url('site/selection-id', ['id' => $resource->id(), 'action' => 'delete'], true) ?>"><?= $removeText ?></button></li>
+        <li><button type="button" class="selection-delete delete-icon" data-url="<?= $baseUrl ?>/delete"><?= $removeText ?></button></li>
     </ul>
 </li>

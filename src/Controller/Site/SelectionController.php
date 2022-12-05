@@ -42,6 +42,9 @@ use Selection\Api\Representation\SelectionRepresentation;
  */
 class SelectionController extends AbstractActionController
 {
+    /**
+     * Select resource(s) to add to a selection.
+     */
     public function addAction()
     {
         if (!$this->getRequest()->isXmlHttpRequest()) {
@@ -105,6 +108,9 @@ class SelectionController extends AbstractActionController
         ]);
     }
 
+    /**
+     * Delete resource(s) from a selection.
+     */
     public function deleteAction()
     {
         if (!$this->getRequest()->isXmlHttpRequest()) {
@@ -161,6 +167,9 @@ class SelectionController extends AbstractActionController
         ]);
     }
 
+    /**
+     * Toggle select/unselect resource(s) for a selection.
+     */
     public function toggleAction()
     {
         if (!$this->getRequest()->isXmlHttpRequest()) {
@@ -240,6 +249,9 @@ class SelectionController extends AbstractActionController
         ]);
     }
 
+    /**
+     * Move resource(s) between groups of a selection.
+     */
     public function moveAction()
     {
         if (!$this->getRequest()->isXmlHttpRequest()) {
@@ -283,7 +295,7 @@ class SelectionController extends AbstractActionController
         // Add the group only if it does not exist.
         $structure = $selection->structure();
 
-        $source = trim((string) $this->params()->fromQuery('source'));
+        $source = trim((string) $this->params()->fromQuery('group'));
         $destination = trim((string) $this->params()->fromQuery('destination'));
         if ($source === $destination) {
             return new JsonModel([
@@ -296,52 +308,71 @@ class SelectionController extends AbstractActionController
 
         if (strlen($source) && !isset($structure[$source])) {
             return new JsonModel([
-                'status' => 'error',
-                'message' => sprintf(
-                    $this->translate('The group "%s" does not exist.'), // @translate
-                    str_replace('/', ' / ', $source)
-                ),
-            ]);
-        }
-
-        if (strlen($destination) && !isset($structure[$destination])) {
-            return new JsonModel([
-                'status' => 'error',
-                'message' => sprintf(
-                    $this->translate('The destination group "%s" does not exist.'), // @translate
-                    str_replace('/', ' / ', $destination)
-                ),
-            ]);
-        }
-
-        /** TODO Optimize process: only the resource id is needed, not the full resources. */
-        $sourceResources = $selection->resourcesForGroup($source);
-        if (!$sourceResources) {
-            return new JsonModel([
                 'status' => 'fail',
                 'data' => [
-                    'message' => $this->translate('There are no resources to move.'), // @translate
+                    'message' => sprintf(
+                        $this->translate('The group "%s" does not exist.'), // @translate
+                        str_replace('/', ' / ', $source)
+                    ),
                 ],
             ]);
         }
 
         if (strlen($destination) && !isset($structure[$destination])) {
             return new JsonModel([
-                'status' => 'error',
-                'message' => sprintf(
-                    $this->translate('The destination group "%s" does not exist.'), // @translate
-                    str_replace('/', ' / ', $destination)
-                ),
+                'status' => 'fail',
+                'data' => [
+                    'message' => sprintf(
+                        $this->translate('The destination group "%s" does not exist.'), // @translate
+                        str_replace('/', ' / ', $destination)
+                    ),
+                ],
             ]);
         }
 
-        // Do the move.
-        unset($structure[$source]['resources']);
-        if (strlen($destination)) {
-            if (empty($structure[$destination]['resources'])) {
-                $structure[$destination]['resources'] = array_keys($sourceResources);
-            } else {
-                $structure[$destination]['resources'] += array_keys($sourceResources);
+        if (strlen($destination) && !isset($structure[$destination])) {
+            return new JsonModel([
+                'status' => 'fail',
+                'data' => [
+                    'message' => sprintf(
+                        $this->translate('The destination group "%s" does not exist.'), // @translate
+                        str_replace('/', ' / ', $destination)
+                        ),
+                ],
+            ]);
+        }
+
+        // TODO Moe all resources of a group.
+        $moveAllResources = false;
+        if ($moveAllResources) {
+            $sourceResources = $selection->resourcesForGroup($source);
+            if (!$sourceResources) {
+                return new JsonModel([
+                    'status' => 'fail',
+                    'data' => [
+                        'message' => $this->translate('There are no resources to move.'), // @translate
+                    ],
+                ]);
+            }
+            unset($structure[$source]['resources']);
+            if (strlen($destination)) {
+                if (empty($structure[$destination]['resources'])) {
+                    $structure[$destination]['resources'] = array_keys($sourceResources);
+                } else {
+                    $structure[$destination]['resources'] += array_keys($sourceResources);
+                }
+            }
+        } else {
+            if (strlen($source)) {
+                $sourceResources = $selection->resourcesForGroup($source);
+                $structure[$source]['resources'] = array_keys(array_diff_key($sourceResources, $resources));
+            }
+            if (strlen($destination)) {
+                if (empty($structure[$destination]['resources'])) {
+                    $structure[$destination]['resources'] = array_keys($resources);
+                } else {
+                    $structure[$destination]['resources'] += array_keys($resources);
+                }
             }
         }
 
@@ -366,6 +397,9 @@ class SelectionController extends AbstractActionController
         ]);
     }
 
+    /**
+     * Add a group to a selection.
+     */
     public function addGroupAction()
     {
         if (!$this->getRequest()->isXmlHttpRequest()) {
@@ -380,11 +414,14 @@ class SelectionController extends AbstractActionController
             return $this->jsonErrorNotFound();
         }
 
-        $groupName = trim((string) $this->params()->fromQuery('group'));
+        $path = trim((string) $this->params()->fromQuery('group'));
+        $groupName = trim((string) $this->params()->fromQuery('name'));
         if (!strlen($groupName)) {
             return new JsonModel([
-                'status' => 'error',
-                'message' => $this->translate('No group set.'), // @translate
+                'status' => 'fail',
+                'data' => [
+                    'message' => $this->translate('No group set.'), // @translate
+                ],
             ]);
         }
 
@@ -397,11 +434,13 @@ class SelectionController extends AbstractActionController
             || preg_match($invalidCharactersRegex, $groupName)
         ) {
             return new JsonModel([
-                'status' => 'error',
-                'message' => sprintf(
-                    $this->translate('The group name contains invalid characters (%s).'), // @translate
-                    $invalidCharacters
-                ),
+                'status' => 'fail',
+                'data' => [
+                    'message' => sprintf(
+                        $this->translate('The group name contains invalid characters (%s).'), // @translate
+                        $invalidCharacters
+                    ),
+                ],
             ]);
         }
 
@@ -422,8 +461,6 @@ class SelectionController extends AbstractActionController
         // Add the group only if it does not exist.
         $structure = $selection->structure();
 
-        $path = trim((string) $this->params()->fromQuery('path'));
-
         // Check the parent for security.
         $hasParent = strlen($path);
         if ($hasParent && !isset($structure[$path])) {
@@ -437,7 +474,6 @@ class SelectionController extends AbstractActionController
 
         $fullPath = "$path/$groupName";
         if (isset($structure[$fullPath])) {
-            $group = $structure[$fullPath];
             return new JsonModel([
                 'status' => 'fail',
                 'data' => [
@@ -489,10 +525,13 @@ class SelectionController extends AbstractActionController
         ]);
     }
 
+    /**
+     * Get selected resources from the query and prepare them.
+     */
     protected function requestedResources()
     {
         $params = $this->params();
-        $id = $params->fromRoute('id') ?: $params->fromQuery('id');
+        $id = $params->fromQuery('id');
         if (!$id) {
             return ['has_result' => false];
         }
@@ -501,6 +540,7 @@ class SelectionController extends AbstractActionController
         $ids = $isMultiple ? $id : [$id];
 
         $api = $this->api();
+
         // Check resources.
         /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $resources */
         $resources = [];
@@ -541,7 +581,7 @@ class SelectionController extends AbstractActionController
             'id' => $resource->id(),
             'type' => $resource->getControllerName(),
             'url' => $resource->siteUrl($siteSlug, true),
-            'url_remove' => $url->fromRoute('site/selection-id', ['site-slug' => $siteSlug, 'action' => 'delete', 'id' => $resource->id()]),
+            'url_remove' => $url->fromRoute('site/selection', ['site-slug' => $siteSlug, 'action' => 'delete'], ['query' => ['id' => $resource->id()]]),
             // String is required to avoid error in container when the title is
             // a resource.
             'title' => (string) $resource->displayTitle(),

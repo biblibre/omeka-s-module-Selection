@@ -65,7 +65,7 @@ class SelectionContainer extends AbstractPlugin
             'id' => $resource->id(),
             'type' => $resource->getControllerName(),
             'url' => $resource->siteUrl($siteSlug, true),
-            'url_remove' => $url->fromRoute('site/selection-id', ['site-slug' => $siteSlug, 'action' => 'delete', 'id' => $resource->id()]),
+            'url_remove' => $url->fromRoute('site/selection', ['site-slug' => $siteSlug, 'action' => 'delete'], ['query' => ['id' => $resource->id()]]),
             // String is required to avoid error in container when the title is
             // a resource.
             'title' => (string) $resource->displayTitle(),

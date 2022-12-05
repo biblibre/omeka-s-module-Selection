@@ -1,15 +1,22 @@
+
 (function() {
     $(document).ready(function() {
 
         /**
-         * Manage selection for multiple resource.
+         * Add multiple resources to a selection.
          */
         $('body').on('click', '.selection-update, .selection-delete', function(e) {
             e.preventDefault();
             e.stopPropagation();
             const button = $(this);
+            const selectionResource = button.closest('.selection-resource');
             const url = button.attr('data-url');
-            $.ajax(url)
+            const id = selectionResource.length ? selectionResource.data('id') : button.attr('data-id');
+            const urlId = getQueryParameter(url, 'id');
+            $.ajax({
+                url: url,
+                data: id && !urlId ? { id: id } : null,
+            })
             .done(function(data) {
                 if (data.status === 'success') {
                     const selectionResource = data.data.selection_resource;
@@ -22,7 +29,7 @@
         });
 
         /**
-         * Toggle selected/unselected for a resource.
+         * Toggle list of selected resources.
          */
         $('body').on('click', '.selection-list-toggle', function() {
             $(this).toggleClass('active');
@@ -37,8 +44,14 @@
             e.preventDefault();
             e.stopPropagation();
             const button = $(this);
+            const selectionResource = button.closest('.selection-resource');
             const url = button.attr('data-url');
-            $.ajax(url)
+            const id = selectionResource.length ? selectionResource.data('id') : button.attr('data-id');
+            const urlId = getQueryParameter(url, 'id');
+            $.ajax({
+                url: url,
+                data: id && !urlId ? { id: id } : null,
+            })
             .done(function(data) {
                 if (data.status === 'success') {
                     const selectionResource = data.data.selection_resource;
@@ -50,7 +63,7 @@
         });
 
         /**
-         * Add a group.
+         * Add a group to a selection.
          */
         $('body').on('click', '.selection-list .add-group', function(e) {
             e.preventDefault();
@@ -67,8 +80,8 @@
             $.ajax({
                 url: url,
                 data: {
-                    group: group.trim(),
-                    path: path,
+                    group: path,
+                    name: group.trim(),
                 },
             })
             .done(function(data) {
@@ -97,7 +110,7 @@
         });
 
         /**
-         * Select a group to move.
+         * Prepare/remove the selector used to move a group or a resource.
          */
         $('body').on('click', '.selection-list .move-group, .selection-list .move-resource', function(e) {
             e.preventDefault();
@@ -126,16 +139,27 @@
         $('body').on('change', '.selection-list .selector-group-move select', function(e) {
             const select = $(this);
             const selectionGroup = select.closest('.selection-group');
+            const selectionResource = select.closest('.selection-resource');
             const path = selectionGroup.data('path') ? selectionGroup.data('path') : '';
             const newPath = select.val();
             if (newPath === path) {
                 return;
             }
+            var id;
+            // Move a single resource or resources of a group.
+            if (selectionResource.length) {
+                id = selectionResource.attr('data-id');
+            } else {
+                id = [];
+                selectionGroup.find(':not(.selection-group) .selection-resource[data-id != ""]').toArray()
+                    .forEach(function(el) { id.push(el.dataset.id); });
+            }
             const url = select.attr('data-url');
             $.ajax({
                 url: url,
                 data: {
-                    source: path,
+                    id: id,
+                    group: path,
                     destination: newPath,
                 },
             })
@@ -222,6 +246,11 @@
                 $('.selection-list.selections').addClass('inactive').hide();
                 $('.selection-list.selection-empty').removeClass('inactive').show();
             }
+        }
+
+        const getQueryParameter = function(url, param) {
+            const urlSplit = url.split('?', 2);
+            return urlSplit.length < 2 ? null : new URLSearchParams(urlSplit[1]).get(param);
         }
 
     });

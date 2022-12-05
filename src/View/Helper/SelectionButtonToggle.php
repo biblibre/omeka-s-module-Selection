@@ -45,7 +45,7 @@ class SelectionButtonToggle extends AbstractHelper
 
         $params = [
             'resource' => $resource,
-            'url' => $view->url('site/selection-id', ['action' => $options['action'], 'id' => $resource->id()], true),
+            'url' => $view->url('site/selection', ['action' => $options['action']], ['query' => ['id' => $resource->id()]], true),
         ];
 
         return $view->partial($template, $params + $options);

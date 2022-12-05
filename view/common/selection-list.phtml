@@ -33,10 +33,11 @@ endif;
 <h3><a href="#" class="selection-list-toggle"><?= $translate('Selected resources') // @translate ?></a></h3>
 <div class="selection-list" style="display:none;">
     <ul class="selection-resources" data-text-remove="<?= $removeText ?>">
+        <?php $urlDelete = $url('site/selection', ['action' => 'delete'], true); ?>
         <?php foreach ($records as $record): ?>
         <li data-id="<?= $record['id'] ?>">
             <a href="<?= $url('site/resource-id', ['controller' => $record['type'], 'id' => $record['id'], 'action' => 'show'], true) ?>"><?= $record['title'] ?></a>
-            <span class="selection-delete" data-id="<?= $record['id'] ?>" data-url="<?= $url('site/selection-id', ['action' => 'delete', 'id' => $record['id']], true) ?>" title="<?= $removeText ?>" aria-label="<?= $removeText ?>"></span>
+            <span class="selection-delete" data-id="<?= $record['id'] ?>" data-url="<?= $urlDelete ?>" title="<?= $removeText ?>" aria-label="<?= $removeText ?>"></span>
         </li>
         <?php endforeach; ?>
     </ul>

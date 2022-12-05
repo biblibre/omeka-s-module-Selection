@@ -97,7 +97,6 @@ return  [
                             'route' => '/selection/:id[/:action]',
                             'constraints' => [
                                 'action' => 'add-group|add|delete|move|toggle',
-                                // The id is the resource id, except for groups.
                                 'id' => '\d+',
                             ],
                             'defaults' => [
