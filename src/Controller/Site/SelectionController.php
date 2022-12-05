@@ -34,7 +34,12 @@ use Laminas\Http\Response;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\JsonModel;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
+use Omeka\Entity\User;
+use Selection\Api\Representation\SelectionRepresentation;
 
+/**
+ * @todo Include the selection by default in all actions.
+ */
 class SelectionController extends AbstractActionController
 {
     public function addAction()
@@ -68,7 +73,9 @@ class SelectionController extends AbstractActionController
             $data = $this->selectionResourceForResource($resource, true);
             if (isset($container->records[$resourceId])) {
                 $data['status'] = 'fail';
-                $data['message'] = $this->translate('Already in'); // @translate
+                $data['data'] = [
+                    'message' => $this->translate('Already in'), // @translate
+                ];
             } else {
                 $container->records[$resourceId] = $data;
                 $data['status'] = 'success';
@@ -233,6 +240,96 @@ class SelectionController extends AbstractActionController
         ]);
     }
 
+    public function addGroupAction()
+    {
+        if (!$this->getRequest()->isXmlHttpRequest()) {
+            return $this->jsonErrorNotFound();
+        }
+
+        $siteSettings = $this->siteSettings();
+        $allowVisitor = $siteSettings->get('selection_visitor_allow', true);
+        $user = $this->identity();
+        // TODO Manage group for visitor by session.
+        if (!$allowVisitor || !$user) {
+            return $this->jsonErrorNotFound();
+        }
+
+        $groupName = trim((string) $this->params()->fromQuery('group'));
+        if (!strlen($groupName)) {
+            return new JsonModel([
+                'status' => 'error',
+                'message' => $this->translate('No group set.'), // @translate
+            ]);
+        }
+
+        $invalidCharacters = '/\\?<>*%|"`&';
+        $invalidCharactersRegex = '~/|\\|\?|<|>|\*|\%|\||"|`|&~';
+        if  ($groupName === '/'
+            || $groupName === '\\'
+            || $groupName === '.'
+            || $groupName === '..'
+            || preg_match($invalidCharactersRegex, $groupName)
+        ) {
+            return new JsonModel([
+                'status' => 'error',
+                'message' => sprintf(
+                    $this->translate('The group name contains invalid characters (%s).'), // @translate
+                    $invalidCharacters
+                ),
+            ]);
+        }
+
+        $api = $this->api();
+
+        $id = (int) $this->params()->fromRoute('id');
+        if (empty($id)) {
+            $selection = $this->defaultStaticSelection($user);
+        } else {
+            try {
+                $selection = $api->read('selections', ['owner' => $user->getId()])->getContent();
+            } catch (\Exception $e) {
+                return $this->jsonErrorNotFound();
+            }
+        }
+
+        // Add the group only if it does not exist.
+        $structure = $selection->structure();
+        if (isset($structure["/$groupName"])) {
+            $group = $structure["/$groupName"];
+            return new JsonModel([
+                'status' => 'fail',
+                'data' => [
+                    'message' => $this->translate('The group exists already.'), // @translate
+                ],
+            ]);
+        }
+
+        $group = [
+            'id' => $groupName,
+            'path' => '/',
+        ];
+        $structure["/$groupName"] = $group;
+
+        try {
+            $api->update('selections', $selection->id(), [
+                'o:structure' => $structure,
+            ], [], ['isPartial' => true])->getContent();
+        } catch (\Exception $e) {
+            return new JsonModel([
+                'status' => 'errof',
+                'message' => $this->translate('An internal error occurred.'), // @translate
+            ]);
+        }
+
+        return new JsonModel([
+            'status' => 'success',
+            'data' => [
+                'selection' => $selection,
+                'group' => $group,
+            ],
+        ]);
+    }
+
     protected function requestedResources()
     {
         $params = $this->params();
@@ -291,6 +388,25 @@ class SelectionController extends AbstractActionController
             'title' => (string) $resource->displayTitle(),
             'value' => $isSelected ? 'selected' : 'unselected',
         ];
+    }
+
+    /**
+     * Get default selection, the first non-dynamic one or a new one when none.
+     */
+    protected function defaultStaticSelection(User $user): SelectionRepresentation
+    {
+        $api = $this->api();
+        $selection = $api->searchOne('selections', [
+            'owner' => $user->getId(),
+            'is_dynamic' => false,
+        ])->getContent();
+        if (!$selection) {
+            $selection = $api->create('selections', [
+                'o:owner' => ['o:id' => $user->getId()],
+                'o:label' => $this->translate('My selection'), // @translate
+            ])->getContent();
+        }
+        return $selection;
     }
 
     protected function jsonErrorNotFound()

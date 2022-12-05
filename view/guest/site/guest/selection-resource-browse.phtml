@@ -38,6 +38,7 @@
 
 $plugins = $this->getHelperPluginManager();
 $url = $plugins->get('url');
+$escape = $plugins->get('escapeHtml');
 $translate = $plugins->get('translate');
 $thumbnail = $plugins->get('thumbnail');
 $escapeAttr = $plugins->get('escapeHtmlAttr');
@@ -68,6 +69,14 @@ $removeText = $escapeAttr($translate('Remove from selection'));
 <div class="selection-list selections<?= count($selectionResources) ? '' : ' inactive" style="display:none' ?>">
 
     <h3><?= sprintf($translate('%d items, %d media'), count($resourcesByType['items']), count($resourcesByType['media'])) ?></h3>
+
+    <div class="selection-list-actions">
+        <ul class="actions">
+            <li>
+                <button type="button" class="add-group" data-msg-add-group="<?= $translate('Set group name') ?>" data-url="<?= $url('site/selection-id', ['id' => $selection ? $selection->id() : 0, 'action' => 'add-group'], true) ?>"><?= $translate('Add a group') ?></button>
+            </li>
+        </ul>
+    </div>
 
     <?php $this->trigger('view.browse.before'); ?>
 

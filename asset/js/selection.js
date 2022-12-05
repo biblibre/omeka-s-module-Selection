@@ -49,6 +49,41 @@
             });
         });
 
+        /**
+         * Add a group.
+         */
+        $('body').on('click', '.selection-list-actions .add-group', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const button = $(this);
+            const msg = button.data('msg-group-name') ? button.data('msg-group-name') : button.text();
+            var group = prompt(msg);
+            if (!group || !group.length) {
+                return;
+            }
+            const url = button.attr('data-url');
+            $.ajax({
+                url: url,
+                data: {
+                    group: group,
+                },
+            })
+            .done(function(data) {
+                if (data.status === 'success') {
+                    $('.selection-structure').append(`
+                    <li class="selection-group">
+                        <div>
+                            <span class="group-name">${data.data.group.id}</span>
+                        </div>
+                    </li>`);
+                } else if (data.status === 'fail') {
+                    alert(data.data.message ? data.data.message : 'An error occurred.');
+                } else {
+                    alert(data.message ? data.message : 'An error occurred.');
+                }
+            });
+        });
+
         const updateSelectionButton = function(selectionResource) {
             const button = $('.selection-update[data-id=' + selectionResource.id + ']');
             if (!button.length) {

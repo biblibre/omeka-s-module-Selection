@@ -105,14 +105,18 @@ class SelectionAdapter extends AbstractEntityAdapter
             ));
         }
 
-        if (isset($query['is_public']) && is_numeric($query['is_public'])) {
+        if (isset($query['is_public'])
+            && (is_numeric($query['is_public']) || is_bool($query['is_public']))
+        ) {
             $qb->andWhere($expr->eq(
                 'omeka_root.isPublic',
                 $this->createNamedParameter($qb, (bool) $query['is_public'])
             ));
         }
 
-        if (isset($query['is_dynamic']) && is_numeric($query['is_dynamic'])) {
+        if (isset($query['is_dynamic'])
+            && (is_numeric($query['is_dynamic']) || is_bool($query['is_dynamic']))
+        ) {
             $qb->andWhere($expr->eq(
                 'omeka_root.isDynamic',
                 $this->createNamedParameter($qb, (bool) $query['is_dynamic'])

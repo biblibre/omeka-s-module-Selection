@@ -5,6 +5,13 @@
     #content .media.resource:hover {
         border-bottom: 1px solid transparent;
     }
+    .selection-list-actions ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+    .selection-list-actions .add-group::after {
+        content:"+";
+    }
     a.selection-list-toggle:link,
     a.selection-list-toggle:visited {
         color: #000;
@@ -20,6 +27,7 @@
     span.selection-delete::after {
         content:"X";
     }
+    .add-group::after,
     .selection-delete::after {
         padding-left: 1em;
     }
