@@ -41,6 +41,11 @@ return  [
             Form\SiteSettingsFieldset::class => Form\SiteSettingsFieldset::class,
         ],
     ],
+    'resource_page_block_layouts' => [
+        'invokables' => [
+            'selection' => Site\ResourcePageBlockLayout\Selection::class,
+        ],
+    ],
     'controllers' => [
         'invokables' => [
             'Selection\Controller\Site\Selection' => Controller\Site\SelectionController::class,
