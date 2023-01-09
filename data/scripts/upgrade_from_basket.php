@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace Selection;
 
 /**
@@ -53,7 +54,7 @@ SQL;
 
 $sqls = array_filter(array_map('trim', explode(";\n", $sql)));
 foreach ($sqls as $sql) {
-    $connection->exec($sql);
+    $connection->executeStatement($sql);
 }
 
 // Convert the settings.

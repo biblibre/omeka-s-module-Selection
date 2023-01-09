@@ -25,7 +25,11 @@ class Module extends AbstractModule
     const NAMESPACE = __NAMESPACE__;
 
     // Guest is an optional dependency, not a required one.
-    // protected $dependency = 'Guest';
+    /*
+    protected $dependencies = [
+        'Guest',
+    ];
+    */
 
     public function onBootstrap(MvcEvent $event): void
     {
