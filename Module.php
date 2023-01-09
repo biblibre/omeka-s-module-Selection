@@ -88,18 +88,21 @@ class Module extends AbstractModule
 
     public function attachListeners(SharedEventManagerInterface $sharedEventManager): void
     {
-        $controllers = [
+        $sharedEventManager->attach(
             'Omeka\Controller\Site\Item',
+            'view.show.after',
+            [$this, 'handleViewShowAfter']
+        );
+        $sharedEventManager->attach(
             'Omeka\Controller\Site\ItemSet',
+            'view.show.after',
+            [$this, 'handleViewShowAfter']
+        );
+        $sharedEventManager->attach(
             'Omeka\Controller\Site\Media',
-        ];
-        foreach ($controllers as $controller) {
-            $sharedEventManager->attach(
-                $controller,
-                'view.show.after',
-                [$this, 'handleViewShowAfter']
-            );
-        }
+            'view.show.after',
+            [$this, 'handleViewShowAfter']
+        );
 
         // Guest integration.
         $sharedEventManager->attach(
@@ -124,6 +127,22 @@ class Module extends AbstractModule
         $allowVisitor = $siteSetting('selection_visitor_allow', true);
         if (!$user && !$allowVisitor) {
             return;
+        }
+
+        // In Omeka S v4, if the selection is set in the view, don't add it.
+        $view = $event->getTarget();
+        if (version_compare(\Omeka\Module::VERSION, '4', '>=')) {
+            /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource */
+            $resource = $view->resource;
+            $services = $this->getServiceLocator();
+            $currentTheme = $services->get('Omeka\Site\ThemeManager')->getCurrentTheme();
+            $blockLayoutManager = $services->get('Omeka\ResourcePageBlockLayoutManager');
+            $resourcePageBlocks = $blockLayoutManager->getResourcePageBlocks($currentTheme);
+            foreach ($resourcePageBlocks[$resource->resourceName()] ?? [] as $blocks) {
+                if (in_array('selection', $blocks)) {
+                    return;
+                }
+            }
         }
 
         $selectionContainer = $this->getServiceLocator()->get('ControllerPluginManager')->get('selectionContainer');
