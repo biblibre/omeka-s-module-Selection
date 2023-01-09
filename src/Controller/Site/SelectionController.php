@@ -2,7 +2,7 @@
 
 /*
  * Copyright BibLibre, 2016
- * Copyright Daniel Berthereau, 2019-2022
+ * Copyright Daniel Berthereau, 2019-2023
  *
  * This software is governed by the CeCILL license under French law and abiding
  * by the rules of distribution of free software.  You can use, modify and/ or
@@ -1054,7 +1054,7 @@ class SelectionController extends AbstractActionController
      * When there is a new selection, all selected resources without selection
      * are moved inside it.
      *
-     * @todo Simplify: require a selection for the first selected resouce (and manage anonymous visitor).
+     * @todo Simplify: require a selection for the first selected resource (and manage anonymous visitor).
      */
     protected function defaultStaticSelection(User $user): SelectionRepresentation
     {

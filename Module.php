@@ -17,7 +17,7 @@ use Laminas\Mvc\MvcEvent;
  * Selection.
  *
  * @copyright Biblibre, 2016
- * @copyright Daniel Berthereau 2019-2022
+ * @copyright Daniel Berthereau 2019-2023
  * @license http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.txt
  */
 class Module extends AbstractModule
