@@ -29,7 +29,7 @@ class Selection implements ResourcePageBlockLayoutInterface
         $user = $view->identity();
         $allowVisitor = $siteSetting('selection_visitor_allow', true);
         if (!$user && !$allowVisitor) {
-            return;
+            return '';
         }
 
         $selectionContainer = $this->getServiceLocator()->get('ControllerPluginManager')->get('selectionContainer');
