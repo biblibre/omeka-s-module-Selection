@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-07 00:00+0000\n"
+"POT-Creation-Date: 2023-02-06 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,27 +17,113 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: Module.php:151 view/common/selection-item.phtml:26
-#: view/common/selection-link.phtml:11 view/guest/site/guest/selection.phtml:64
+#: data/scripts/upgrade.php:170 Module.php:162
+#: src/Site/BlockLayout/Selection.php:19
+#: view/common/selection-link-browse.phtml:11
+#: view/common/selection-resource.phtml:26
+#: view/guest/site/guest/selection-resource-browse.phtml:96
 msgid "Selection"
 msgstr ""
 
-#: src/Controller/Site/SelectionController.php:73
-#: src/Controller/Site/SelectionController.php:88
+#: src/Controller/Site/SelectionController.php:89
 msgid "Already in"
 msgstr ""
 
-#: src/Generic/AbstractModule.php:598
+#: src/Controller/Site/SelectionController.php:352
+#: src/Controller/Site/SelectionController.php:615
+#: src/Controller/Site/SelectionController.php:735
+msgid "The group name is unchanged."
+msgstr ""
+
+#: src/Controller/Site/SelectionController.php:362
+#: src/Controller/Site/SelectionController.php:768
+#: src/Controller/Site/SelectionController.php:780
+#, php-format
+msgid "The group \"%s\" does not exist."
+msgstr ""
+
+#: src/Controller/Site/SelectionController.php:374
+#: src/Controller/Site/SelectionController.php:386
+#, php-format
+msgid "The destination group \"%s\" does not exist."
+msgstr ""
+
+#: src/Controller/Site/SelectionController.php:412
+#: src/Controller/Site/SelectionController.php:538
+#: src/Controller/Site/SelectionController.php:681
+#: src/Controller/Site/SelectionController.php:861
+#: src/Controller/Site/SelectionController.php:956
+msgid "An internal error occurred."
+msgstr ""
+
+#: src/Controller/Site/SelectionController.php:449
+#: src/Controller/Site/SelectionController.php:577
+#: src/Controller/Site/SelectionController.php:587
+#: src/Controller/Site/SelectionController.php:720
+#: src/Controller/Site/SelectionController.php:898
+msgid "No group set."
+msgstr ""
+
+#: src/Controller/Site/SelectionController.php:466
+#: src/Controller/Site/SelectionController.php:604
+#, php-format
+msgid "The group name contains invalid characters (%s)."
+msgstr ""
+
+#: src/Controller/Site/SelectionController.php:493
+#: src/Controller/Site/SelectionController.php:640
+msgid "The parent group does not exist."
+msgstr ""
+
+#: src/Controller/Site/SelectionController.php:503
+#: src/Controller/Site/SelectionController.php:653
+msgid "The group exists already."
+msgstr ""
+
+#: src/Controller/Site/SelectionController.php:744
+msgid "The group cannot be moved inside itself."
+msgstr ""
+
+#: src/Controller/Site/SelectionController.php:921
+msgid "The group does not exist."
+msgstr ""
+
+#: src/Controller/Site/SelectionController.php:1070
+msgid "My selection"
+msgstr ""
+
+#: src/Generic/AbstractModule.php:80 src/Generic/AbstractModule.php:88
+#: src/Generic/AbstractModule.php:861
 #, php-format
 msgid "This module requires the module \"%s\"."
 msgstr ""
 
-#: src/Generic/AbstractModule.php:618
+#: src/Generic/AbstractModule.php:93
 #, php-format
 msgid "This module requires modules \"%s\"."
 msgstr ""
 
-#: src/Generic/AbstractModule.php:686
+#: src/Generic/AbstractModule.php:101
+msgid "This module has resources that cannot be installed."
+msgstr ""
+
+#: src/Generic/AbstractModule.php:108
+msgid ""
+"This module cannot install its tables, because they exist already. Try to "
+"remove them first."
+msgstr ""
+
+#: src/Generic/AbstractModule.php:369
+#, php-format
+msgid "The module removed tables \"%s\" from a previous broken install."
+msgstr ""
+
+#: src/Generic/AbstractModule.php:856
+#, php-format
+msgid "This module requires the module \"%1$s\", version %2$s or above."
+msgstr ""
+
+#: src/Generic/AbstractModule.php:953
 #, php-format
 msgid ""
 "The module \"%s\" was automatically deactivated because the dependencies are "
@@ -48,57 +134,152 @@ msgstr ""
 msgid "Add to selection"
 msgstr ""
 
-#: view/common/selection-button.phtml:13 view/common/selection-list.phtml:34
+#: view/common/selection-button.phtml:13 view/common/selection-list.phtml:32
+#: view/guest/site/guest/selection-resource-browse.phtml:89
 msgid "Remove from selection"
 msgstr ""
 
-#: view/common/selection-list.phtml:35
+#: view/common/selection-list.phtml:33
 msgid "Selected resources"
 msgstr ""
 
-#: view/common/selection-list.phtml:45
+#: view/common/selection-list.phtml:44
 msgid "No selection"
 msgstr ""
 
-#: view/common/selection-list.phtml:49
+#: view/common/selection-list.phtml:48
 msgid "Download selection"
 msgstr ""
 
-#: view/guest/site/guest/selection.phtml:67
+#: view/guest/site/guest/selection-group.phtml:28
+msgid "Add a sub-group"
+msgstr ""
+
+#: view/guest/site/guest/selection-group.phtml:29
+msgid "Rename group"
+msgstr ""
+
+#: view/guest/site/guest/selection-group.phtml:30
+msgid "Move group"
+msgstr ""
+
+#: view/guest/site/guest/selection-group.phtml:31
+msgid "Delete group"
+msgstr ""
+
+#: view/guest/site/guest/selection-group.phtml:32
+msgid "Move resources"
+msgstr ""
+
+#: view/guest/site/guest/selection-resource-browse.phtml:88
+msgid "Move"
+msgstr ""
+
+#: view/guest/site/guest/selection-resource-browse.phtml:101
 #, php-format
 msgid "%d items, %d media"
 msgstr ""
 
-#: view/guest/site/guest/selection.phtml:115
+#: view/guest/site/guest/selection-resource-browse.phtml:104
 msgid "The selection is empty."
+msgstr ""
+
+#: view/guest/site/guest/selection-resource-browse.phtml:111
+#: view/guest/site/guest/selection-resource-browse.phtml:120
+msgid "Set group name"
+msgstr ""
+
+#: view/guest/site/guest/selection-resource-browse.phtml:111
+msgid "Add a group"
+msgstr ""
+
+#: view/guest/site/guest/selection-resource-browse.phtml:161
+msgid "Select a group"
 msgstr ""
 
 #: view/guest/site/guest/widget/selection.phtml:14
 msgid "See selection"
 msgstr ""
 
-#: data/scripts/upgrade_from_basket.php:23
+#: src/Site/Navigation/Link/Selection.php:23
+#, php-format
+msgid "Invalid navigation: link without label (%s)"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:13
+msgid "Selection module"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:29
+msgid "Enable session selection for visitors"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:30
+msgid "The selection is automatically saved for logged users."
+msgstr ""
+
+#: src/Api/Adapter/SelectionResourceAdapter.php:240
+msgid "A selection resource must have an owner."
+msgstr ""
+
+#: src/Api/Adapter/SelectionResourceAdapter.php:244
+msgid "A selection resource must have a resource."
+msgstr ""
+
+#: src/Api/Adapter/SelectionResourceAdapter.php:250
+msgid "A selection resource must have the same owner than the selection."
+msgstr ""
+
+#: src/Api/Adapter/SelectionResourceAdapter.php:257
+msgid "A resource must be unique inside a selection."
+msgstr ""
+
+#: src/Api/Adapter/SelectionResourceAdapter.php:260
+msgid ""
+"A selection resource must be unique for the owner when there is no selection."
+msgstr ""
+
+#: src/Api/Adapter/SelectionAdapter.php:183
+msgid "A selection must have an owner."
+msgstr ""
+
+#: src/Api/Adapter/SelectionAdapter.php:188
+msgid "A selection must have a label."
+msgstr ""
+
+#: src/Api/Adapter/SelectionAdapter.php:190
+msgid "The label is already taken by the owner."
+msgstr ""
+
+#: src/Api/Adapter/SelectionAdapter.php:194
+msgid "The selection cannot have selection resources when a query is set."
+msgstr ""
+
+#: data/scripts/upgrade_from_basket.php:25
 #, php-format
 msgid "The version of the module Basket should be at least %s."
 msgstr ""
 
-#: data/scripts/upgrade_from_basket.php:63
+#: data/scripts/upgrade_from_basket.php:64
 msgid "The module Basket was upgraded by module Selection and uninstalled."
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:12
-msgid "Selection module"
+#: data/scripts/upgrade.php:125
+msgid ""
+"Helpers and templates were renamed. Old ones will be removed in a future "
+"version."
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:21
-msgid "Enable session selection for visitors"
+#: data/scripts/upgrade.php:174
+msgid "It is now possible to organize selected resources in a structured way."
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:31
-msgid "For authenticated users, fill the main selection directly"
+#: data/scripts/upgrade.php:178
+msgid "The structure is not available for anonymous visitors yet."
 msgstr ""
 
-#: src/Site/Navigation/Link/Selection.php:23
-#, php-format
-msgid "Invalid navigation: link without label (%s)"
+#: data/scripts/upgrade.php:182
+msgid ""
+"Some url routes have been updated to use query arguments. Check you theme if "
+"needed."
 msgstr ""
