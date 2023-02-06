@@ -32,7 +32,7 @@ class Selection implements ResourcePageBlockLayoutInterface
             return '';
         }
 
-        $selectionContainer = $this->getServiceLocator()->get('ControllerPluginManager')->get('selectionContainer');
+        $selectionContainer = $resource->getServiceLocator()->get('ControllerPluginManager')->get('selectionContainer');
         $selectionContainer();
 
         return $view->partial('common/resource-page-block-layout/selection', [
