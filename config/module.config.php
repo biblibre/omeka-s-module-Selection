@@ -137,6 +137,7 @@ return  [
     'selection' => [
         'site_settings' => [
             'selection_visitor_allow' => true,
+            'selection_open' => true,
         ],
     ],
 ];
