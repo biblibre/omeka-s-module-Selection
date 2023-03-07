@@ -22,8 +22,9 @@ $this->headScript()
 $medias = $resource->getControllerName() === 'item' ? $resource->media() : [];
 ?>
 
-<div class="selection">
-    <h2><?= $translate('Selection') // @translate ?></h2>
+    <details class="selection" <?= $this->siteSetting('selection_open', true) ? 'open' : '' ?>>
+    <summary><h2><?= $translate('Selection') ?></h2></summary>
+
     <?php if (count($medias)): ?>
     <h3><?= $translate('Item') ?></h3>
     <?php endif; ?>
@@ -45,4 +46,4 @@ $medias = $resource->getControllerName() === 'item' ? $resource->media() : [];
 
     <?php // The session selection list can be moved anywhere via the main layout. ?>
     <?= $this->partial('common/selection-list') ?>
-</div>
+</details>
