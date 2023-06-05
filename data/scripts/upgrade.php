@@ -132,7 +132,11 @@ if (version_compare($oldVersion, '3.3.4.5', '<')) {
 ALTER TABLE `selection`
 ADD `structure` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json)' AFTER `search_query`;
 SQL;
-    $connection->executeStatement($sql);
+    try {
+        $connection->executeStatement($sql);
+    } catch (\Exception $e) {
+        // Skip.
+    }
 
     // Add at least one selection by user for all selected resources.
     // Selections by owner.
@@ -140,31 +144,37 @@ SQL;
 SELECT id, owner_id
 FROM selection_resource
 WHERE selection_id IS NULL
-ORDER BY owner_id;
+ORDER BY owner_id
+;
 SQL;
     $selectionResources = $connection->executeQuery($sql)->fetchAllKeyValue();
 
     // Create a new selection for all selections, even if the user has one.
     if ($selectionResources) {
+        // Append "id" to avoid issue with the unique index.
         $sql = <<<'SQL'
 INSERT INTO selection (owner_id, label, created)
-SELECT DISTINCT owner_id, '__SELECTION__', NOW()
+SELECT DISTINCT owner_id, CONCAT('__SELECTION__ ', id), NOW()
 FROM selection_resource
-WHERE selection_id IS NULL;
+WHERE selection_id IS NULL
+;
 SQL;
         $connection->executeStatement($sql);
         $sql = <<<'SQL'
 UPDATE selection_resource
 JOIN selection
     ON selection.owner_id =  selection_resource.owner_id
-        AND selection.label = "__SELECTION__"
-SET selection_id = selection.id;
+        AND selection.label LIKE "\_\_SELECTION\_\_%"
+SET selection_id = selection.id
+WHERE selection_id IS NULL
+;
 SQL;
         $connection->executeStatement($sql);
         $sql = <<<'SQL'
 UPDATE selection
 SET label = "%s"
-WHERE label = "__SELECTION__";
+WHERE label LIKE "\_\_SELECTION\_\_%"
+;
 SQL;
         $translate = $services->get('ControllerPluginManager')->get('translate');
         $connection->executeStatement(sprintf($sql, $translate('Selection'))); // @translate
