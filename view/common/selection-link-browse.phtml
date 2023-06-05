@@ -8,4 +8,4 @@ $translate = $this->plugin('translate');
 $url = $this->plugin('url');
 ?>
 
-<a class="selection browse" href="<?= $url('site/guest/selection', [], true) ?>"><?= $translate('Selection') ?></a>
+<a class="selection browse <?= $class ?? '' ?>" href="<?= $url('site/guest/selection', [], true) ?>"><?= $translate('Selection') ?></a>
