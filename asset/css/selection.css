@@ -1,4 +1,7 @@
 @media screen {
+    .selection summary h2 {
+        display: inline-block;
+    }
     #content .selection .media.resource {
         text-align: inherit;
     }

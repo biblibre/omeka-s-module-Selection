@@ -33,6 +33,18 @@ class SiteSettingsFieldset extends Fieldset
                     'id' => 'selection_visitor_allow',
                 ],
             ])
+            ->add([
+                'name' => 'selection_open',
+                'type' => Element\Checkbox::class,
+                'options' => [
+                    'element_group' => 'selection',
+                    'label' => 'Open the selection block by default', // @translate
+                    'info' => 'If enabled, the selection block on resource pages is open by default', // @translate
+                ],
+                'attributes' => [
+                    'id' => 'selection_open',
+                ],
+            ])
         ;
     }
 }
