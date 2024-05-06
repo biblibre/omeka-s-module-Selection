@@ -2,6 +2,18 @@
     $(document).ready(function() {
 
         /**
+         * Hide details summary on outside click.
+         */
+        $(document).on('click', function(e) {
+            const clicked = e.target;
+            $('details')
+                .filter(function() {
+                    return !$.contains(this, clicked);
+                })
+                .removeAttr('open');
+        });
+
+        /**
          * Add multiple resources to a selection.
          */
         $('body').on('click', '.selection-update, .selection-delete', function(e) {

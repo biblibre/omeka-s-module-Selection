@@ -51,10 +51,20 @@ $selection = $currentSelection;
 $recordsByType = array_column($currentRecords, 'resource_name', 'id');
 $countsByType = array_count_values($recordsByType) + ['items' => 0, 'media' => 0, 'item_sets' => 0, 'annotations' => 0];
 
+$baseUrl = dirname($url('site/selection-id', ['id' => $selectionId, 'action' => '__'], true));
+$deleteText = $escapeAttr($translate('Remove from selection')); // @translate
+
 // TODO Get the resources one time via api (currently only needed for thumbnail, not prepared early).
 ?>
 
 <?= $this->pageTitle($selections[$selectionId]['label'] ?? $translate('Selection'), 2) ?>
+
+<?php if ($isSession): ?>
+<p>
+    <strong><?= $translate('Warning') ?></strong>
+    <?= $translate('This selection is stored in the session cookie. It will be lost if the cookie is cleared.') ?>
+</p>
+<?php endif; ?>
 
 <div class="selection-list selections selection-flat">
 
@@ -75,10 +85,15 @@ $countsByType = array_count_values($recordsByType) + ['items' => 0, 'media' => 0
             $linkContent = sprintf('%s<span class="resource-name">%s</span>', $thumbnail($resource, 'medium'), $escape($heading));
             ?>
         <li class="item resource">
-            <?= $resource->linkRaw($linkContent, null, ['class' => 'resource-link']) ?>
+            <?= $hyperlink->raw($linkContent, $record['url'], ['class' => 'resource-link']) ?>
             <?php if ($body): ?>
-            <div class="description"><?= $escape($body) ?></div>
+            <div class="description">
+                <?= $escape($body) ?>
+            </div>
             <?php endif; ?>
+            <ul class="actions">
+                <li><button type="button" class="selection-delete" data-url="<?= $record['url_remove'] ?>"><?= $deleteText ?></button></li>
+            </ul>
         </li>
         <?php endforeach; ?>
     </ul>

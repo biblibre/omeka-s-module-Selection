@@ -23,23 +23,26 @@ $baseUrl = dirname($url('site/selection-id', ['id' => $selectionId, 'action' => 
 $bulkExporters = $plugins->has('bulkExporters') ? $plugins->get('bulkExporters')() : null;
 ?>
 
-<li class="selection-group group-level-__GROUP_LEVEL_" data-path="__GROUP_PATH__" data-level="__GROUP_LEVEL__">>
+<li class="selection-group group-level-__GROUP_LEVEL__" data-path="__GROUP_PATH__" data-level="__GROUP_LEVEL__">
     <div>
-        <span class="group-name">__GROUP_NAME__</span>
-        <ul class="actions">
-            <li><button type="button" class="add-group" data-url="<?= $baseUrl  ?>/add-group"><?= $escape($translate('Add a sub-folder')) ?></button></li>
-            <li><button type="button" class="rename-group" data-url="<?= $baseUrl ?>/rename-group"><?= $escape($translate('Rename folder')) ?></button></li>
-            <li><button type="button" class="move-group" data-url="<?= $baseUrl ?>/move-group"><?= $escape($translate('Move folder')) ?></button></li>
-            <li><button type="button" class="delete-group" data-url="<?= $baseUrl ?>/delete-group"><?= $escape($translate('Delete folder')) ?></button></li>
-            <li><button type="button" class="move-resource" data-url="<?= $baseUrl ?>/move"><?= $escape($translate('Move resources')) ?></button></li>
-            <?php if ($bulkExporters):
-            foreach ($bulkExporters as $format => $label):
-                $urlFormat = $url('site/resource/output', ['site-slug' => $siteSlug, 'controller' => 'resource', 'action' => 'browse', 'format' => $format]);
-            ?>
-            <li><a class="download-id" href="<?= $urlFormat ?>" download="download"><button type="button" class="export-group download-<?= $format ?>" data-url="<?= $urlFormat ?>"><?= $label ?></button></a></li>
-            <?php endforeach; ?>
-            <?php endif; ?>
-        </ul>
+        <h4><span class="group-name">__GROUP_NAME__</span></h4>
+        <details class="action-details">
+            <summary class="group-name"><?= $translate('Actions') ?></summary>
+            <ul class="actions">
+                <li><button type="button" class="add-group" data-url="<?= $baseUrl  ?>/add-group"><?= $escape($translate('Add a sub-folder')) ?></button></li>
+                <li><button type="button" class="rename-group" data-url="<?= $baseUrl ?>/rename-group"><?= $escape($translate('Rename folder')) ?></button></li>
+                <li><button type="button" class="move-group" data-url="<?= $baseUrl ?>/move-group"><?= $escape($translate('Move folder')) ?></button></li>
+                <li><button type="button" class="delete-group" data-url="<?= $baseUrl ?>/delete-group"><?= $escape($translate('Delete folder')) ?></button></li>
+                <li><button type="button" class="move-resource" data-url="<?= $baseUrl ?>/move"><?= $escape($translate('Move resources')) ?></button></li>
+                <?php if ($bulkExporters):
+                foreach ($bulkExporters as $format => $label):
+                    $urlFormat = $url('site/resource/output', ['site-slug' => $siteSlug, 'controller' => 'resource', 'action' => 'browse', 'format' => $format]);
+                ?>
+                <li><a class="download-id" href="<?= $urlFormat ?>" download="download"><button type="button" class="export-group download-<?= $format ?>" data-url="<?= $urlFormat ?>"><?= $label ?></button></a></li>
+                <?php endforeach; ?>
+                <?php endif; ?>
+            </ul>
+        </details>
     </div>
     <ul class="resource-list selection-resources">
         __GROUP_RESOURCES__

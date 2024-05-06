@@ -1,32 +1,18 @@
 @media screen {
-    .selection-details summary,
-    .selection-details summary h3,
-    .selection-details summary h4,
-    .selection-details summary h5 {
-        display: inline-block;
-        cursor: pointer;
-    }
-    .selection-details > summary::after {
-        content: "";
-        font-family: "Font Awesome 5 Free";
-        font-weight: 900;
-        margin-left: .5em !important;
-        margin-right: 0 !important;
-        padding: 0 !important;
-        float: none !important;
-        border: 0 !important;
-        width: auto !important;
-    }
-    .selection-details[open] > summary:first-child::after {
-        content: "";
-    }
-
     .selection .resource-link {
         display: initial;
     }
     #content .selection .media.resource {
         text-align: inherit;
     }
+    .selection #content .media.resource,
+    #content .selection .media.resource {
+        display: block;
+        text-align: inherit;
+        margin-right: inherit;
+    }
+
+    /* Selection list */
 
     .selection-list ul {
         list-style-type: none;
@@ -38,48 +24,136 @@
     .selection-list .selection-empty:not(.active) {
         display: none;
     }
-    .selection-list .add-group::after {
+    .selection-list .add-group::before {
         content:"+";
     }
-    .selection-list .move-group::after,
-    .selection-list .move-resource::after {
+    .selection-list .move-group::before,
+    .selection-list .move-resource::before {
         content:"▷";
     }
-    .selection-list .rename-group::after {
+    .selection-list .rename-group::before {
         content:"⁄";
     }
-    .selection-list .delete-group::after,
-    .selection-list .selection-delete::after {
+    .selection-list .delete-group::before,
+    .selection-list .selection-delete::before {
         content:"X";
     }
-    .selection-list .add-group::after,
-    .selection-list .move-group::after,
-    .selection-list .rename-group::after,
-    .selection-list .delete-group::after,
-    .selection-list .move-resource::after,
-    .selection-list .selection-delete::after {
-        padding-left: 1em;
+    .selection-list .add-group::before,
+    .selection-list .move-group::before,
+    .selection-list .rename-group::before,
+    .selection-list .delete-group::before,
+    .selection-list .move-resource::before,
+    .selection-list .selection-delete::before {
+        display: inline-block;
+        width: 0.5em;
+        padding-right: 1em;
+    }
+    .selection-list li a button {
+        margin-left: 1.5em;
     }
     .selection-list.selections.inactive,
     .selection-list.selection-empty.inactive {
         display: none;
     }
 
-    span.selection-delete {
-        cursor: pointer;
-        margin-left: 12px;
+    /* Selection hierarchy */
+
+    .selection-hierarchy .selection-structure > li {
+        margin: 16px 0 16px 0;
     }
-    .selection #content .media.resource,
-    #content .selection .media.resource {
-        display: block;
-        text-align: inherit;
-        margin-right: inherit;
+    .selection-hierarchy .selection-structure > li[data-level='1'] {
+        margin-left: 0;
+    }
+    .selection-hierarchy .selection-structure > li[data-level='2'] {
+        margin-left: 48px;
+    }
+    .selection-hierarchy .selection-structure > li[data-level='3'] {
+        margin-left: 96px;
+    }
+    .selection-hierarchy .selection-structure > li[data-level='4'] {
+        margin-left: 144px;
+    }
+    .selection-hierarchy .selection-structure > li[data-level='5'] {
+        margin-left: 192px;
+    }
+    .selection-hierarchy.selections.inactive,
+    .selection-hierarchy.selection-empty.inactive {
+        display: none;
     }
     .group-name span:not(:last-of-type)::after {
         content:"/";
         padding-left: .5em;
         padding-right: .5em;
     }
+    .group-name span:not(:last-of-type) {
+        display: none;
+    }
+
+    /* Selections actions */
+
+    .action-details,
+    .selection-details {
+        cursor: pointer;
+    }
+    .action-details summary,
+    .selection-details summary,
+    .selection-details summary h3,
+    .selection-details summary h4,
+    .selection-details summary h5 {
+        display: inline-block;
+        cursor: pointer;
+    }
+    .action-details > summary::after,
+    .selection-details > summary::after {
+        content: "";
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        margin-left: .5em !important;
+        margin-right: 0 !important;
+        padding: 0 !important;
+        float: none !important;
+        border: 0 !important;
+        width: auto !important;
+    }
+    .action-details[open] > summary:first-child::after,
+    .selection-details[open] > summary:first-child::after {
+        content: "";
+    }
+    body.selection.browse .action-details[open] > p,
+    body.selection.browse .action-details[open] > ul,
+    body.selection.browse .action-details[open] > div,
+    body.selection.browse .selection-details[open] > p,
+    body.selection.browse .selection-details[open] > ul,
+    body.selection.browse .selection-details[open] > div {
+        display: block;
+        position: absolute;
+        z-index: 10;
+        overflow: visible;
+        cursor: auto;
+        min-width: 230px;
+        padding: 15px;
+        border: 1px solid #DCD6CA;
+        background: #EEE;
+        background-color: #FFFFFF;
+        box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2);
+    }
+    body.selection.browse ul.resource-list .resource {
+        overflow: initial;
+        display: flow-root;
+    }
+    body.selection.browse .selection-resources .actions button {
+        background-color: #FFFFFF;
+        padding: 7.5px 4px;
+    }
+    body.selection.browse .selection-resources .actions button:hover {
+        background-color: #dedede;
+    }
+
+    span.selection-delete {
+        cursor: pointer;
+        margin-left: 12px;
+    }
+
     /* Note: regular font awesome icons are no more free. */
     .selection-update.selected {
          color:black;

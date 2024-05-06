@@ -38,20 +38,25 @@ $baseUrl = pathinfo($url('site/selection-id', ['id' => $selectionId, 'action' =>
 $resourceId = $record['id'];
 $resourceType = $record['type'];
 $resource = $api->read($record['resource_name'], $resourceId)->getContent();
+$heading = $record['heading'];
+$body = $record['body'];
+$linkContent = sprintf('%s<span class="resource-name">%s</span>', $thumbnail($resource, 'medium'), $escape($heading));
 ?>
 
 <li class="selection-resource resource <?= $resourceType ?>" data-id="<?= $resourceId ?>">
-    <?= $hyperlink->raw($thumbnail($resource, 'square'), $record['url'], ['class' => 'resource-link']) ?>
-    <h4><?= $hyperlink($record['heading'], $record['url']) ?></h4>
-    <?php if ($record['body']): ?>
+    <?= $hyperlink->raw($linkContent, $record['url'], ['class' => 'resource-link']) ?>
+    <?php if ($body): ?>
     <div class="description">
-        <?= $escape($record['body']) ?>
+        <?= $escape($body) ?>
     </div>
     <?php endif; ?>
-    <ul class="actions">
-        <?php if ($selection && $selection['structure']): ?>
-        <li><button type="button" class="move-resource" data-url="<?= $baseUrl ?>/move"><?= $moveText ?></button></li>
-        <?php endif; ?>
-        <li><button type="button" class="selection-delete" data-url="<?= $baseUrl ?>/delete"><?= $deleteText ?></button></li>
-    </ul>
+    <details class="action-details">
+        <summary class="group-name"><?= $translate('Actions') ?></summary>
+        <ul class="actions">
+            <?php if ($selection && $selection['structure']): ?>
+            <li><button type="button" class="move-resource" data-url="<?= str_replace('/delete', '/move', $record['url_remove']) ?>"><?= $moveText ?></button></li>
+            <?php endif; ?>
+            <li><button type="button" class="selection-delete" data-url="<?= $record['url_remove'] ?>"><?= $deleteText ?></button></li>
+        </ul>
+    </details>
 </li>
