@@ -107,6 +107,7 @@ $selectText = $escapeAttr($translate('Select resource')); // @translate
 
     <?php
     if ($currentRecords && $bulkExport) { // Does not support mixed types for now.
+        echo '<h4>' . $translate('Select resources and download metadata') . '</h4>';
         $recordsByType = array_column($currentRecords, 'type', 'id');
         $countsByType = array_count_values($recordsByType);
         if (count($countsByType) === 1) {

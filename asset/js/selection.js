@@ -338,6 +338,29 @@
             });
 
         /**
+         * Update direct links for bulk export according to checkboxes.
+         * 
+         * Unlike contact us, send all resources when none are set.
+         */
+        $('.bulk-export .exporters a.exporter').on('click', function() {
+            var url = new URL($(this).prop('href'));
+            var vals = $('input.selected-resource[name="resource_ids[]"]:checked');
+            if (!vals.length)  {
+                vals = $('input.selected-resource[name="resource_ids[]"]');
+            }
+            var values = [];
+            if (vals.length)  {
+                for (var i = 0; i < vals.length; i++) {
+                    values.push(vals[i].value);
+                }
+            } else {
+                values.push(0);
+            }
+            url.search = 'id=' + values.join(',');
+            $(this).prop('href', url.toString());
+        });
+
+       /**
          * Append resource_ids for contact us.
          */
         $('#contact-us').on('submit', function() {
