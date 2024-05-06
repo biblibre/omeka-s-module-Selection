@@ -153,7 +153,7 @@ class SelectionResourceAdapter extends AbstractEntityAdapter
                     'WITH', $qb->expr()->eq("$valuesAlias.property", $property->getId())
                 );
                 $qb->addOrderBy(
-                    "GROUP_CONCAT($valuesAlias.value ORDER BY $valuesAlias.id)",
+                    "GROUP_CONCAT($valuesAlias.value ORDER BY $valuesAlias.id ASC)",
                     $query['sort_order']
                 );
             } else {

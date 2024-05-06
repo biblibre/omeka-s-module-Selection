@@ -144,7 +144,7 @@ SQL;
 SELECT id, owner_id
 FROM selection_resource
 WHERE selection_id IS NULL
-ORDER BY owner_id
+ORDER BY owner_id ASC
 ;
 SQL;
     $selectionResources = $connection->executeQuery($sql)->fetchAllKeyValue();
