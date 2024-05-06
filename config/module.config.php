@@ -159,6 +159,7 @@ return  [
                 'items',
             ],
             'selection_resource_show_open' => true,
+            'selection_resource_show_open_list' => true,
             'selection_browse_disposition' => 'list',
         ],
         'block_settings' => [

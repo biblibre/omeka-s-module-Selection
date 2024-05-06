@@ -56,10 +56,20 @@ class SiteSettingsFieldset extends Fieldset
                 'options' => [
                     'element_group' => 'selection',
                     'label' => 'Open the selection block by default in resource page', // @translate
-                    'info' => 'If enabled, the selection block on resource pages is open by default', // @translate
                 ],
                 'attributes' => [
                     'id' => 'selection_resource_show_open',
+                ],
+            ])
+            ->add([
+                'name' => 'selection_resource_show_open_list',
+                'type' => Element\Checkbox::class,
+                'options' => [
+                    'element_group' => 'selection',
+                    'label' => 'Open the selection list block by default in resource page', // @translate
+                ],
+                'attributes' => [
+                    'id' => 'selection_resource_show_open_list',
                 ],
             ])
             // TODO Add a third view with a button to let user choose disposition.
