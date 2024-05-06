@@ -3,20 +3,23 @@
 
         /**
          * Hide details summary on outside click.
+         * @todo Find a better way to manage only selection details.
          */
+        /*
         $(document).on('click', function(e) {
             const clicked = e.target;
-            $('details')
+            $('details.selection-details')
                 .filter(function() {
                     return !$.contains(this, clicked);
                 })
                 .removeAttr('open');
         });
+        */
 
         /**
          * Add multiple resources to a selection.
          */
-        $('body').on('click', '.selection-update, .selection-delete', function(e) {
+        $('body').on('click', '.selection-button', function(e) {
             e.preventDefault();
             e.stopPropagation();
             const button = $(this);
@@ -27,6 +30,7 @@
             $.ajax({
                 url: url,
                 data: id && !urlId ? { id: id } : null,
+                beforeSend: beforeSpin(button),
             })
             .done(function(data) {
                 if (data.status === 'success') {
@@ -36,6 +40,9 @@
                         updateSelectionList(selectionResource);
                     }
                 }
+            })
+            .always(function () {
+                afterSpin(button)
             });
         });
 
@@ -53,6 +60,7 @@
             $.ajax({
                 url: url,
                 data: id && !urlId ? { id: id } : null,
+                beforeSend: beforeSpin(button),
             })
             .done(function(data) {
                 if (data.status === 'success') {
@@ -61,6 +69,9 @@
                         deleteSelectionFromList(selectionResource);
                     }
                 }
+            })
+            .always(function () {
+                afterSpin(button)
             });
         });
 
@@ -247,7 +258,7 @@
         });
 
         const updateSelectionButton = function(selectionResource) {
-            const button = $('.selection-update[data-id=' + selectionResource.id + ']');
+            const button = $('.selection-button[data-id=' + selectionResource.id + ']');
             if (!button.length) {
                 return;
             }
@@ -319,6 +330,14 @@
          */
         const emptySelectionGroups = $('.selection-group .selection-resources:not(:has(.selection-resource))').closest('.selection-group');
         emptySelectionGroups.find('.move-resource, .export-group').hide();
+
+        const beforeSpin = function (button) {
+            button.find('span').removeClass('fas fa-bookmark').addClass('fas fa-sync fa-spin');
+        }
+
+        const afterSpin = function (button) {
+            button.find('span').removeClass('fas fa-sync fa-spin').addClass('fas fa-bookmark');
+        }
 
         /**
          * Prepare initial ids for groups and buttons.

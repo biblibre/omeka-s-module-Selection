@@ -155,17 +155,22 @@
     }
 
     /* Note: regular font awesome icons are no more free. */
-    .selection-update {
+    .selection-button {
          background-color: initial;
     }
-    .selection-update:hover {
+    .selection-button:hover {
          background-color: #dedede;
     }
-    .selection-update.selected {
+    .selection-button.selected {
          color: black;
     }
-    .selection-update.unselected {
+    .selection-button.unselected {
          color: gray;
+    }
+    .selection-button span.fa-sync.fa-spin {
+        /* Like fa-bookmark */
+        height: 20px;
+        width: 15px;
     }
 
     .selected-resource {
