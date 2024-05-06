@@ -5,28 +5,50 @@ Selection (module for Omeka S)
 > are available on [GitLab], which seems to respect users and privacy better
 > than the previous repository.__
 
-[Selection] is a module for [Omeka S] that allows any visitor to store selected
-resources through sessions. The selected resources can be saved in multiple
-selections with a label to simplify management. The selection can be dynamic too
-when a search query is used. The selection can be organized in a structured way.
+[Selection] is a module for [Omeka S] that allows any users to store one or
+multiple selections and the same for any visitor via local session. Each
+selections can be saved with a label to simplify management and it is possible
+to create a directory-like hierarchy to arrange resources. The selection can be
+dynamic too when a search query is used.
 
 Furthermore, when the module [Bulk Export] is installed, it is possible to
 export them instantly to common formats, included common spreadsheet formats.
 
 The selection is saved in a cookie for anonymous visitor, so anybody can create
 a selection. When the user is authenticated, in particular as a [Guest], the
-selections is saved in the database and available through sessions.
+selections is saved in the database and available permanently.
 
 
 Installation
 ------------
 
-Install the optional modules [Generic], [Guest], and [Bulk Export], if wanted.
+See general end user documentation for [installing a module].
 
-Uncompress files in the module directory and rename module folder `Selection`.
+The module [Common] must be installed first.
+
+The optional module [Guest] can be used, but Selection is available for
+anonymous users too. The module is integrated with module [Bulk Export] too.
+
+If you use an old theme, you can install [Blocks Disposition] too.
+
+You may use the release zip to install it or clone the source via git.
+
+* From the zip
+
+Download the last release [Selection.zip] from the list of releases (the master
+does not contain the dependency), and uncompress it in the `modules` directory.
+
+* From the source and for development
+
+If the module was installed from the source, rename the name of the folder of
+the module to `Selection`.
+
+```sh
+cd modules
+git clone https://gitlab.com/Daniel-KM/Omeka-S-module-Selection Selection
+```
+
 Then install it like any other Omeka module and follow the config instructions.
-
-See general end user documentation for [Installing a module].
 
 
 Usage
@@ -34,14 +56,24 @@ Usage
 
 The user can see a selection in the item page. On a click, the item is added to
 the selection, or removed. The full list of resources in the selection is
-available at "/s/my-site/guest/selection". This page is available for any
-registered users and possibly for visitors.
+available at "/s/my-site/selection". This page is available for any registered
+users and possibly for visitors. For guest users (module [Guest]), the url is
+"/s/my-site/guest/selection".
 
 A resource can be selected multiple times, but only once by selection.
 
 
 Integration in a theme
 ----------------------
+
+The selection is viewable at /s/my-site/selection or, when module Guest is used,
+at /s/my-site/guest/selection.
+
+### Themes with resource blocks
+
+Add the block for the basket in the pages you need.
+
+### Themes without resource blocks (before Omeka S v4)
 
 It is recommended to edit the theme directly to include the selection besides
 the item and the media, in particular in the item/show and the item/browse views.
@@ -166,6 +198,7 @@ TODO
 - [ ] Integrate visibility in order to share selections.
 - [ ] Allow to query multiple ids (owner id, resource id, selection id) in the api.
 - [x] Add a modified date of a selection (from the selection itself, not only from the list of selected resources).
+- [ ] Add a third view with a button to let user choose disposition.
 
 
 Warning
@@ -217,17 +250,18 @@ Copyright
 ---------
 
 * Copyright Biblibre, 2016-2017 (see [Biblibre])
-* Copyright Daniel Berthereau, 2017-2023 (see [Daniel-KM] on GitLab)
+* Copyright Daniel Berthereau, 2017-2024 (see [Daniel-KM] on GitLab)
 
-This module was initially based on the fork of the module [Basket] from BibLibre.
+This module was initially based on the fork of the module [Basket] from BibLibre
+and restructured and improved for various projects, like [Collections de la Maison de Salins].
 
 
 [Selection]: https://gitlab.com/Daniel-KM/Omeka-S-module-Selection
 [Omeka S]: https://omeka.org/s
-[Generic]: https://gitlab.com/Daniel-KM/Omeka-S-module-Generic
+[Common]: https://gitlab.com/Daniel-KM/Omeka-S-module-Common
 [Guest]: https://gitlab.com/Daniel-KM/Omeka-S-module-Guest
 [Bulk Export]: https://gitlab.com/Daniel-KM/Omeka-S-module-BulkExport
-[Installing a module]: https://omeka.org/s/docs/user-manual/modules/#installing-modules
+[installing a module]: https://omeka.org/s/docs/user-manual/modules/#installing-modules
 [module issues]: https://gitlab.com/Daniel-KM/Omeka-S-module-Selection/-/issues
 [CeCILL v2.1]: https://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
 [GNU/GPL]: https://www.gnu.org/licenses/gpl-3.0.html
@@ -236,4 +270,5 @@ This module was initially based on the fork of the module [Basket] from BibLibre
 [Basket]: https://github.com/BibLibre/Omeka-S-module-Basket
 [Biblibre]: https://github.com/biblibre
 [GitLab]: https://gitlab.com/Daniel-KM
+[Collections de la Maison de Salins]: https://collections.maison-salins.fr
 [Daniel-KM]: https://gitlab.com/Daniel-KM "Daniel Berthereau"
