@@ -1,19 +1,42 @@
 @media screen {
-    .selection summary h2 {
+    .selection-details summary,
+    .selection-details summary h3,
+    .selection-details summary h4,
+    .selection-details summary h5 {
         display: inline-block;
+        cursor: pointer;
+    }
+    .selection-details > summary::after {
+        content: "";
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        margin-left: .5em !important;
+        margin-right: 0 !important;
+        padding: 0 !important;
+        float: none !important;
+        border: 0 !important;
+        width: auto !important;
+    }
+    .selection-details[open] > summary:first-child::after {
+        content: "";
+    }
+
+    .selection .resource-link {
+        display: initial;
     }
     #content .selection .media.resource {
         text-align: inherit;
     }
-    #content .media.resource:hover {
-        border-bottom: 1px solid transparent;
-    }
+
     .selection-list ul {
         list-style-type: none;
         padding-left: 0;
     }
     .selection-list .selection-group .selection-resources {
         padding-left: 2em;
+    }
+    .selection-list .selection-empty:not(.active) {
+        display: none;
     }
     .selection-list .add-group::after {
         content:"+";
@@ -25,20 +48,7 @@
     .selection-list .rename-group::after {
         content:"⁄";
     }
-    .selection-list .delete-group::after {
-        content:"X";
-    }
-    a.selection-list-toggle:link,
-    a.selection-list-toggle:visited {
-        color: #000;
-        text-decoration: none;
-    }
-    .selection-list-toggle::after {
-        content:"⊞";
-    }
-    .selection-list-toggle.active::after {
-        content:"⊟";
-    }
+    .selection-list .delete-group::after,
     .selection-list .selection-delete::after {
         content:"X";
     }
@@ -54,15 +64,15 @@
     .selection-list.selection-empty.inactive {
         display: none;
     }
+
     span.selection-delete {
         cursor: pointer;
         margin-left: 12px;
     }
     .selection #content .media.resource,
     #content .selection .media.resource {
-        display: inherit;
+        display: block;
         text-align: inherit;
-        vertical-align: inherit;
         margin-right: inherit;
     }
     .group-name span:not(:last-of-type)::after {

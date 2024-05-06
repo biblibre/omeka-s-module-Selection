@@ -12,6 +12,7 @@
 
 $plugins = $this->getHelperPluginManager();
 $translate = $plugins->get('translate');
+$siteSetting = $plugins->get('siteSetting');
 $selectionButtonToggle = $plugins->get('selectionButtonToggle');
 
 $this->headLink()
@@ -22,26 +23,25 @@ $this->headScript()
 $medias = $resource->getControllerName() === 'item' ? $resource->media() : [];
 ?>
 
-    <details class="selection" <?= $this->siteSetting('selection_open', true) ? 'open' : '' ?>>
-    <summary><h2><?= $translate('Selection') ?></h2></summary>
-
+<details class="selection selection-details" <?= $siteSetting('selection_open', true) ? 'open="open"' : '' ?>>
+    <summary><h4><?= $translate('Selection') ?></h4></summary>
     <?php if (count($medias)): ?>
-    <h3><?= $translate('Item') ?></h3>
+    <h5><?= $translate('Item') ?></h5>
     <?php endif; ?>
     <div class="item resource">
         <?= $selectionButtonToggle($resource) ?>
         <?= $resource->linkPretty() ?>
     </div>
     <?php if (count($medias)): ?>
-    <h3><?= $translate('Media') ?></h3>
-    <div class="media-list">
+    <details class="media-list selection-details">
+        <summary><h5><?= $translate('Media') ?></h5></summary>
         <?php foreach ($medias as $media): ?>
         <div class="media resource">
             <?= $selectionButtonToggle($media) ?>
             <?= $media->linkPretty() ?>
         </div>
         <?php endforeach; ?>
-    </div>
+    </details>
     <?php endif; ?>
 
     <?php // The session selection list can be moved anywhere via the main layout. ?>

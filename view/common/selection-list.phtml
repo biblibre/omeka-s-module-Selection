@@ -11,9 +11,9 @@ $siteSetting = $plugins->get('siteSetting');
 
 $user = $this->identity();
 $allowVisitor = !$user && $siteSetting('selection_visitor_allow', true);
-if (!$allowVisitor && !$user):
+if (!$allowVisitor && !$user) {
     return;
-endif;
+}
 
 $container = new \Laminas\Session\Container('Selection');
 
@@ -21,19 +21,21 @@ $records = $container->records ?? [];
 $exporters = $records && $plugins->has('bulkExporters')
     ? $plugins->get('bulkExporters')()
     : [];
-if ($exporters):
+if ($exporters) {
     $ids = implode(',', array_keys($records));
     $route = $this->status()->isAdminRequest() ? 'admin/default/output' : 'site/resource/output';
     $this->headLink()
         ->appendStylesheet($this->assetUrl('css/bulk-export.css', 'BulkExport'));
-endif;
+}
+
+$urlDelete = $url('site/selection', ['action' => 'delete'], true);
+$deleteText = $escapeAttr($translate('Remove from selection')); // @translate
 ?>
 
-<?php $deleteText = $escapeAttr($translate('Remove from selection')); // @translate ?>
-<h3><a href="#" class="selection-list-toggle"><?= $translate('Selected resources') // @translate ?></a></h3>
-<div class="selection-list" style="display:none;">
+<details class="selection-list selection-details">
+    <summary><h5><?= $translate('Selected resources') // @translate ?></h5></summary>
+
     <ul class="selection-resources" data-text-delete="<?= $deleteText ?>">
-        <?php $urlDelete = $url('site/selection', ['action' => 'delete'], true); ?>
         <?php foreach ($records as $record): ?>
         <li data-id="<?= $record['id'] ?>">
             <a href="<?= $url('site/resource-id', ['controller' => $record['type'], 'id' => $record['id'], 'action' => 'show'], true) ?>"><?= $record['title'] ?></a>
@@ -41,11 +43,12 @@ endif;
         </li>
         <?php endforeach; ?>
     </ul>
+
     <p class="selection-empty<?= count($records) ? '' : ' active' ?>"><?= $translate('No selection') // @translate ?></p>
 
     <?php if ($exporters): ?>
     <div class="bulk-export">
-        <h4><?= $translate('Download selection') ?></h4>
+        <h5><?= $translate('Download selection') ?></h5>
         <ul class="formatters">
         <?php foreach ($exporters as $format => $label): ?>
             <?php $urlFormat = $url($route, ['resource-type' => 'resource', 'format' => $format], ['query' => ['id' => $ids]], true); ?>
@@ -54,4 +57,4 @@ endif;
         </ul>
     </div>
     <?php endif; ?>
-</div>
+</details>

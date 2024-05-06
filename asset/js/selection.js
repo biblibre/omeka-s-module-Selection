@@ -28,15 +28,6 @@
         });
 
         /**
-         * Toggle list of selected resources.
-         */
-        $('body').on('click', '.selection-list-toggle', function() {
-            $(this).toggleClass('active');
-            $('.selection-list').toggle().toggleClass('active');
-            return false;
-        });
-
-        /**
          * Remove a resource from the list of selected resources.
          */
         $('body').on('click', '.selection-resources .actions .delete', function(e) {
