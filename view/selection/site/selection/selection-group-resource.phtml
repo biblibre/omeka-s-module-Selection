@@ -53,12 +53,5 @@ $resource = $api->read($record['resource_name'], $resourceId)->getContent();
         <li><button type="button" class="move-resource" data-url="<?= $baseUrl ?>/move"><?= $moveText ?></button></li>
         <?php endif; ?>
         <li><button type="button" class="selection-delete" data-url="<?= $baseUrl ?>/delete"><?= $deleteText ?></button></li>
-        <?php if ($bulkExporters):
-        foreach ($bulkExporters as $format => $label):
-            $urlFormat = $url('site/resource-id/output', ['site-slug' => $siteSlug, 'controller' => $resourceType, 'id' => $resourceId, 'action' => 'show', 'format' => $format]);
-        ?>
-        <li><a class="download-id" href="<?= $urlFormat ?>" download="download"><button type="button" class="export-group download-<?= $format ?>" data-url="<?= $urlFormat ?>"><?= $label ?></button></a></li>
-        <?php endforeach; ?>
-        <?php endif; ?>
     </ul>
 </li>

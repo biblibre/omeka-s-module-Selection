@@ -25,6 +25,7 @@ $thumbnail = $plugins->get('thumbnail');
 $siteSetting = $plugins->get('siteSetting');
 $escapeAttr = $plugins->get('escapeHtmlAttr');
 $partialLoop = $plugins->get('partialLoop');
+$bulkExport = $plugins->has('bulkExport') ? $plugins->get('bulkExport') : null;
 
 // May be included in main layout.
 $this->headLink()
@@ -78,18 +79,23 @@ $countsByType = array_count_values($recordsByType) + ['items' => 0, 'media' => 0
             <?php if ($body): ?>
             <div class="description"><?= $escape($body) ?></div>
             <?php endif; ?>
-            <?php if ($bulkExporters): ?>
-            <ul class="actions">
-                <?php foreach ($bulkExporters as $format => $label):
-                    $urlFormat = $url('site/resource-id/output', ['site-slug' => $siteSlug, 'controller' => $record['type'], 'id' => $resourceId, 'action' => 'show', 'format' => $format]);
-                    ?>
-                <li><a class="download-id" href="<?= $urlFormat ?>" download="download"><button type="button" class="export-group download-<?= $format ?>" data-url="<?= $urlFormat ?>"><?= $label ?></button></a></li>
-                <?php endforeach; ?>
-            </ul>
-            <?php endif; ?>
         </li>
         <?php endforeach; ?>
     </ul>
     <?php $this->trigger('view.browse.after'); ?>
+
+    <?php
+    if ($currentRecords && $bulkExport) { // Does not support mixed types for now.
+        $recordsByType = array_column($currentRecords, 'type', 'id');
+        $countsByType = array_count_values($recordsByType);
+        if (count($countsByType) === 1) {
+            echo $bulkExport(array_keys($currentRecords), ['resourceType' => key($countsByType)]);
+        } else {
+            foreach (array_keys($countsByType) as $type) {
+                echo $bulkExport(array_keys($currentRecords, $type), ['resourceType' => $type]);
+            }
+        }
+    }
+    ?>
 
 </div>

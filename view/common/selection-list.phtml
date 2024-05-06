@@ -19,24 +19,15 @@ $url = $plugins->get('url');
 $translate = $plugins->get('translate');
 $siteSetting = $plugins->get('siteSetting');
 $escapeAttr = $plugins->get('escapeHtmlAttr');
+$bulkExport = $plugins->has('bulkExport') ? $plugins->get('bulkExport') : null;
 
 $currentRecords = $records[$selectionId] ?? [];
-
-$exporters = $records && $plugins->has('bulkExporters')
-    ? $plugins->get('bulkExporters')()
-    : [];
-if ($exporters) {
-    $ids = implode(',', array_keys($currentRecords));
-    $route = 'site/resource/output';
-    $this->headLink()
-        ->appendStylesheet($this->assetUrl('css/bulk-export.css', 'BulkExport'));
-}
 
 $deleteText = $escapeAttr($translate('Remove from selection')); // @translate
 ?>
 
 <details class="selection-list selection-details" <?= $siteSetting('selection_resource_show_open_list', true) ? 'open="open"' : '' ?>>
-    <summary><h5><?= $translate('Selected resources') // @translate ?></h5></summary>
+    <summary><h4><?= $translate('Selected resources') // @translate ?></h4></summary>
 
     <ul class="selection-resources" data-text-delete="<?= $deleteText ?>">
         <?php foreach ($currentRecords as $resourceId => $record): ?>
@@ -49,15 +40,17 @@ $deleteText = $escapeAttr($translate('Remove from selection')); // @translate
 
     <p class="selection-empty<?= count($currentRecords) ? '' : ' active' ?>"><?= $translate('No selection') // @translate ?></p>
 
-    <?php if ($exporters): ?>
-    <div class="bulk-export">
-        <h5><?= $translate('Download selection') ?></h5>
-        <ul class="formatters">
-        <?php foreach ($exporters as $format => $label): ?>
-            <?php $urlFormat = $url($route, ['resource-type' => 'resource', 'format' => $format], ['query' => ['id' => $ids]], true); ?>
-            <li><a class="download-<?= $format ?>" href="<?= $escapeAttr($urlFormat) ?>"><?= $label ?></a></li>
-        <?php endforeach; ?>
-        </ul>
-    </div>
-    <?php endif; ?>
+    <?php
+    if ($currentRecords && $bulkExport) { // Does not support mixed types for now.
+        $recordsByType = array_column($currentRecords, 'type', 'id');
+        $countsByType = array_count_values($recordsByType);
+        if (count($countsByType) === 1) {
+            echo $bulkExport(array_keys($currentRecords), ['resourceType' => key($countsByType)]);
+        } else {
+            foreach (array_keys($countsByType) as $type) {
+                echo $bulkExport(array_keys($currentRecords, $type), ['resourceType' => $type]);
+            }
+        }
+    }
+    ?>
 </details>
