@@ -6,9 +6,20 @@ use OmekaTestHelper\Controller\OmekaControllerTestCase;
 
 class SelectionControllerTest extends OmekaControllerTestCase
 {
-    protected $user;
+    /**
+     * @var \Omeka\Api\Representation\ItemRepresentation
+     */
     protected $item;
+
+    /**
+     * @var \Omeka\Api\Representation\SiteRepresentation
+     */
     protected $site;
+
+    /**
+     * @var \Omeka\Api\Representation\UserRepresentation
+     */
+    protected $user;
 
     public function setUp(): void
     {
@@ -33,10 +44,9 @@ class SelectionControllerTest extends OmekaControllerTestCase
         $this->api()->delete('users', $this->user->id());
     }
 
-    /** @test */
-    public function additemToSelectionShouldStoreSelectionForUser(): void
+    public function testAdditemToSelectionShouldStoreSelectionForUser(): void
     {
-        $this->dispatch('/s/test/selection/add/' . $this->item->id());
+        $this->dispatch('/s/test/guest/selection/add', null, ['id' => $this->item->id()], true);
 
         $selectionResources = $this->api()->search('selection_resources', [
             'owner_id' => $this->user->id(),
@@ -46,11 +56,10 @@ class SelectionControllerTest extends OmekaControllerTestCase
         $this->assertCount(1, $selectionResources);
     }
 
-    /** @test */
-    public function addmediaToSelectionShouldStoreSelectionForUSer(): void
+    public function testAddmediaToSelectionShouldStoreSelectionForUSer(): void
     {
         $media = $this->item->primaryMedia();
-        $this->dispatch('/s/test/selection/add/' . $media->id());
+        $this->dispatch('/s/test/guest/selection/add', null, ['id' => $media->id()], true);
 
         $selectionResources = $this->api()->search('selection_resources', [
             'owner_id' => $this->user->id(),
@@ -60,11 +69,10 @@ class SelectionControllerTest extends OmekaControllerTestCase
         $this->assertCount(1, $selectionResources);
     }
 
-    /** @test */
-    public function addExistingItemShouldNotUpdateSelection(): void
+    public function testAddExistingItemShouldNotUpdateSelection(): void
     {
         $this->addToSelection($this->item);
-        $this->dispatch('/s/test/selection/add/' . $this->item->id());
+        $this->dispatch('/s/test/guest/selection/add', null, ['id' => $this->item->id()], true);
 
         $selectionResources = $this->api()->search('selection_resources', [
             'owner_id' => $this->user->id(),
@@ -73,11 +81,10 @@ class SelectionControllerTest extends OmekaControllerTestCase
         $this->assertCount(1, $selectionResources);
     }
 
-    /** @test */
-    public function removeItemToSelectionShouldRemoveSelectionForUser(): void
+    public function testRemoveItemToSelectionShouldRemoveSelectionForUser(): void
     {
         $this->addToSelection($this->item);
-        $this->dispatch('/s/test/selection/delete/' . $this->item->id());
+        $this->dispatch('/s/test/guest/selection/delete', null, ['id' => $this->item->id()], true);
         $this->assertResponseStatusCode(200);
 
         $selectionResources = $this->api()->search('selection_resources', [
@@ -87,20 +94,18 @@ class SelectionControllerTest extends OmekaControllerTestCase
         $this->assertEmpty($selectionResources);
     }
 
-    /** @test */
-    public function displaySelectionShouldDisplayResources(): void
+    public function testDisplaySelectionShouldDisplayResources(): void
     {
         $this->addToSelection($this->item);
-        $this->dispatch('/s/test/selection');
+        $this->dispatch('/s/test/guest/selection');
         $this->assertXPathQueryContentContains('//h4', 'First Item');
     }
 
-    /** @test */
-    public function displaySelectionShouldDisplayMedia(): void
+    public function testDisplaySelectionShouldDisplayMedia(): void
     {
         $media = $this->item->primaryMedia();
         $this->addToSelection($media);
-        $this->dispatch('/s/test/selection');
+        $this->dispatch('/s/test/guest/selection');
         $this->assertResponseStatusCode(200);
         $this->assertQueryContentRegex('.property .value', '/media1/');
     }
@@ -173,8 +178,8 @@ class SelectionControllerTest extends OmekaControllerTestCase
     protected function addToSelection($resource): void
     {
         $this->api()->create('selection_resources', [
-            'o:owner_id' => $this->user->id(),
-            'o:resource_id' => $resource->id(),
+            'o:owner' => ['o:id' => $this->user->id()],
+            'o:resource' => ['o:id' => $resource->id()],
         ]);
     }
 }

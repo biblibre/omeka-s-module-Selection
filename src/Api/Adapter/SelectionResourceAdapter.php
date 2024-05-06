@@ -179,6 +179,7 @@ class SelectionResourceAdapter extends AbstractEntityAdapter
             $this->hydrateOwner($request, $entity);
             if ($this->shouldHydrate($request, 'o:resource')) {
                 $resource = $request->getValue('o:resource');
+                $resourceEntity = null;
                 if (is_array($resource) && !empty($resource['o:id']) && is_numeric($resource['o:id'])) {
                     $resourceEntity = $this->getAdapter('resources')->findEntity((int) $resource['o:id']);
                 }
