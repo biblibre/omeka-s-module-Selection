@@ -118,6 +118,7 @@ $countsByType = array_count_values($recordsByType) + ['items' => 0, 'media' => 0
         <?php
         foreach ($selection['structure'] ?? [] as $groupFullPath => $group):
             // Prepare the partial loop.
+            // WARNING: see js too.
             $selectedRecordModels = [];
             foreach ($group['resources'] ?? [] as $resourceId) {
                 $record = $selectedRecords[$resourceId] ?? null;

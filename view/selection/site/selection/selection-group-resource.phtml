@@ -63,7 +63,7 @@ $linkContent = sprintf('%s<span class="resource-name">%s</span>', $thumbnail($re
             <?php if ($selection && $selection['structure']): ?>
             <li><button type="button" class="move-resource" data-url="<?= str_replace('/delete', '/move', $record['url_remove']) ?>"><?= $moveText ?></button></li>
             <?php endif; ?>
-            <li><button type="button" class="selection-button selection-delete" data-url="<?= $record['url_remove'] ?>"><?= $deleteText ?></button></li>
+            <li><button type="button" class="selection-button selection-delete" data-id="<?= $record['id'] ?>" data-url="<?= $record['url_remove'] ?>"><?= $deleteText ?></button></li>
         </ul>
     </details>
 </li>

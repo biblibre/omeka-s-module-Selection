@@ -16,8 +16,6 @@
 $plugins = $this->getHelperPluginManager();
 $url = $plugins->get('url');
 $api = $plugins->get('api');
-$i18n = $plugins->get('i18n');
-$partial = $plugins->get('partial');
 $escape = $plugins->get('escapeHtml');
 $assetUrl = $plugins->get('assetUrl');
 $translate = $plugins->get('translate');
@@ -25,7 +23,6 @@ $hyperlink = $plugins->get('hyperlink');
 $thumbnail = $plugins->get('thumbnail');
 $siteSetting = $plugins->get('siteSetting');
 $escapeAttr = $plugins->get('escapeHtmlAttr');
-$partialLoop = $plugins->get('partialLoop');
 $bulkExport = $plugins->has('bulkExport') ? $plugins->get('bulkExport') : null;
 $contactUs = $plugins->has('contactUs') ? $plugins->get('contactUs') : null;
 
@@ -37,18 +34,9 @@ $this->headScript()
 
 $this->htmlElement('body')->appendAttribute('class', 'selection resource browse');
 
-$siteSlug = $site->slug();
-
-$lang = $this->lang();
-$filterLocale = (bool) $siteSetting('filter_locale_values');
-$headingTerm = $siteSetting('browse_heading_property_term');
-$bodyTerm = $siteSetting('browse_body_property_term');
-$bulkExporters = $plugins->has('bulkExporters') ? $plugins->get('bulkExporters')() : null;
-
 $currentSelection = $selections[$selectionId] ?? [];
 $currentRecords = $records[$selectionId] ?? [];
 $selectedRecords = $currentRecords;
-$selection = $currentSelection;
 
 $recordsByType = array_column($currentRecords, 'resource_name', 'id');
 $countsByType = array_count_values($recordsByType) + ['items' => 0, 'media' => 0, 'item_sets' => 0, 'annotations' => 0];
@@ -98,7 +86,7 @@ $selectText = $escapeAttr($translate('Select resource')); // @translate
             </div>
             <?php endif; ?>
             <ul class="actions">
-                <li><button type="button" class="selection-button selection-delete" data-url="<?= $record['url_remove'] ?>"><?= $deleteText ?></button></li>
+                <li><button type="button" class="selection-button selection-delete" data-id="<?= $record['id'] ?>" data-url="<?= $record['url_remove'] ?>"><?= $deleteText ?></button></li>
             </ul>
         </li>
         <?php endforeach; ?>

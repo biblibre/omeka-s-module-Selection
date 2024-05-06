@@ -38,6 +38,7 @@
                     if (selectionResource.status === 'success') {
                         updateSelectionButton(selectionResource);
                         updateSelectionList(selectionResource);
+                        button.closest('body.selection.browse .selection-list .resource').remove();
                     }
                 }
             })
@@ -47,9 +48,9 @@
         });
 
         /**
-         * Remove a resource from the list of selected resources.
+         * Remove a resource from the list of selected resources block.
          */
-        $('body').on('click', '.selection-resources .actions .delete', function(e) {
+        $('body').on('click', '.selection-resources .actions .delete, .selection-resources .selection-delete', function(e) {
             e.preventDefault();
             e.stopPropagation();
             const button = $(this);
@@ -65,8 +66,9 @@
             .done(function(data) {
                 if (data.status === 'success') {
                     const selectionResource = data.data.selection_resource;
-                    if (selectionResource.status === 'success' && selectionResource.value === 'unselected' ) {
-                        deleteSelectionFromList(selectionResource);
+                    if (selectionResource.status === 'success' && selectionResource.value === 'unselected') {
+                        updateSelectionButton(selectionResource);
+                        updateSelectionList(selectionResource);
                     }
                 }
             })
@@ -296,18 +298,6 @@
                 $('.selection-empty').addClass('inactive').hide();
                 $('.selection-count').removeClass('inactive').show();
             } else {
-                $('.selection-count').addClass('inactive').hide();
-                $('.selection-empty').removeClass('inactive').show();
-            }
-        }
-
-        const deleteSelectionFromList = function(selectionResource) {
-            const list = $('.selection-resources');
-            if (!list.length) {
-                return;
-            }
-            list.find('li[data-id=' + selectionResource.id + ']').remove();
-            if (!list.find('li').length) {
                 $('.selection-count').addClass('inactive').hide();
                 $('.selection-empty').removeClass('inactive').show();
             }
