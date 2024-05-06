@@ -67,7 +67,11 @@ class Selection extends AbstractBlockLayout
         $selection = $selectionContainer->selections[$selectionId] ?? reset($selectionContainer->selections);
         $selectionId = $selection['id'];
 
-        $disposition = $block->dataValue('disposition') === 'hierarchy' ? 'hierarchy' : 'list';
+        if (isset($query['disposition']) && in_array($query['disposition'], ['list', 'hierarchy'])) {
+            $disposition = $query['disposition'];
+        } else {
+            $disposition = $block->dataValue('disposition') === 'hierarchy' ? 'hierarchy' : 'list';
+        }
 
         $vars = [
             'site' => $block->page()->site(),

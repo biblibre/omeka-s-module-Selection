@@ -78,7 +78,8 @@ class SiteSettingsFieldset extends Fieldset
                 'type' => CommonElement\OptionalRadio::class,
                 'options' => [
                     'element_group' => 'selection',
-                    'label' => 'Disposition of page Selection', // @translate
+                    'label' => 'Default disposition of page Selection', // @translate
+                    'info' => 'When the url query argument "disposition" is set, it overrides this option.', // @ŧranslate
                     'value_options' => [
                         'list' => 'List', // @translate
                         'hierarchy' => 'Hierarchy', // @translate

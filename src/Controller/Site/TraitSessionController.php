@@ -34,7 +34,11 @@ trait TraitSessionController
         $selection = $this->getSelectionFromSessionOrInit($selectionContainer, $selectionId);
         $selectionId = $selection['id'];
 
-        $disposition = $this->siteSettings()->get('selection_browse_disposition') === 'hierarchy' ? 'hierarchy' : 'list';
+        if (isset($query['disposition']) && in_array($query['disposition'], ['list', 'hierarchy'])) {
+            $disposition = $query['disposition'];
+        } else {
+            $disposition = $this->siteSettings()->get('selection_browse_disposition') === 'hierarchy' ? 'hierarchy' : 'list';
+        }
 
         $view = new ViewModel([
             'site' => $this->currentSite(),
