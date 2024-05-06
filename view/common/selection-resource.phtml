@@ -52,7 +52,4 @@ $medias = $resource->getControllerName() === 'item' ? $resource->media() : [];
         <?php endforeach; ?>
     </details>
     <?php endif; ?>
-
-    <?php // The session selection list can be moved anywhere via the main layout or resource block. ?>
-    <?= $this->partial('common/selection-list') ?>
 </details>

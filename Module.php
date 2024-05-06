@@ -125,24 +125,32 @@ class Module extends AbstractModule
 
     public function handleViewShowAfter(Event $event): void
     {
+        /**
+         * @var \Omeka\Site\Theme\Theme $currentTheme
+         * @var \Omeka\Settings\SiteSettings $siteSettings
+         * @var \Omeka\Entity\User $user
+         * @var \Laminas\View\Renderer\PhpRenderer $view
+         * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
+         * @var \Omeka\Site\ResourcePageBlockLayout\Manager $blockLayoutManager
+         */
+
         $services = $this->getServiceLocator();
+
+        // Since Omeka S v4, if the theme support resource blocks, don't add it
+        // via event.
+        $currentTheme = $services->get('Omeka\Site\ThemeManager')->getCurrentTheme();
+        if ($currentTheme->isConfigurableResourcePageBlocks()) {
+            return;
+        }
+
         $siteSettings = $services->get('Omeka\Settings\Site');
 
-        /** @var \Omeka\Entity\User $user */
         $user = $services->get('Omeka\AuthenticationService')->getIdentity();
         $disableAnonymous = (bool) $siteSettings->get('selection_disable_anonymous');
         if ($disableAnonymous && !$user) {
             return;
         }
 
-        /**
-         * @var \Laminas\View\Renderer\PhpRenderer $view
-         * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
-         * @var \Omeka\Site\ResourcePageBlockLayout\Manager $blockLayoutManager
-         */
-
-        // Since Omeka S v4, if the selection is set in the resource block,
-        // don't add it via event.
         $view = $event->getTarget();
         $resource = $view->resource;
 
@@ -151,16 +159,9 @@ class Module extends AbstractModule
             return;
         }
 
-        $currentTheme = $services->get('Omeka\Site\ThemeManager')->getCurrentTheme();
         $blockLayoutManager = $services->get('Omeka\ResourcePageBlockLayoutManager');
-        $resourcePageBlocks = $blockLayoutManager->getResourcePageBlocks($currentTheme);
-        foreach ($resourcePageBlocks[$resource->resourceName()] ?? [] as $blocks) {
-            if (in_array('selection', $blocks)) {
-                return;
-            }
-        }
-
         echo $blockLayoutManager->get('selection')->render($view, $resource);
+        echo $blockLayoutManager->get('selectionList')->render($view, $resource);
     }
 
     public function handleGuestWidgets(Event $event): void
