@@ -298,9 +298,7 @@ class SelectionAdapter extends AbstractEntityAdapter
         // Get the current list of resource ids in order to update it partially.
         // Get only resource ids to simplify checks, not the useless ids of the
         // selection resources.
-        $resourceIds = array_map(function ($v) {
-            return (int) $v->getId();
-        }, $selection->getResources()->toArray());
+        $resourceIds = array_map(fn ($v) => (int) $v->getId(), $selection->getResources()->toArray());
 
         if (is_array($resources['replace'])) {
             $resourceIds = array_unique(array_filter(array_map('intval', array_filter($resources['replace'], 'is_numeric'))));

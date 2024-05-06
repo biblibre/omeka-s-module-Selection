@@ -10,10 +10,8 @@ use Common\Stdlib\PsrMessage;
 use Common\TraitModule;
 use Laminas\EventManager\Event;
 use Laminas\EventManager\SharedEventManagerInterface;
-use Laminas\ModuleManager\ModuleManager;
 use Laminas\Mvc\MvcEvent;
 use Omeka\Module\AbstractModule;
-use Omeka\Module\Exception\ModuleCannotInstallException;
 
 /**
  * Selection.

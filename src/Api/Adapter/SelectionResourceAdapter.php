@@ -328,7 +328,7 @@ class SelectionResourceAdapter extends AbstractEntityAdapter
         if (!$this->isTerm($term)) {
             return null;
         }
-        list($prefix, $localName) = explode(':', $term);
+        [$prefix, $localName] = explode(':', $term);
         $dql = 'SELECT p FROM Omeka\Entity\Property p
         JOIN p.vocabulary v WHERE p.localName = :localName
         AND v.prefix = :prefix';

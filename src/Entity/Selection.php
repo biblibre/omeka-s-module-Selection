@@ -283,9 +283,7 @@ class Selection extends AbstractEntity
         if ($this->isDynamic()) {
             return null;
         }
-        return $this->getSelectionResources()->map(function ($selectionResource) {
-            return $selectionResource->getResource();
-        });
+        return $this->getSelectionResources()->map(fn ($selectionResource) => $selectionResource->getResource());
     }
 
     public function setStructure(?array $structure): self

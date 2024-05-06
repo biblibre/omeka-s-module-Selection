@@ -69,6 +69,6 @@ class Selection extends Fieldset
                         'class' => 'chosen-select',
                     ],
                 ]);
-            }
+        }
     }
 }
