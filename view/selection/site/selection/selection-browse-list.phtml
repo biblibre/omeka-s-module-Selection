@@ -27,6 +27,7 @@ $siteSetting = $plugins->get('siteSetting');
 $escapeAttr = $plugins->get('escapeHtmlAttr');
 $partialLoop = $plugins->get('partialLoop');
 $bulkExport = $plugins->has('bulkExport') ? $plugins->get('bulkExport') : null;
+$contactUs = $plugins->has('contactUs') ? $plugins->get('contactUs') : null;
 
 // May be included in main layout.
 $this->headLink()
@@ -117,5 +118,9 @@ $selectText = $escapeAttr($translate('Select resource')); // @translate
         }
     }
     ?>
+
+    <?= $currentRecords && $contactUs ? $contactUs([
+        'html' => '<h4>' . $translate('Select resources and send an email') . '</h4>',
+    ]) : '' ?>
 
 </div>

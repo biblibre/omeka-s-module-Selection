@@ -337,5 +337,15 @@
                 }
             });
 
+        /**
+         * Append resource_ids for contact us.
+         */
+        $('#contact-us').on('submit', function() {
+            var selecteds = $('input.selected-resource');
+            selecteds.prop('name', 'fields[id][]');
+            selecteds.attr('form', 'contact-us');
+            return true;
+        });
+
     });
 })();
