@@ -58,7 +58,7 @@ $countsByType = array_count_values($recordsByType) + ['items' => 0, 'media' => 0
 <div class="selection-list selections selection-flat">
 
     <?php if (count($currentRecords)): ?>
-    <h3 class="selection-count"><?= sprintf($translate('%d items, %d media'), $countsByType['items'], $countsByType['media']) ?></h3>
+    <h3 class="selection-count"><?= sprintf($translate('%d resources'), count($currentRecords)) ?></h3>
     <?php else: ?>
     <p class="selection-empty">
         <?= $translate('The selection is empty.') // @translate ?>

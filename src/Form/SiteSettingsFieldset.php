@@ -34,6 +34,23 @@ class SiteSettingsFieldset extends Fieldset
                 ],
             ])
             ->add([
+                'name' => 'selection_selectable_resources',
+                'type' => CommonElement\OptionalMultiCheckbox::class,
+                'options' => [
+                    'element_group' => 'selection',
+                    'label' => 'Limit selections to specific resources', // @translate
+                    'value_options' => [
+                        'items' => 'Items', // @translate
+                        'media' => 'Medias', // @translate
+                        'item_sets' => 'Item sets', // @translate
+                        // 'annotations' => 'Annotations',
+                    ],
+                ],
+                'attributes' => [
+                    'id' => 'selection_selectable_resources',
+                ],
+            ])
+            ->add([
                 'name' => 'selection_resource_show_open',
                 'type' => Element\Checkbox::class,
                 'options' => [

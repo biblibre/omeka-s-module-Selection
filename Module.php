@@ -135,15 +135,22 @@ class Module extends AbstractModule
             return;
         }
 
-        // Since Omeka S v4, if the selection is set in the resource block,
-        // don't add it via event.
-        $view = $event->getTarget();
-
         /**
+         * @var \Laminas\View\Renderer\PhpRenderer $view
          * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
          * @var \Omeka\Site\ResourcePageBlockLayout\Manager $blockLayoutManager
          */
+
+        // Since Omeka S v4, if the selection is set in the resource block,
+        // don't add it via event.
+        $view = $event->getTarget();
         $resource = $view->resource;
+
+        $selectables = $siteSettings->get('selection_selectable_resources', ['items']);
+        if (!in_array($resource->resourceName(), $selectables)) {
+            return;
+        }
+
         $currentTheme = $services->get('Omeka\Site\ThemeManager')->getCurrentTheme();
         $blockLayoutManager = $services->get('Omeka\ResourcePageBlockLayoutManager');
         $resourcePageBlocks = $blockLayoutManager->getResourcePageBlocks($currentTheme);

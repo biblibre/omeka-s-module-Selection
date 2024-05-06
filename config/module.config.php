@@ -154,6 +154,9 @@ return  [
     'selection' => [
         'site_settings' => [
             'selection_disable_anonymous' => false,
+            'selection_selectable_resources' => [
+                'items',
+            ],
             'selection_resource_show_open' => true,
             'selection_browse_disposition' => 'list',
         ],
