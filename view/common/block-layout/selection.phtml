@@ -1,0 +1,22 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Omeka\Api\Representation\SitePageBlockRepresentation $block
+ * @var \Selection\Api\Representation\SelectionRepresentation $selection
+ * @var \Selection\Api\Representation\SelectionResourceRepresentation[] $selectionResources
+ * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $resources
+ * @var array $resourcesByType
+ * @var string $heading
+ */
+
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+?>
+
+<div class="block block-selection">
+    <?php if (!empty($heading)): ?>
+    <h2><?= $escape($heading) ?></h2>
+    <?php endif; ?>
+    <?= $this->partial('guest/site/guest/selection-resource-browse'); ?>
+</div>

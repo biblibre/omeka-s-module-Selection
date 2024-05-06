@@ -9,11 +9,6 @@ return  [
             'selection_resources' => Api\Adapter\SelectionResourceAdapter::class,
         ],
     ],
-    'block_layouts' => [
-        'invokables' => [
-            'selection' => Site\BlockLayout\Selection::class,
-        ],
-    ],
     'entity_manager' => [
         'mapping_classes_paths' => [
             dirname(__DIR__) . '/src/Entity',
@@ -43,7 +38,13 @@ return  [
     ],
     'form_elements' => [
         'invokables' => [
+            Form\Selection::class => Form\Selection::class,
             Form\SiteSettingsFieldset::class => Form\SiteSettingsFieldset::class,
+        ],
+    ],
+    'block_layouts' => [
+        'invokables' => [
+            'selection' => Site\BlockLayout\Selection::class,
         ],
     ],
     'resource_page_block_layouts' => [
@@ -157,6 +158,12 @@ return  [
         'site_settings' => [
             'selection_visitor_allow' => true,
             'selection_open' => true,
+        ],
+        'block_settings' => [
+            'selection' => [
+                'heading' => '',
+                'template' => '',
+            ],
         ],
     ],
 ];
