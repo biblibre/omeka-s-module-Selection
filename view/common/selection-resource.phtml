@@ -29,7 +29,7 @@ $this->headScript()
 $medias = $resource->getControllerName() === 'item' ? $resource->media() : [];
 ?>
 
-<details class="selection selection-details" <?= $siteSetting('selection_open', true) ? 'open="open"' : '' ?>>
+<details class="selection selection-details" <?= $siteSetting('selection_resource_show_open', true) ? 'open="open"' : '' ?>>
     <summary><h4><?= $translate('Selection') ?></h4></summary>
     <?php if (count($medias)): ?>
     <h5><?= $translate('Item') ?></h5>

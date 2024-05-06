@@ -154,7 +154,7 @@ return  [
     'selection' => [
         'site_settings' => [
             'selection_disable_anonymous' => false,
-            'selection_open' => true,
+            'selection_resource_show_open' => true,
         ],
         'block_settings' => [
             'selection' => [
