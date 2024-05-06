@@ -32,7 +32,6 @@ namespace Selection\Entity;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Omeka\Entity\AbstractEntity;
 use Omeka\Entity\User;
 
@@ -54,7 +53,6 @@ use Omeka\Entity\User;
  *          )
  *    }
  * )
- * @HasLifecycleCallbacks
  */
 class Selection extends AbstractEntity
 {
@@ -175,7 +173,11 @@ class Selection extends AbstractEntity
      * @var DateTime
      *
      * @Column(
-     *      type="datetime"
+     *     type="datetime",
+     *     nullable=false,
+     *     options={
+     *         "default": "CURRENT_TIMESTAMP"
+     *     }
      * )
      */
     protected $created;
@@ -184,8 +186,8 @@ class Selection extends AbstractEntity
      * @var DateTime
      *
      * @Column(
-     *      type="datetime",
-     *      nullable=true
+     *     type="datetime",
+     *     nullable=true
      * )
      */
     protected $modified;
@@ -317,14 +319,5 @@ class Selection extends AbstractEntity
     public function getModified(): ?DateTime
     {
         return $this->modified;
-    }
-
-    /**
-     * @PrePersist
-     */
-    public function prePersist(LifecycleEventArgs $eventArgs): self
-    {
-        $this->created = new DateTime('now');
-        return $this;
     }
 }

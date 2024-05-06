@@ -31,7 +31,6 @@
 namespace Selection\Entity;
 
 use DateTime;
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Omeka\Entity\AbstractEntity;
 use Omeka\Entity\Resource;
 use Omeka\Entity\User;
@@ -52,7 +51,6 @@ use Omeka\Entity\User;
  *          )
  *    }
  * )
- * @HasLifecycleCallbacks
  */
 class SelectionResource extends AbstractEntity
 {
@@ -111,7 +109,11 @@ class SelectionResource extends AbstractEntity
      * @var DateTime
      *
      * @Column(
-     *      type="datetime"
+     *     type="datetime",
+     *     nullable=false,
+     *     options={
+     *         "default": "CURRENT_TIMESTAMP"
+     *     }
      * )
      */
     protected $created;
@@ -163,11 +165,5 @@ class SelectionResource extends AbstractEntity
     public function getCreated(): DateTime
     {
         return $this->created;
-    }
-
-    public function prePersist(LifecycleEventArgs $eventArgs): self
-    {
-        $this->created = new DateTime('now');
-        return $this;
     }
 }
