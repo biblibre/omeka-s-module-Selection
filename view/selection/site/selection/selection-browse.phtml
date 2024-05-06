@@ -117,7 +117,7 @@ $countsByType = array_count_values($recordsByType) + ['items' => 0, 'media' => 0
     <div class="selection-list-actions">
         <ul class="actions">
             <li>
-                <button type="button" class="add-group" data-msg-group-name="<?= $translate('Set group name') ?>" data-url="<?= $url('site/selection-id', ['id' => $selectionId, 'action' => 'add-group'], true) ?>"><?= $translate('Add a group') ?></button>
+                <button type="button" class="add-group" data-msg-group-name="<?= $translate('Set folder name') ?>" data-url="<?= $url('site/selection-id', ['id' => $selectionId, 'action' => 'add-group'], true) ?>"><?= $translate('Create a folder') ?></button>
             </li>
         </ul>
     </div>
@@ -126,7 +126,7 @@ $countsByType = array_count_values($recordsByType) + ['items' => 0, 'media' => 0
 
     <?php // Groups and selected resources inside them. ?>
     <?php $templateGroup = $partial('selection/site/selection/selection-group'); ?>
-    <ul class="resource-list selection-resources selection-structure" data-msg-add-group="<?= $translate('Set group name') ?>" data-template-group="<?= $escapeAttr($templateGroup) ?>">
+    <ul class="resource-list selection-resources selection-structure" data-msg-add-group="<?= $translate('Set folder name') ?>" data-template-group="<?= $escapeAttr($templateGroup) ?>">
         <?php
         foreach ($selection['structure'] ?? [] as $groupFullPath => $group):
             // Prepare the partial loop.
@@ -166,7 +166,7 @@ $countsByType = array_count_values($recordsByType) + ['items' => 0, 'media' => 0
 
 <?php // Common actions. ?>
 <div id="selector-group" class="selector-group inactive" style="display:none;">
-    <select name="group" aria-label="<?= $translate('Select a group') ?>">
+    <select name="group" aria-label="<?= $translate('Select a folder') ?>">
         <option value="">/</option>
         <?php foreach ($selection ? array_keys($selection['structure']) : [] as $groupFullPath): ?>
         <option value="<?= $groupFullPath ?>"><?= str_replace('/', ' / ', $groupFullPath) ?></option>

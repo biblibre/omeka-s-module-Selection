@@ -27,10 +27,10 @@ $bulkExporters = $plugins->has('bulkExporters') ? $plugins->get('bulkExporters')
     <div>
         <span class="group-name">__GROUP_NAME__</span>
         <ul class="actions">
-            <li><button type="button" class="add-group" data-url="<?= $baseUrl  ?>/add-group"><?= $escape($translate('Add a sub-group')) ?></button></li>
-            <li><button type="button" class="rename-group" data-url="<?= $baseUrl ?>/rename-group"><?= $escape($translate('Rename group')) ?></button></li>
-            <li><button type="button" class="move-group" data-url="<?= $baseUrl ?>/move-group"><?= $escape($translate('Move group')) ?></button></li>
-            <li><button type="button" class="delete-group" data-url="<?= $baseUrl ?>/delete-group"><?= $escape($translate('Delete group')) ?></button></li>
+            <li><button type="button" class="add-group" data-url="<?= $baseUrl  ?>/add-group"><?= $escape($translate('Add a sub-folder')) ?></button></li>
+            <li><button type="button" class="rename-group" data-url="<?= $baseUrl ?>/rename-group"><?= $escape($translate('Rename folder')) ?></button></li>
+            <li><button type="button" class="move-group" data-url="<?= $baseUrl ?>/move-group"><?= $escape($translate('Move folder')) ?></button></li>
+            <li><button type="button" class="delete-group" data-url="<?= $baseUrl ?>/delete-group"><?= $escape($translate('Delete folder')) ?></button></li>
             <li><button type="button" class="move-resource" data-url="<?= $baseUrl ?>/move"><?= $escape($translate('Move resources')) ?></button></li>
             <?php if ($bulkExporters):
             foreach ($bulkExporters as $format => $label):
