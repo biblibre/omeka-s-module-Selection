@@ -35,14 +35,35 @@ class Selection implements LinkInterface
 
     public function toZend(array $data, SiteRepresentation $site)
     {
+        /**
+         * @var \Omeka\Entity\User $user
+         * @var \Omeka\Module\Manager $moduleManager
+         */
+        $services = $site->getServiceLocator();
+        $user = $services->get('Omeka\AuthenticationService')->getIdentity();
+        $moduleManager = $services->get('Omeka\ModuleManager');
+        $module = $moduleManager->getModule('Guest');
+        $isGuestActive = $module
+            && $module->getState() === \Omeka\Module\Manager::STATE_ACTIVE;
+        if ($user && $isGuestActive) {
+            return [
+                'label' => $data['label'],
+                'route' => 'site/guest/selection',
+                'class' => 'selection-link',
+                'params' => [
+                    'site-slug' => $site->slug(),
+                ],
+                'resource' => 'Selection\Controller\Site\Guest',
+            ];
+        }
         return [
             'label' => $data['label'],
-            'route' => 'site/guest/selection',
+            'route' => 'site/selection',
             'class' => 'selection-link',
             'params' => [
                 'site-slug' => $site->slug(),
             ],
-            'resource' => 'Selection\Controller\Site\GuestBoard',
+            'resource' => 'Selection\Controller\Site\Selection',
         ];
     }
 

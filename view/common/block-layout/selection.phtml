@@ -8,6 +8,7 @@
  * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $resources
  * @var array $resourcesByType
  * @var string $heading
+ * @var bool $isGuestActive
  */
 
 $plugins = $this->getHelperPluginManager();
@@ -18,5 +19,7 @@ $escape = $plugins->get('escapeHtml');
     <?php if (!empty($heading)): ?>
     <h2><?= $escape($heading) ?></h2>
     <?php endif; ?>
-    <?= $this->partial('guest/site/guest/selection-resource-browse'); ?>
+    <?= $isGuestActive
+        ? $this->partial('guest/site/guest/selection-resource-browse')
+        : $this->partial('selection/site/selection/selection-browse') ?>
 </div>

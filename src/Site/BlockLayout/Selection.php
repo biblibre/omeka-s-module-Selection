@@ -47,38 +47,36 @@ class Selection extends AbstractBlockLayout
 
     public function render(PhpRenderer $view, SitePageBlockRepresentation $block)
     {
+        $plugins = $view->getHelperPluginManager();
+        $siteSetting = $plugins->get('siteSetting');
+
         $user = $view->identity();
-        if (!$user) {
+        $disableAnonymous = (bool) $siteSetting('selection_disable_anonymous');
+        if ($disableAnonymous && !$user) {
             return '';
         }
 
-        $selectionResources = $view->api()->search('selection_resources', ['owner_id' => $user->getId()])->getContent();
+        // TODO Query in session is used only for pagination, not implemented yet.
+        $query = $view->params()->fromQuery();
 
-        $resourcesByType = [
-            'items' => [],
-            'item_sets' => [],
-            'media' => [],
-            'annotations' => [],
-        ];
+        // Read selection from session. There is always at least one selection.
+        /** @var \Laminas\Session\Container $selectionContainer */
+        $selectionContainer = $view->selectionContainer();
 
-        $resources = [];
-        foreach ($selectionResources as $selectionResource) {
-            $resource = $selectionResource->resource();
-            $resourceType = $classesToTypes[get_class($resource)] ?? 'resources';
-            $resourceId = $resource->id();
-            $typeAndId = $resourceType . '/' . $resourceId;
-            $resources[$typeAndId] = $resource;
-            $resourcesByType[$resourceType][$resourceId] = $resource;
-        }
+        $selectionId = empty($query['selection_id']) ? 0 : (int) $query['selection_id'];
+        $selection = $selectionContainer->selections[$selectionId] ?? reset($selectionContainer->selections);
+        $selectionId = $selection['id'];
 
         $vars = [
             'site' => $block->page()->site(),
             'block' => $block,
-            'selection' => null,
-            'selectionResources' => $selectionResources,
-            'resources' => $resources,
-            'resourcesByType' => $resourcesByType,
+            'user' => $user,
+            'selectionId' => $selectionId,
+            'selections' => $selectionContainer->selections,
+            'records' => $selectionContainer->records,
             'heading' => $block->dataValue('heading'),
+            'isGuestActive' => $plugins->has('guestWidget'),
+            'isSession' => !$user,
         ];
 
         $template = $block->dataValue('template', self::PARTIAL_NAME);

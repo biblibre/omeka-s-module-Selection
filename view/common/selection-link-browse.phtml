@@ -1,11 +1,14 @@
 <?php
 /**
  * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var string $urlBrowse
+ * @var bool $isGuestActive
+ *
  * and options passed from the caller.
+ * @var string`null $class
  */
 
 $translate = $this->plugin('translate');
-$url = $this->plugin('url');
 ?>
 
-<a class="selection browse <?= $class ?? '' ?>" href="<?= $url('site/guest/selection', [], true) ?>"><?= $translate('Selection') ?></a>
+<a class="selection browse <?= $class ?? '' ?>" href="<?= $urlBrowse ?>"><?= $translate('Selection') ?></a>

@@ -1,0 +1,175 @@
+<?php
+/*
+ * Copyright BibLibre, 2016
+ * Copyright Daniel Berthereau 2018-2024
+ *
+ * This software is governed by the CeCILL license under French law and abiding
+ * by the rules of distribution of free software.  You can use, modify and/ or
+ * redistribute the software under the terms of the CeCILL license as circulated
+ * by CEA, CNRS and INRIA at the following URL "http://www.cecill.info".
+ *
+ * As a counterpart to the access to the source code and rights to copy, modify
+ * and redistribute granted by the license, users are provided only with a
+ * limited warranty and the software's author, the holder of the economic
+ * rights, and the successive licensors have only limited liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated with
+ * loading, using, modifying and/or developing or reproducing the software by
+ * the user in light of its specific status of free software, that may mean that
+ * it is complicated to manipulate, and that also therefore means that it is
+ * reserved for developers and experienced professionals having in-depth
+ * computer knowledge. Users are therefore encouraged to load and test the
+ * software's suitability as regards their requirements in conditions enabling
+ * the security of their systems and/or data to be ensured and, more generally,
+ * to use and operate it in the same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL license and that you accept its terms.
+ */
+
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Omeka\Entity\User $user
+ * @var int $selectionId
+ * @var array $selections
+ * @var array $records
+ * @var bool $isGuestActive
+ * @var bool $isSession
+ */
+
+// Browse the current selection, not all selections.
+
+$plugins = $this->getHelperPluginManager();
+$url = $plugins->get('url');
+$api = $plugins->get('api');
+$i18n = $plugins->get('i18n');
+$partial = $plugins->get('partial');
+$escape = $plugins->get('escapeHtml');
+$assetUrl = $plugins->get('assetUrl');
+$translate = $plugins->get('translate');
+$hyperlink = $plugins->get('hyperlink');
+$thumbnail = $plugins->get('thumbnail');
+$siteSetting = $plugins->get('siteSetting');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+$partialLoop = $plugins->get('partialLoop');
+
+// May be included in main layout.
+$this->headLink()
+    ->appendStylesheet($assetUrl('css/selection.css', 'Selection'));
+$this->headScript()
+    ->appendFile($assetUrl('js/selection.js', 'Selection'), 'text/javascript', ['defer' => 'defer']);
+
+$this->htmlElement('body')->appendAttribute('class', 'selection resource browse');
+
+$lang = $this->lang();
+$filterLocale = (bool) $siteSetting('filter_locale_values');
+$headingTerm = $siteSetting('browse_heading_property_term');
+$bodyTerm = $siteSetting('browse_body_property_term');
+$bulkExporters = $plugins->has('bulkExporters') ? $plugins->get('bulkExporters')() : null;
+
+$currentSelection = $selections[$selectionId] ?? [];
+$currentRecords = $records[$selectionId] ?? [];
+$selectedRecords = $currentRecords;
+$selection = $currentSelection;
+
+// All data needed to display each selected resource quickly via partialLoop.
+$selectedRecordModel = [
+    'site' => $site,
+    'siteSlug' => $site->slug(),
+    'selectionId' => $selectionId,
+    'selection' => $selection,
+    'record' => null,
+    'url' => $url,
+    'api' => $api,
+    'i18n' => $i18n,
+    'escape' => $escape,
+    'translate' => $translate,
+    'hyperlink' => $hyperlink,
+    'thumbnail' => $thumbnail,
+    'escapeAttr' => $escapeAttr,
+    'headingTerm' => $headingTerm,
+    'bodyTerm' => $bodyTerm,
+    'defaultHeading' => ['default' => $translate('[Untitled]'), 'lang' => ($filterLocale ? [$lang, ''] : null)],
+    'defaultBody' => ['lang' => ($filterLocale ? [$lang, ''] : null)],
+    'defaultLang' => $filterLocale ? [$lang, ''] : null,
+    'moveText' => $escapeAttr($translate('Move')),
+    'deleteText' => $escapeAttr($translate('Remove from selection')),
+    'bulkExporters' => $bulkExporters,
+];
+
+$recordsByType = array_column($currentRecords, 'resource_name', 'id');
+$countsByType = array_count_values($recordsByType) + ['items' => 0, 'media' => 0, 'item_sets' => 0, 'annotations' => 0];
+?>
+
+<?= $this->pageTitle($selections[$selectionId]['label'] ?? $translate('Selection'), 2) ?>
+
+<div class="selection-list selections">
+
+    <?php if (count($currentRecords)): ?>
+    <h3 class="selection-count"><?= sprintf($translate('%d items, %d media'), $countsByType['items'], $countsByType['media']) ?></h3>
+    <?php else: ?>
+    <p class="selection-empty">
+        <?= $translate('The selection is empty.') // @translate ?>
+    </p>
+    <?php endif; ?>
+
+    <div class="selection-list-actions">
+        <ul class="actions">
+            <li>
+                <button type="button" class="add-group" data-msg-group-name="<?= $translate('Set group name') ?>" data-url="<?= $url('site/selection-id', ['id' => $selectionId, 'action' => 'add-group'], true) ?>"><?= $translate('Add a group') ?></button>
+            </li>
+        </ul>
+    </div>
+
+    <?php $this->trigger('view.browse.before'); ?>
+
+    <?php // Groups and selected resources inside them. ?>
+    <?php $templateGroup = $partial('selection/site/selection/selection-group'); ?>
+    <ul class="resource-list selection-resources selection-structure" data-msg-add-group="<?= $translate('Set group name') ?>" data-template-group="<?= $escapeAttr($templateGroup) ?>">
+        <?php
+        foreach ($selection['structure'] ?? [] as $groupFullPath => $group):
+            // Prepare the partial loop.
+            $selectedRecordModels = [];
+            foreach ($group['resources'] ?? [] as $resourceId) {
+                $record = $selectedRecords[$resourceId] ?? null;
+                unset($selectedRecords[$resourceId]);
+                if (!$record) continue;
+                $selectedRecordModel['record'] = $record;
+                $selectedRecordModels[] = $selectedRecordModel;
+            }
+            $replace = [
+                '__GROUP_LEVEL__' => substr_count($groupFullPath, '/'),
+                '__GROUP_PATH__' => $escapeAttr($groupFullPath),
+                '__GROUP_NAME__' => '<span>' . str_replace('/', '</span><span>', ltrim($groupFullPath, '/')) . '</span>',
+                '__GROUP_RESOURCES__' => $selectedRecordModels
+                    ? $partialLoop('selection/site/selection/selection-group-resource', $selectedRecordModels)
+                    : '',
+            ]; ?>
+        <?= str_replace(array_keys($replace), array_values($replace), $templateGroup) ?>
+        <?php endforeach; ?>
+    </ul>
+
+    <?php // Remaining selected resources without group. ?>
+    <ul class="resource-list selection-resources">
+        <?php // Prepare the partial loop.
+        $selectedRecordModels = [];
+        foreach ($selectedRecords as $resourceId => $record) {
+            $selectedRecordModel['record'] = $record;
+            $selectedRecordModels[] = $selectedRecordModel;
+        } ?>
+        <?= $partialLoop('selection/site/selection/selection-group-resource', $selectedRecordModels) ?>
+    </ul>
+    <?php $this->trigger('view.browse.after'); ?>
+
+</div>
+
+<?php // Common actions. ?>
+<div id="selector-group" class="selector-group inactive" style="display:none;">
+    <select name="group" aria-label="<?= $translate('Select a group') ?>">
+        <option value="">/</option>
+        <?php foreach ($selection ? array_keys($selection['structure']) : [] as $groupFullPath): ?>
+        <option value="<?= $groupFullPath ?>"><?= str_replace('/', ' / ', $groupFullPath) ?></option>
+        <?php endforeach ?>
+    </select>
+</div>

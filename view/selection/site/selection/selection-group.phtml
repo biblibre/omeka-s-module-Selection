@@ -2,13 +2,15 @@
 /**
  * @var \Laminas\View\Renderer\PhpRenderer $this
  * @var \Omeka\Api\Representation\SiteRepresentation $site
- * @var \Selection\Api\Representation\SelectionRepresentation $selection
- * @var \Selection\Api\Representation\SelectionResourceRepresentation[] $selectionResources
- * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $resources
- * @var array $resourcesByType
+ * @var \Omeka\Entity\User $user
+ * @var int $selectionId
+ * @var array $selections
+ * @var array $records
+ * @var bool $isGuestActive
+ * @var bool $isSession
  */
 
-// Template used by selection-resource-browse.
+// Template used by selection-browse.
 
 $plugins = $this->getHelperPluginManager();
 $url = $plugins->get('url');
@@ -17,7 +19,7 @@ $translate = $plugins->get('translate');
 
 // This is the base url, the query is added via js.
 $siteSlug = $site->slug();
-$baseUrl = dirname($url('site/selection-id', ['id' => $selection ? $selection->id() : 0, 'action' => '__'], true));
+$baseUrl = dirname($url('site/selection-id', ['id' => $selectionId, 'action' => '__'], true));
 $bulkExporters = $plugins->has('bulkExporters') ? $plugins->get('bulkExporters')() : null;
 ?>
 

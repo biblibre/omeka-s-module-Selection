@@ -171,6 +171,8 @@ class SelectionRepresentation extends AbstractEntityRepresentation
      * Get list of resources belonging to a group or no group.
      *
      * @return \Omeka\Api\Representation\AbstractResourceEntityRepresentation[]
+     *
+     * @see \Selection\Controller\Site\TraitSessionController::resourcesForGroupSession()
      */
     public function resourcesForGroup(?string $group): array
     {

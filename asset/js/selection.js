@@ -117,7 +117,7 @@
             const selectionGroup = button.closest('.selection-group');
             const path = selectionGroup.data('path') ? selectionGroup.data('path') : null;
             const groupName = path ? path.substring(path.lastIndexOf('/') + 1) : null;
-            if (!groupName || !groupName.length || groupName === '/' || groupName=== groupDestination) {
+            if (!groupName || !groupName.length || groupName === '/' || groupName === groupDestination) {
                 return;
             }
             const url = button.attr('data-url');

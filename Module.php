@@ -40,21 +40,20 @@ class Module extends AbstractModule
 
         $acl
             ->allow(
+                null,
+                [
+                    'Selection\Controller\Site\Selection',
+                ]
+            )
+            ->allow(
                 $roles,
                 [
                     Entity\Selection::class,
                     Entity\SelectionResource::class,
                     Api\Adapter\SelectionAdapter::class,
                     Api\Adapter\SelectionResourceAdapter::class,
-                    'Selection\Controller\Site\Selection',
-                    'Selection\Controller\Site\GuestBoard',
+                    'Selection\Controller\Site\Guest',
                 ]
-            )
-            // This right is checked in controller in order to avoid to check
-            // the site here.
-            ->allow(
-                null,
-                'Selection\Controller\Site\Selection'
             )
         ;
     }
@@ -90,6 +89,7 @@ class Module extends AbstractModule
 
     public function attachListeners(SharedEventManagerInterface $sharedEventManager): void
     {
+        // Display block in resources pages for old themes.
         $sharedEventManager->attach(
             'Omeka\Controller\Site\Item',
             'view.show.after',
@@ -106,6 +106,8 @@ class Module extends AbstractModule
             [$this, 'handleViewShowAfter']
         );
 
+        // No need to listen user.logout: session is automatically destroyed.
+
         // Guest integration.
         $sharedEventManager->attach(
             \Guest\Controller\Site\GuestController::class,
@@ -113,6 +115,7 @@ class Module extends AbstractModule
             [$this, 'handleGuestWidgets']
         );
 
+        // Site config.
         $sharedEventManager->attach(
             \Omeka\Form\SiteSettingsForm::class,
             'form.add_elements',
@@ -122,35 +125,35 @@ class Module extends AbstractModule
 
     public function handleViewShowAfter(Event $event): void
     {
-        $view = $event->getTarget();
-        $siteSetting = $view->getHelperPluginManager()->get('siteSetting');
+        $services = $this->getServiceLocator();
+        $siteSettings = $services->get('Omeka\Settings\Site');
 
-        $user = $this->identity();
+        /** @var \Omeka\Entity\User $user */
+        $user = $services->get('Omeka\AuthenticationService')->getIdentity();
         $disableAnonymous = (bool) $siteSettings->get('selection_disable_anonymous');
         if ($disableAnonymous && !$user) {
             return;
         }
 
-        // In Omeka S v4, if the selection is set in the view, don't add it.
+        // Since Omeka S v4, if the selection is set in the resource block,
+        // don't add it via event.
         $view = $event->getTarget();
-        if (version_compare(\Omeka\Module::VERSION, '4', '>=')) {
-            /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource */
-            $resource = $view->resource;
-            $services = $this->getServiceLocator();
-            $currentTheme = $services->get('Omeka\Site\ThemeManager')->getCurrentTheme();
-            $blockLayoutManager = $services->get('Omeka\ResourcePageBlockLayoutManager');
-            $resourcePageBlocks = $blockLayoutManager->getResourcePageBlocks($currentTheme);
-            foreach ($resourcePageBlocks[$resource->resourceName()] ?? [] as $blocks) {
-                if (in_array('selection', $blocks)) {
-                    return;
-                }
+
+        /**
+         * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
+         * @var \Omeka\Site\ResourcePageBlockLayout\Manager $blockLayoutManager
+         */
+        $resource = $view->resource;
+        $currentTheme = $services->get('Omeka\Site\ThemeManager')->getCurrentTheme();
+        $blockLayoutManager = $services->get('Omeka\ResourcePageBlockLayoutManager');
+        $resourcePageBlocks = $blockLayoutManager->getResourcePageBlocks($currentTheme);
+        foreach ($resourcePageBlocks[$resource->resourceName()] ?? [] as $blocks) {
+            if (in_array('selection', $blocks)) {
+                return;
             }
         }
 
-        $selectionContainer = $this->getServiceLocator()->get('ControllerPluginManager')->get('selectionContainer');
-        $selectionContainer();
-
-        echo $view->partial('common/selection-resource');
+        echo $blockLayoutManager->get('selection')->render($view, $resource);
     }
 
     public function handleGuestWidgets(Event $event): void

@@ -12,16 +12,37 @@ class SelectionLinkBrowse extends AbstractHelper
     const PARTIAL_NAME = 'common/selection-link-browse';
 
     /**
-     * Get the link to the user selection.
+     * @var bool
+     */
+    protected $isGuestActive;
+
+    public function __construct(bool $isGuestActive)
+    {
+        $this->isGuestActive = $isGuestActive;
+    }
+
+    /**
+     * Get the link to the user selection, with or without guest.
      *
      * @param array $options Options for the partial.
-     * @return string
      */
-    public function __invoke(array $options = [])
+    public function __invoke(array $options = []): string
     {
         $view = $this->getView();
+
+        $user = $view->identity();
+        $urlBrowse = $this->isGuestActive && $user
+            ? $view->url('site/guest/selection', ['action' => 'browse'], true)
+            : $view->url('site/selection', ['action' => 'browse'], true);
+
         $template = $options['template'] ?? self::PARTIAL_NAME;
         unset($options['template']);
-        return $view->partial($template, $options);
+
+        $vars = [
+            'urlBrowse' => $urlBrowse,
+            'isGuestActive' => $this->isGuestActive,
+        ] + $options;
+
+        return $view->partial($template, $vars);
     }
 }

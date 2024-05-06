@@ -1,0 +1,64 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Omeka\Entity\User $user
+ * @var int $selectionId
+ * @var array $selection
+ * @var array $record
+ *
+ * // Helpers.
+ * @var \Omeka\View\Helper\api $api
+ * @var \Laminas\View\Helper\Url $url
+ * @var \Omeka\View\Helper\I18n $i18n
+ * @var \Laminas\View\Helper\EscapeHtml $escape
+ * @var \Laminas\I18n\View\Helper\Translate $translate
+ * @var \Omeka\View\Helper\Hyperlink $hyperlink
+ * @var \Omeka\View\Helper\Thumbnail $thumbnail
+ * @var \Laminas\View\Helper\EscapeHtmlAttr $escapeAttr
+ *
+ * // Static vars.
+ * @var string $siteSlug
+ * @var string $headingTerm
+ * @var string $bodyTerm
+ * @var array $defaultHeading
+ * @var array $defaultBody
+ * @var array $defaultLang
+ * @var string $deleteText
+ * @var string $moveText
+ * @var array $bulkExporters
+ */
+
+// Partial loop template used by selection-browse.
+
+if (!$record) return;
+
+// This is the base url, the query is added via js.
+$baseUrl = pathinfo($url('site/selection-id', ['id' => $selectionId, 'action' => '__'], true), PATHINFO_DIRNAME);
+$resourceId = $record['id'];
+$resourceType = $record['type'];
+$resource = $api->read($record['resource_name'], $resourceId)->getContent();
+?>
+
+<li class="selection-resource resource <?= $resourceType ?>" data-id="<?= $resourceId ?>">
+    <?= $hyperlink->raw($thumbnail($resource, 'square'), $record['url'], ['class' => 'resource-link']) ?>
+    <h4><?= $hyperlink($record['heading'], $record['url']) ?></h4>
+    <?php if ($record['body']): ?>
+    <div class="description">
+        <?= $escape($record['body']) ?>
+    </div>
+    <?php endif; ?>
+    <ul class="actions">
+        <?php if ($selection && $selection['structure']): ?>
+        <li><button type="button" class="move-resource" data-url="<?= $baseUrl ?>/move"><?= $moveText ?></button></li>
+        <?php endif; ?>
+        <li><button type="button" class="selection-delete" data-url="<?= $baseUrl ?>/delete"><?= $deleteText ?></button></li>
+        <?php if ($bulkExporters):
+        foreach ($bulkExporters as $format => $label):
+            $urlFormat = $url('site/resource-id/output', ['site-slug' => $siteSlug, 'controller' => $resourceType, 'id' => $resourceId, 'action' => 'show', 'format' => $format]);
+        ?>
+        <li><a class="download-id" href="<?= $urlFormat ?>" download="download"><button type="button" class="export-group download-<?= $format ?>" data-url="<?= $urlFormat ?>"><?= $label ?></button></a></li>
+        <?php endforeach; ?>
+        <?php endif; ?>
+    </ul>
+</li>

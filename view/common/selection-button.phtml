@@ -1,9 +1,18 @@
 <?php
 /**
  * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
  * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
- * @var bool $selectionResource
- * @var string $url
+ * @var \Omeka\Entity\User $user
+ * @var int $selectionId
+ * @var array $selections
+ * @var array $records
+ * @var bool $isGuestActive
+ * @var bool $isSession
+ * @var string $value
+ * @var string $action
+ * @var string $urlButton
+ *
  * and options passed from the caller.
  */
 
@@ -11,10 +20,10 @@ $translate = $this->plugin('translate');
 
 $textSelect['unselected'] = $translate('Add to selection');
 $textSelect['selected'] = $translate('Remove from selection');
-$class = empty($selectionResource) ? 'unselected' : 'selected';
+$class = $value === 'selected' ? 'selected' : 'unselected';
 $text = $textSelect[$class];
 ?>
 
-<button class="selection-update <?= $class ?>" data-id="<?= $resource->id() ?>" title="<?= $text ?>" data-title-selected="<?= $textSelect['selected'] ?>" data-title-unselected="<?= $textSelect['unselected'] ?>" data-url="<?= $url ?>">
+<button class="selection-update <?= $class ?>" data-id="<?= $resource->id() ?>" title="<?= $text ?>" data-title-selected="<?= $textSelect['selected'] ?>" data-title-unselected="<?= $textSelect['unselected'] ?>" data-url="<?= $urlButton ?>">
     <span class="fas fa-bookmark"></span >
 </button>

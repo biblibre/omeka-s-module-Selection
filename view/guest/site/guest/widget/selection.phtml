@@ -3,9 +3,10 @@
  * @var \Laminas\View\Renderer\PhpRenderer $this
  */
 
-$translate = $this->plugin('translate');
-$url = $this->plugin('url');
-$hyperlink = $this->plugin('hyperlink');
+$plugins = $this->getHelperPluginManager();
+$url = $plugins->get('url');
+$translate = $plugins->get('translate');
+$hyperlink = $plugins->get('hyperlink');
 ?>
 
 <ul>

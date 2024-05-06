@@ -1,34 +1,36 @@
 <?php
 /**
  * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Omeka\Api\Representation\ItemRepresentation $resource
+ * @var \Omeka\Entity\User $user
+ * @var int $selectionId
+ * @var array $selections
+ * @var array $records
+ * @var bool $isGuestActive
+ * @var bool $isSession
  */
+
+// This template display a simple list of the current selection,
+// unlike the full hierarchical list of selection-browse.
 
 $plugins = $this->getHelperPluginManager();
 $url = $plugins->get('url');
 $translate = $plugins->get('translate');
 $escapeAttr = $plugins->get('escapeHtmlAttr');
-$siteSetting = $plugins->get('siteSetting');
 
-$user = $this->identity();
-$disableAnonymous = $siteSetting('selection_disable_anonymous');
-if ($disableAnonymous && !$user) {
-    return;
-}
+$currentRecords = $records[$selectionId] ?? [];
 
-$container = new \Laminas\Session\Container('Selection');
-
-$records = $container->records ?? [];
 $exporters = $records && $plugins->has('bulkExporters')
     ? $plugins->get('bulkExporters')()
     : [];
 if ($exporters) {
-    $ids = implode(',', array_keys($records));
-    $route = $this->status()->isAdminRequest() ? 'admin/default/output' : 'site/resource/output';
+    $ids = implode(',', array_keys($currentRecords));
+    $route = 'site/resource/output';
     $this->headLink()
         ->appendStylesheet($this->assetUrl('css/bulk-export.css', 'BulkExport'));
 }
 
-$urlDelete = $url('site/selection', ['action' => 'delete'], true);
 $deleteText = $escapeAttr($translate('Remove from selection')); // @translate
 ?>
 
@@ -36,15 +38,15 @@ $deleteText = $escapeAttr($translate('Remove from selection')); // @translate
     <summary><h5><?= $translate('Selected resources') // @translate ?></h5></summary>
 
     <ul class="selection-resources" data-text-delete="<?= $deleteText ?>">
-        <?php foreach ($records as $record): ?>
-        <li data-id="<?= $record['id'] ?>">
-            <a href="<?= $url('site/resource-id', ['controller' => $record['type'], 'id' => $record['id'], 'action' => 'show'], true) ?>"><?= $record['title'] ?></a>
-            <span class="selection-delete" data-id="<?= $record['id'] ?>" data-url="<?= $urlDelete ?>" title="<?= $deleteText ?>" aria-label="<?= $deleteText ?>"></span>
+        <?php foreach ($currentRecords as $resourceId => $record): ?>
+        <li data-id="<?= $resourceId ?>">
+            <a href="<?= $record['url'] ?>"><?= $record['heading'] ?></a>
+            <span class="selection-delete" data-id="<?= $resourceId ?>" data-url="<?= $record['url_remove'] ?>" title="<?= $deleteText ?>" aria-label="<?= $deleteText ?>"></span>
         </li>
         <?php endforeach; ?>
     </ul>
 
-    <p class="selection-empty<?= count($records) ? '' : ' active' ?>"><?= $translate('No selection') // @translate ?></p>
+    <p class="selection-empty<?= count($currentRecords) ? '' : ' active' ?>"><?= $translate('No selection') // @translate ?></p>
 
     <?php if ($exporters): ?>
     <div class="bulk-export">

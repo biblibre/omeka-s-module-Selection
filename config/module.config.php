@@ -27,13 +27,11 @@ return  [
     ],
     'view_helpers' => [
         'invokables' => [
-            'selectionButtonToggle' => View\Helper\SelectionButtonToggle::class,
-            'selectionLinkBrowse' => View\Helper\SelectionLinkBrowse::class,
+            'selectionButton' => View\Helper\SelectionButton::class,
         ],
-        'aliases' => [
-            // @deprecated
-            'showSelectionLink' => 'selectionLinkBrowse',
-            'updateSelectionLink' => 'selectionButtonToggle',
+        'factories' => [
+            'selectionContainer' => Service\ViewHelper\SelectionContainerFactory::class,
+            'selectionLinkBrowse' => Service\ViewHelper\SelectionLinkBrowseFactory::class,
         ],
     ],
     'form_elements' => [
@@ -54,16 +52,15 @@ return  [
     ],
     'controllers' => [
         'invokables' => [
-            'Selection\Controller\Site\Selection' => Controller\Site\SelectionController::class,
-            'Selection\Controller\Site\GuestBoard' => Controller\Site\GuestBoardController::class,
+            'Selection\Controller\Site\Guest' => Controller\Site\GuestController::class,
+        ],
+        'factories' => [
+            'Selection\Controller\Site\Selection' => Service\Controller\Site\SelectionControllerFactory::class,
         ],
     ],
     'controller_plugins' => [
-        'invokables' => [
-            'selectionContainer' => Mvc\Controller\Plugin\SelectionContainer::class,
-        ],
-        'aliases' => [
-            'containerSelection' => 'selectionContainer',
+        'factories' => [
+            'selectionContainer' => Service\ControllerPlugin\SelectionContainerFactory::class,
         ],
     ],
     'navigation_links' => [
@@ -76,8 +73,8 @@ return  [
             [
                 'label' => 'Selection', // @translate
                 'route' => 'site/guest/selection',
-                'controller' => 'Selection\Controller\Site\GuestBoard',
-                'action' => 'selection',
+                'controller' => 'Selection\Controller\Site\Guest',
+                'action' => 'browse',
                 'useRouteMatch' => true,
                 'visible' => false,
             ],
@@ -93,12 +90,12 @@ return  [
                             'route' => '/selection[/:action]',
                             'constraints' => [
                                 // Set groups first for regex.
-                                'action' => 'add-group|rename-group|move-group|delete-group|add|delete|move|toggle',
+                                'action' => 'browse|add-group|rename-group|move-group|delete-group|add|delete|move|toggle',
                             ],
                             'defaults' => [
                                 '__NAMESPACE__' => 'Selection\Controller\Site',
                                 'controller' => 'Selection',
-                                'action' => 'add',
+                                'action' => 'browse',
                             ],
                         ],
                     ],
@@ -107,7 +104,7 @@ return  [
                         'options' => [
                             'route' => '/selection/:id[/:action]',
                             'constraints' => [
-                                'action' => 'add-group|rename-group|move-group|delete-group|add|delete|move|toggle',
+                                'action' => 'browse|add-group|rename-group|move-group|delete-group|add|delete|move|toggle',
                                 'id' => '\d+',
                             ],
                             'defaults' => [
@@ -133,8 +130,8 @@ return  [
                                     'route' => '/selection',
                                     'defaults' => [
                                         '__NAMESPACE__' => 'Selection\Controller\Site',
-                                        'controller' => 'GuestBoard',
-                                        'action' => 'resource-browse',
+                                        'controller' => 'Guest',
+                                        'action' => 'browse',
                                     ],
                                 ],
                             ],
