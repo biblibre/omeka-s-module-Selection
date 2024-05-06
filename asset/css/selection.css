@@ -161,4 +161,10 @@
     .selection-update.unselected {
          color:gray;
     }
+
+    .selected-resource {
+        vertical-align: initial;
+        margin-right: 12px;
+        flex-shrink: 0;
+    }
 }

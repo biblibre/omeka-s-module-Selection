@@ -6,6 +6,9 @@
  * @var int $selectionId
  * @var array $selection
  * @var array $record
+ * @var bool $isGuestActive
+ * @var bool $isSession
+ * @var bool $allowIndividualSelect
  *
  * // Helpers.
  * @var \Omeka\View\Helper\api $api
@@ -24,8 +27,9 @@
  * @var array $defaultHeading
  * @var array $defaultBody
  * @var array $defaultLang
- * @var string $deleteText
  * @var string $moveText
+ * @var string $deleteText
+ * @var string $selectText
  * @var array $bulkExporters
  */
 
@@ -44,6 +48,9 @@ $linkContent = sprintf('%s<span class="resource-name">%s</span>', $thumbnail($re
 ?>
 
 <li class="selection-resource resource <?= $resourceType ?>" data-id="<?= $resourceId ?>">
+    <?php if ($allowIndividualSelect): ?>
+    <input type="checkbox" name="resource_ids[]" class="selected-resource" value="<?= $resourceId ?>" aria-label="<?= $selectText ?>"/>
+    <?php endif; ?>
     <?= $hyperlink->raw($linkContent, $record['url'], ['class' => 'resource-link']) ?>
     <?php if ($body): ?>
     <div class="description">

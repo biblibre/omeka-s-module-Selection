@@ -8,6 +8,7 @@
  * @var array $records
  * @var bool $isGuestActive
  * @var bool $isSession
+ * @var bool $allowIndividualSelect
  */
 
 // Browse the current selection, not all selections.
@@ -53,6 +54,9 @@ $selectedRecordModel = [
     'selectionId' => $selectionId,
     'selection' => $selection,
     'record' => null,
+    'isGuestActive' => $isGuestActive,
+    'isSession' => $isSession,
+    'allowIndividualSelect' => $allowIndividualSelect,
     'url' => $url,
     'api' => $api,
     'i18n' => $i18n,
@@ -68,6 +72,7 @@ $selectedRecordModel = [
     'defaultLang' => $filterLocale ? [$lang, ''] : null,
     'moveText' => $escapeAttr($translate('Move')),
     'deleteText' => $escapeAttr($translate('Remove from selection')),
+    'selectText' => $escapeAttr($translate('Select resource')),
     'bulkExporters' => $bulkExporters,
 ];
 

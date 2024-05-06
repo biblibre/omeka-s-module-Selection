@@ -9,6 +9,7 @@
  * @var array $records
  * @var bool $isGuestActive
  * @var bool $isSession
+ * @var bool $allowIndividualSelect
  */
 
 // This template display a simple list of the current selection,
@@ -23,6 +24,7 @@ $bulkExport = $plugins->has('bulkExport') ? $plugins->get('bulkExport') : null;
 
 $currentRecords = $records[$selectionId] ?? [];
 
+$selectText = $escapeAttr($translate('Select resource')); // @translate
 $deleteText = $escapeAttr($translate('Remove from selection')); // @translate
 ?>
 
@@ -32,6 +34,9 @@ $deleteText = $escapeAttr($translate('Remove from selection')); // @translate
     <ul class="selection-resources" data-text-delete="<?= $deleteText ?>">
         <?php foreach ($currentRecords as $resourceId => $record): ?>
         <li data-id="<?= $resourceId ?>">
+            <?php if ($allowIndividualSelect): ?>
+            <input type="checkbox" name="resource_ids[]" class="selected-resource" value="<?= $resourceId ?>" aria-label="<?= $selectText ?>"/>
+            <?php endif; ?>
             <a href="<?= $record['url'] ?>"><?= $record['heading'] ?></a>
             <span class="selection-delete" data-id="<?= $resourceId ?>" data-url="<?= $record['url_remove'] ?>" title="<?= $deleteText ?>" aria-label="<?= $deleteText ?>"></span>
         </li>

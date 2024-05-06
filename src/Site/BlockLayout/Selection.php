@@ -73,6 +73,11 @@ class Selection extends AbstractBlockLayout
             $disposition = $block->dataValue('disposition') === 'hierarchy' ? 'hierarchy' : 'list';
         }
 
+        $allowIndividualSelect = $block->dataValue('individual_select', 'auto');
+        $allowIndividualSelect = ($allowIndividualSelect !== 'no' && $allowIndividualSelect !== 'yes')
+            ? $plugins->has('bulkExport') || $plugins->has('contactUs')
+            : $allowIndividualSelect === 'yes';
+
         $vars = [
             'site' => $block->page()->site(),
             'block' => $block,
@@ -83,6 +88,7 @@ class Selection extends AbstractBlockLayout
             'heading' => $block->dataValue('heading'),
             'isGuestActive' => $plugins->has('guestWidget'),
             'isSession' => !$user,
+            'allowIndividualSelect' => $allowIndividualSelect,
             'disposition' => $disposition,
         ];
 

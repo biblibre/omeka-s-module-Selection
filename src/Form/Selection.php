@@ -37,6 +37,21 @@ class Selection extends Fieldset
                 'attributes' => [
                     'id' => 'selection-disposition',
                 ],
+            ])
+            ->add([
+                'name' => 'o:block[__blockIndex__][o:data][individual_select]',
+                'type' => CommonElement\OptionalRadio::class,
+                'options' => [
+                    'label' => 'Add individual checkboxes for modules Bulk Export and Contact Us', // @translate
+                    'value_options' => [
+                        'auto' => 'When needed', // @translate
+                        'no' => 'No', // @translate
+                        'yes' => 'Yes', // @translate
+                    ],
+                ],
+                'attributes' => [
+                    'id' => 'selection-individual_select',
+                ],
             ]);
 
         if (class_exists('BlockPlus\Form\Element\TemplateSelect')) {

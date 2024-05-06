@@ -43,6 +43,14 @@ class SelectionList implements ResourcePageBlockLayoutInterface
         $selection = $selectionContainer->selections[$selectionId] ?? reset($selectionContainer->selections);
         $selectionId = $selection['id'];
 
+        /* // Useless here, or add a specific option.
+         $allowIndividualSelect = $siteSetting('selection_individual_select', 'auto');
+        $allowIndividualSelect = ($allowIndividualSelect !== 'no' && $allowIndividualSelect !== 'yes')
+            ? $plugins->has('bulkExport') || $plugins->has('contactUs')
+            : $allowIndividualSelect === 'yes';
+        */
+        $allowIndividualSelect = false;
+
         return $view->partial('common/resource-page-block-layout/selection-list', [
             'site' => $view->layout()->site,
             'resource' => $resource,
@@ -52,6 +60,7 @@ class SelectionList implements ResourcePageBlockLayoutInterface
             'records' => $selectionContainer->records,
             'isGuestActive' => $plugins->has('guestWidget'),
             'isSession' => !$user,
+            'allowIndividualSelect' => $allowIndividualSelect,
         ]);
     }
 }

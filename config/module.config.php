@@ -161,11 +161,13 @@ return  [
             'selection_resource_show_open' => true,
             'selection_resource_show_open_list' => true,
             'selection_browse_disposition' => 'list',
+            'selection_individual_select' => 'auto',
         ],
         'block_settings' => [
             'selection' => [
                 'heading' => '',
                 'disposition' => 'list',
+                'individual_select' => 'auto',
                 'template' => '',
             ],
         ],

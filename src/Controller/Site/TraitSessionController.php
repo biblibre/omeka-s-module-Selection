@@ -34,11 +34,19 @@ trait TraitSessionController
         $selection = $this->getSelectionFromSessionOrInit($selectionContainer, $selectionId);
         $selectionId = $selection['id'];
 
+        $siteSettings = $this->siteSettings();
+        $viewHelpers = $this->viewHelpers();
+
         if (isset($query['disposition']) && in_array($query['disposition'], ['list', 'hierarchy'])) {
             $disposition = $query['disposition'];
         } else {
-            $disposition = $this->siteSettings()->get('selection_browse_disposition') === 'hierarchy' ? 'hierarchy' : 'list';
+            $disposition = $siteSettings->get('selection_browse_disposition') === 'hierarchy' ? 'hierarchy' : 'list';
         }
+
+        $allowIndividualSelect = $siteSettings->get('selection_individual_select', 'auto');
+        $allowIndividualSelect = ($allowIndividualSelect !== 'no' && $allowIndividualSelect !== 'yes')
+            ? $viewHelpers->has('bulkExport') || $viewHelpers->has('contactUs')
+            : $allowIndividualSelect === 'yes';
 
         $view = new ViewModel([
             'site' => $this->currentSite(),
@@ -48,6 +56,7 @@ trait TraitSessionController
             'records' => $selectionContainer->records,
             'isGuestActive' => false,
             'isSession' => true,
+            'allowIndividualSelect' => $allowIndividualSelect,
         ]);
         return $view
             ->setTemplate("selection/site/selection/selection-browse-$disposition");

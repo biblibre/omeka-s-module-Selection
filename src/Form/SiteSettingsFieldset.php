@@ -89,6 +89,21 @@ class SiteSettingsFieldset extends Fieldset
                     'id' => 'selection_browse_disposition',
                 ],
             ])
+            ->add([
+                'name' => 'selection_individual_select',
+                'type' => CommonElement\OptionalRadio::class,
+                'options' => [
+                    'label' => 'Add individual checkboxes for modules Bulk Export and Contact Us', // @translate
+                    'value_options' => [
+                        'auto' => 'When needed', // @translate
+                        'no' => 'No', // @translate
+                        'yes' => 'Yes', // @translate
+                    ],
+                ],
+                'attributes' => [
+                    'id' => 'selection_individual_select',
+                ],
+            ])
         ;
     }
 }

@@ -8,6 +8,7 @@
  * @var array $records
  * @var bool $isGuestActive
  * @var bool $isSession
+ * @var bool $allowIndividualSelect
  */
 
 // Browse the current selection, not all selections.
@@ -53,6 +54,7 @@ $countsByType = array_count_values($recordsByType) + ['items' => 0, 'media' => 0
 
 $baseUrl = dirname($url('site/selection-id', ['id' => $selectionId, 'action' => '__'], true));
 $deleteText = $escapeAttr($translate('Remove from selection')); // @translate
+$selectText = $escapeAttr($translate('Select resource')); // @translate
 
 // TODO Get the resources one time via api (currently only needed for thumbnail, not prepared early).
 ?>
@@ -85,6 +87,9 @@ $deleteText = $escapeAttr($translate('Remove from selection')); // @translate
             $linkContent = sprintf('%s<span class="resource-name">%s</span>', $thumbnail($resource, 'medium'), $escape($heading));
             ?>
         <li class="item resource">
+            <?php if ($allowIndividualSelect): ?>
+            <input type="checkbox" name="resource_ids[]" class="selected-resource" value="<?= $resourceId ?>" aria-label="<?= $selectText ?>"/>
+            <?php endif; ?>
             <?= $hyperlink->raw($linkContent, $record['url'], ['class' => 'resource-link']) ?>
             <?php if ($body): ?>
             <div class="description">
