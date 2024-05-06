@@ -48,6 +48,7 @@ return  [
     'resource_page_block_layouts' => [
         'invokables' => [
             'selection' => Site\ResourcePageBlockLayout\Selection::class,
+            'selectionButton' => Site\ResourcePageBlockLayout\SelectionButton::class,
             'selectionList' => Site\ResourcePageBlockLayout\SelectionList::class,
         ],
     ],
