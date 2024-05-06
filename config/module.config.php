@@ -156,7 +156,7 @@ return  [
     ],
     'selection' => [
         'site_settings' => [
-            'selection_visitor_allow' => true,
+            'selection_disable_anonymous' => false,
             'selection_open' => true,
         ],
         'block_settings' => [

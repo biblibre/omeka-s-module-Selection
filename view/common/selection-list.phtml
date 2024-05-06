@@ -10,8 +10,8 @@ $escapeAttr = $plugins->get('escapeHtmlAttr');
 $siteSetting = $plugins->get('siteSetting');
 
 $user = $this->identity();
-$allowVisitor = !$user && $siteSetting('selection_visitor_allow', true);
-if (!$allowVisitor && !$user) {
+$disableAnonymous = $siteSetting('selection_disable_anonymous');
+if ($disableAnonymous && !$user) {
     return;
 }
 

@@ -125,9 +125,9 @@ class Module extends AbstractModule
         $view = $event->getTarget();
         $siteSetting = $view->getHelperPluginManager()->get('siteSetting');
 
-        $user = $view->identity();
-        $allowVisitor = $siteSetting('selection_visitor_allow', true);
-        if (!$user && !$allowVisitor) {
+        $user = $this->identity();
+        $disableAnonymous = (bool) $siteSettings->get('selection_disable_anonymous');
+        if ($disableAnonymous && !$user) {
             return;
         }
 

@@ -22,15 +22,14 @@ class SiteSettingsFieldset extends Fieldset
             ->setAttribute('id', 'selection')
             ->setOption('element_groups', $this->elementGroups)
             ->add([
-                'name' => 'selection_visitor_allow',
+                'name' => 'selection_disable_anonymous',
                 'type' => Element\Checkbox::class,
                 'options' => [
                     'element_group' => 'selection',
-                    'label' => 'Enable session selection for visitors', // @translate
-                    'info' => 'The selection is automatically saved for logged users.', // @translate
+                    'label' => 'Disable selection stored in session for anonymous visitors', // @translate
                 ],
                 'attributes' => [
-                    'id' => 'selection_visitor_allow',
+                    'id' => 'selection_disable_anonymous',
                 ],
             ])
             ->add([

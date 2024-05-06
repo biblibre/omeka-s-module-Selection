@@ -26,8 +26,8 @@ class SelectionButtonToggle extends AbstractHelper
         $siteSetting = $view->plugin('siteSetting');
 
         $user = $view->identity();
-        $allowVisitor = $siteSetting('selection_visitor_allow', true);
-        if (!$allowVisitor && !$user) {
+        $disableAnonymous = (bool) $siteSetting('selection_disable_anonymous');
+        if ($disableAnonymous && !$user) {
             return '';
         }
 

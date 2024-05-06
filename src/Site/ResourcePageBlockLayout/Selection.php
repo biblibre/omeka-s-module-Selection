@@ -27,8 +27,8 @@ class Selection implements ResourcePageBlockLayoutInterface
         $siteSetting = $view->getHelperPluginManager()->get('siteSetting');
 
         $user = $view->identity();
-        $allowVisitor = $siteSetting('selection_visitor_allow', true);
-        if (!$user && !$allowVisitor) {
+        $disableAnonymous = (bool) $siteSetting('selection_disable_anonymous');
+        if ($disableAnonymous && !$user) {
             return '';
         }
 
