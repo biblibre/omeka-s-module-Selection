@@ -12,6 +12,7 @@ use Common\Stdlib\PsrMessage;
  *
  * @var \Omeka\Api\Manager $api
  * @var \Omeka\Settings\Settings $settings
+ * @var \Omeka\Settings\SiteSettings $siteSettings
  * @var \Doctrine\DBAL\Connection $connection
  * @var \Doctrine\ORM\EntityManager $entityManager
  * @var \Omeka\Mvc\Controller\Plugin\Messenger $messenger
@@ -22,6 +23,7 @@ $settings = $services->get('Omeka\Settings');
 $translate = $plugins->get('translate');
 $connection = $services->get('Omeka\Connection');
 $messenger = $plugins->get('messenger');
+$siteSettings = $services->get('Omeka\Settings\Site');
 $entityManager = $services->get('Omeka\EntityManager');
 
 if (!method_exists($this, 'checkModuleActiveVersion') || !$this->checkModuleActiveVersion('Common', '3.4.57')) {
@@ -201,4 +203,73 @@ SQL;
         'Some url routes have been updated to use query arguments. Check your theme if needed.' // @translate
     );
     $messenger->addWarning($message);
+}
+
+if (version_compare($oldVersion, '3.4.7', '<')) {
+    $sql = <<<'SQL'
+ALTER TABLE `selection`
+CHANGE `created` `created` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL AFTER `structure`;
+
+ALTER TABLE `selection_resource`
+CHANGE `created` `created` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL AFTER `selection_id`;
+SQL;
+    try {
+        $connection->executeStatement($sql);
+    } catch (\Exception $e) {
+        // Skip.
+    }
+
+    $sql = <<<'SQL'
+UPDATE `site_setting`
+SET `id` = "selection_anonymous"
+WHERE `id` = "selection_visitor_allow";
+SQL;
+    $connection->executeStatement($sql);
+    $sql = <<<'SQL'
+UPDATE `site_setting`
+SET `id` = "selection_resource_show_open"
+WHERE `id` = "selection_open";
+SQL;
+    $connection->executeStatement($sql);
+
+    $siteIds = $api->search('sites', [], ['returnScalar' => 'id'])->getContent();
+    foreach ($siteIds as $siteId) {
+        $siteSettings->set('selection_selectable_resources', ['items', 'media', 'item_sets'], $siteId);
+    }
+
+    $message = new PsrMessage(
+        'The option "selection_visitor_allow" was renamed "selection_disable_anonymous" and "selection_open" as "selection_resource_show_open". Update your theme if you customized it.' // @translate
+    );
+    $messenger->addWarning($message);
+
+    $message = new PsrMessage(
+        'The views were restructured, so check your theme if you customized it.' // @translate
+    );
+    $messenger->addWarning($message);
+
+    $message = new PsrMessage(
+        'A new option in site settings and in block settings allows to display the selection flat, by default, or hierarchically.' // @translate
+    );
+    $messenger->addSuccess($message);
+
+    $message = new PsrMessage(
+        'A new option in site settings allows to define selectable resources (items, medias, item sets).' // @translate
+    );
+    $messenger->addSuccess($message);
+
+    $message = new PsrMessage(
+        'The resource block "Selection" was split into a block "Selection" and a block "Selection list".' // @translate
+    );
+    $messenger->addSuccess($message);
+
+    $message = new PsrMessage(
+        'Modules {link_1}Bulk Export{link_end} and {link_2}Contact Us{link_end} are fully integrated in the selection page.', // @translate
+        [
+            'link_1' => '<a href="https://gitlab.com/Daniel-KM/Omeka-S-module-BulkExport" target="_blank" rel="noopener">',
+            'link_2' => '<a href="https://gitlab.com/Daniel-KM/Omeka-S-module-ContactUs" target="_blank" rel="noopener">',
+            'link_end' => '</a>',
+        ]
+    );
+    $message->setEscapeHtml(false);
+    $messenger->addSuccess($message);
 }
