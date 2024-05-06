@@ -1,0 +1,95 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Omeka\Entity\User $user
+ * @var int $selectionId
+ * @var array $selections
+ * @var array $records
+ * @var bool $isGuestActive
+ * @var bool $isSession
+ */
+
+// Browse the current selection, not all selections.
+
+$plugins = $this->getHelperPluginManager();
+$url = $plugins->get('url');
+$api = $plugins->get('api');
+$i18n = $plugins->get('i18n');
+$partial = $plugins->get('partial');
+$escape = $plugins->get('escapeHtml');
+$assetUrl = $plugins->get('assetUrl');
+$translate = $plugins->get('translate');
+$hyperlink = $plugins->get('hyperlink');
+$thumbnail = $plugins->get('thumbnail');
+$siteSetting = $plugins->get('siteSetting');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+$partialLoop = $plugins->get('partialLoop');
+
+// May be included in main layout.
+$this->headLink()
+    ->appendStylesheet($assetUrl('css/selection.css', 'Selection'));
+$this->headScript()
+    ->appendFile($assetUrl('js/selection.js', 'Selection'), 'text/javascript', ['defer' => 'defer']);
+
+$this->htmlElement('body')->appendAttribute('class', 'selection resource browse');
+
+$siteSlug = $site->slug();
+
+$lang = $this->lang();
+$filterLocale = (bool) $siteSetting('filter_locale_values');
+$headingTerm = $siteSetting('browse_heading_property_term');
+$bodyTerm = $siteSetting('browse_body_property_term');
+$bulkExporters = $plugins->has('bulkExporters') ? $plugins->get('bulkExporters')() : null;
+
+$currentSelection = $selections[$selectionId] ?? [];
+$currentRecords = $records[$selectionId] ?? [];
+$selectedRecords = $currentRecords;
+$selection = $currentSelection;
+
+$recordsByType = array_column($currentRecords, 'resource_name', 'id');
+$countsByType = array_count_values($recordsByType) + ['items' => 0, 'media' => 0, 'item_sets' => 0, 'annotations' => 0];
+
+// TODO Get the resources one time via api (currently only needed for thumbnail, not prepared early).
+?>
+
+<?= $this->pageTitle($selections[$selectionId]['label'] ?? $translate('Selection'), 2) ?>
+
+<div class="selection-list selections selection-flat">
+
+    <?php if (count($currentRecords)): ?>
+    <h3 class="selection-count"><?= sprintf($translate('%d items, %d media'), $countsByType['items'], $countsByType['media']) ?></h3>
+    <?php else: ?>
+    <p class="selection-empty">
+        <?= $translate('The selection is empty.') // @translate ?>
+    </p>
+    <?php endif; ?>
+
+    <?php $this->trigger('view.browse.before'); ?>
+    <ul class="resource-list">
+        <?php foreach ($selectedRecords as $resourceId => $record):
+            $resource = $api->read($record['resource_name'], ['id' => $resourceId])->getContent();
+            $heading = $record['heading'];
+            $body = $record['body'];
+            $linkContent = sprintf('%s<span class="resource-name">%s</span>', $thumbnail($resource, 'medium'), $escape($heading));
+            ?>
+        <li class="item resource">
+            <?= $resource->linkRaw($linkContent, null, ['class' => 'resource-link']) ?>
+            <?php if ($body): ?>
+            <div class="description"><?= $escape($body) ?></div>
+            <?php endif; ?>
+            <?php if ($bulkExporters): ?>
+            <ul class="actions">
+                <?php foreach ($bulkExporters as $format => $label):
+                    $urlFormat = $url('site/resource-id/output', ['site-slug' => $siteSlug, 'controller' => $record['type'], 'id' => $resourceId, 'action' => 'show', 'format' => $format]);
+                    ?>
+                <li><a class="download-id" href="<?= $urlFormat ?>" download="download"><button type="button" class="export-group download-<?= $format ?>" data-url="<?= $urlFormat ?>"><?= $label ?></button></a></li>
+                <?php endforeach; ?>
+            </ul>
+            <?php endif; ?>
+        </li>
+        <?php endforeach; ?>
+    </ul>
+    <?php $this->trigger('view.browse.after'); ?>
+
+</div>

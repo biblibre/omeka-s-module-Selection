@@ -67,6 +67,8 @@ class Selection extends AbstractBlockLayout
         $selection = $selectionContainer->selections[$selectionId] ?? reset($selectionContainer->selections);
         $selectionId = $selection['id'];
 
+        $disposition = $block->dataValue('disposition') === 'hierarchy' ? 'hierarchy' : 'list';
+
         $vars = [
             'site' => $block->page()->site(),
             'block' => $block,
@@ -77,6 +79,7 @@ class Selection extends AbstractBlockLayout
             'heading' => $block->dataValue('heading'),
             'isGuestActive' => $plugins->has('guestWidget'),
             'isSession' => !$user,
+            'disposition' => $disposition,
         ];
 
         $template = $block->dataValue('template', self::PARTIAL_NAME);

@@ -2,6 +2,7 @@
 
 namespace Selection\Form;
 
+use Common\Form\Element as CommonElement;
 use Laminas\Form\Element;
 use Laminas\Form\Fieldset;
 
@@ -20,6 +21,21 @@ class Selection extends Fieldset
                 ],
                 'attributes' => [
                     'id' => 'selection-heading',
+                ],
+            ])
+            // TODO Add a third view with a button to let user choose disposition.
+            ->add([
+                'name' => 'o:block[__blockIndex__][o:data][disposition]',
+                'type' => CommonElement\OptionalRadio::class,
+                'options' => [
+                    'label' => 'Disposition', // @translate
+                    'value_options' => [
+                        'list' => 'List', // @translate
+                        'hierarchy' => 'Hierarchy', // @translate
+                    ],
+                ],
+                'attributes' => [
+                    'id' => 'selection-disposition',
                 ],
             ]);
 

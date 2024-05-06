@@ -2,6 +2,7 @@
 
 namespace Selection\Form;
 
+use Common\Form\Element as CommonElement;
 use Laminas\Form\Element;
 use Laminas\Form\Fieldset;
 
@@ -42,6 +43,22 @@ class SiteSettingsFieldset extends Fieldset
                 ],
                 'attributes' => [
                     'id' => 'selection_resource_show_open',
+                ],
+            ])
+            // TODO Add a third view with a button to let user choose disposition.
+            ->add([
+                'name' => 'selection_browse_disposition',
+                'type' => CommonElement\OptionalRadio::class,
+                'options' => [
+                    'element_group' => 'selection',
+                    'label' => 'Disposition of page Selection', // @translate
+                    'value_options' => [
+                        'list' => 'List', // @translate
+                        'hierarchy' => 'Hierarchy', // @translate
+                    ],
+                ],
+                'attributes' => [
+                    'id' => 'selection_browse_disposition',
                 ],
             ])
         ;

@@ -37,6 +37,8 @@ trait TraitDbController
         /** @var \Laminas\Session\Container $selectionContainer */
         $selectionContainer = $this->selectionContainer();
 
+        $disposition = $this->siteSettings()->get('selection_browse_disposition') === 'hierarchy' ? 'hierarchy' : 'list';
+
         $view = new ViewModel([
             'site' => $this->currentSite(),
             'user' => $user,
@@ -48,8 +50,8 @@ trait TraitDbController
         ]);
         return $view
             ->setTemplate($this->isGuestActive
-                ? 'guest/site/guest/selection-resource-browse'
-                : 'selection/site/selection/selection-browse'
+                ? "guest/site/guest/selection-resource-browse-$disposition"
+                : "selection/site/selection/selection-browse-$disposition"
             );
     }
 

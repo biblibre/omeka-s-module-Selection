@@ -155,10 +155,12 @@ return  [
         'site_settings' => [
             'selection_disable_anonymous' => false,
             'selection_resource_show_open' => true,
+            'selection_browse_disposition' => 'list',
         ],
         'block_settings' => [
             'selection' => [
                 'heading' => '',
+                'disposition' => 'list',
                 'template' => '',
             ],
         ],

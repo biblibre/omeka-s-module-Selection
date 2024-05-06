@@ -9,6 +9,7 @@
  * @var array $resourcesByType
  * @var string $heading
  * @var bool $isGuestActive
+ * @var string $disposition "list" or "hierarchy"
  */
 
 $plugins = $this->getHelperPluginManager();
@@ -20,6 +21,6 @@ $escape = $plugins->get('escapeHtml');
     <h2><?= $escape($heading) ?></h2>
     <?php endif; ?>
     <?= $isGuestActive
-        ? $this->partial('guest/site/guest/selection-resource-browse')
-        : $this->partial('selection/site/selection/selection-browse') ?>
+        ? $this->partial("guest/site/guest/selection-resource-browse-$disposition")
+        : $this->partial("selection/site/selection/selection-browse-$disposition") ?>
 </div>
