@@ -2,7 +2,7 @@
 
 namespace Selection;
 
-use Omeka\Stdlib\Message;
+use Common\Stdlib\PsrMessage;
 
 /**
  * @var Module $this
@@ -19,9 +19,18 @@ use Omeka\Stdlib\Message;
 $plugins = $services->get('ControllerPluginManager');
 $api = $plugins->get('api');
 $settings = $services->get('Omeka\Settings');
+$translate = $plugins->get('translate');
 $connection = $services->get('Omeka\Connection');
 $messenger = $plugins->get('messenger');
 $entityManager = $services->get('Omeka\EntityManager');
+
+if (!method_exists($this, 'checkModuleActiveVersion') || !$this->checkModuleActiveVersion('Common', '3.4.57')) {
+    $message = new \Omeka\Stdlib\Message(
+        $translate('The module %1$s should be upgraded to version %2$s or later.'), // @translate
+        'Common', '3.4.57'
+    );
+    throw new \Omeka\Module\Exception\ModuleCannotInstallException((string) $message);
+}
 
 if (version_compare($oldVersion, '3.3.4.1', '<')) {
     $sqls = '';
@@ -121,7 +130,7 @@ SQL;
 }
 
 if (version_compare($oldVersion, '3.3.4.4', '<')) {
-    $message = new Message(
+    $message = new PsrMessage(
         'Helpers and templates were renamed. Old ones will be removed in a future version.' // @translate
     );
     $messenger->addWarning($message);
@@ -180,16 +189,16 @@ SQL;
         $connection->executeStatement(sprintf($sql, $translate('Selection'))); // @translate
     }
 
-    $message = new Message(
+    $message = new PsrMessage(
         'It is now possible to organize selected resources in a structured way.' // @translate
     );
     $messenger->addSuccess($message);
-    $message = new Message(
+    $message = new PsrMessage(
         'The structure is not available for anonymous visitors yet.' // @translate
     );
     $messenger->addWarning($message);
-    $message = new Message(
-        'Some url routes have been updated to use query arguments. Check you theme if needed.' // @translate
+    $message = new PsrMessage(
+        'Some url routes have been updated to use query arguments. Check your theme if needed.' // @translate
     );
     $messenger->addWarning($message);
 }
