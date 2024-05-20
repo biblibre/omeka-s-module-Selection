@@ -26,6 +26,7 @@ $thumbnail = $plugins->get('thumbnail');
 $siteSetting = $plugins->get('siteSetting');
 $escapeAttr = $plugins->get('escapeHtmlAttr');
 $partialLoop = $plugins->get('partialLoop');
+$breadcrumbs = $plugins->has('breadcrumbs') ? $plugins->get('breadcrumbs') : null;
 $bulkExport = $plugins->has('bulkExport') ? $plugins->get('bulkExport') : null;
 $contactUs = $plugins->has('contactUs') ? $plugins->get('contactUs') : null;
 
@@ -82,6 +83,10 @@ $countsByType = array_count_values($recordsByType) + ['items' => 0, 'media' => 0
 
 // TODO Get the resources one time via api (currently only needed for thumbnail, not prepared early).
 ?>
+
+<?php if ($breadcrumbs): ?>
+<?= $breadcrumbs() ?>
+<?php endif; ?>
 
 <?= $this->pageTitle($selections[$selectionId]['label'] ?? $translate('Selection'), 2) ?>
 
