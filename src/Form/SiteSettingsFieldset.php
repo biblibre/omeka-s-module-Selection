@@ -93,6 +93,7 @@ class SiteSettingsFieldset extends Fieldset
                 'name' => 'selection_individual_select',
                 'type' => CommonElement\OptionalRadio::class,
                 'options' => [
+                    'element_group' => 'selection',
                     'label' => 'Add individual checkboxes for modules Bulk Export and Contact Us', // @translate
                     'value_options' => [
                         'auto' => 'When needed', // @translate
