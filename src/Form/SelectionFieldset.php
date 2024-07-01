@@ -6,7 +6,7 @@ use Common\Form\Element as CommonElement;
 use Laminas\Form\Element;
 use Laminas\Form\Fieldset;
 
-class Selection extends Fieldset
+class SelectionFieldset extends Fieldset
 {
     public function init(): void
     {
@@ -14,6 +14,7 @@ class Selection extends Fieldset
 
         $this
             // TODO Add a third view with a button to let user choose disposition.
+            // TODO Move this to a layout block-template?
             ->add([
                 'name' => 'o:block[__blockIndex__][o:data][disposition]',
                 'type' => CommonElement\OptionalRadio::class,
@@ -43,22 +44,5 @@ class Selection extends Fieldset
                     'id' => 'selection-individual_select',
                 ],
             ]);
-
-        if (class_exists('BlockPlus\Form\Element\TemplateSelect')) {
-            $this
-                ->add([
-                    'name' => 'template',
-                    'type' => \BlockPlus\Form\Element\TemplateSelect::class,
-                    'options' => [
-                        'label' => 'Template to display', // @translate
-                        'info' => 'Templates are in folder "common/block-layout" of the theme and should start with "selection".', // @translate
-                        'template' => 'common/block-layout/selection',
-                    ],
-                    'attributes' => [
-                        'id' => 'selection-template',
-                        'class' => 'chosen-select',
-                    ],
-                ]);
-        }
     }
 }

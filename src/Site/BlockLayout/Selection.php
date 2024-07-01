@@ -7,8 +7,9 @@ use Omeka\Api\Representation\SitePageBlockRepresentation;
 use Omeka\Api\Representation\SitePageRepresentation;
 use Omeka\Api\Representation\SiteRepresentation;
 use Omeka\Site\BlockLayout\AbstractBlockLayout;
+use Omeka\Site\BlockLayout\TemplateableBlockLayoutInterface;
 
-class Selection extends AbstractBlockLayout
+class Selection extends AbstractBlockLayout implements TemplateableBlockLayoutInterface
 {
     /**
      * The default partial view script.
@@ -30,7 +31,7 @@ class Selection extends AbstractBlockLayout
         $services = $site->getServiceLocator();
         $formElementManager = $services->get('FormElementManager');
         $defaultSettings = $services->get('Config')['selection']['block_settings']['selection'];
-        $blockFieldset = \Selection\Form\Selection::class;
+        $blockFieldset = \Selection\Form\SelectionFieldset::class;
 
         $data = $block ? ($block->data() ?? []) + $defaultSettings : $defaultSettings;
 
@@ -45,7 +46,7 @@ class Selection extends AbstractBlockLayout
         return $view->formCollection($fieldset);
     }
 
-    public function render(PhpRenderer $view, SitePageBlockRepresentation $block)
+    public function render(PhpRenderer $view, SitePageBlockRepresentation $block, $templateViewScript = self::PARTIAL_NAME)
     {
         $plugins = $view->getHelperPluginManager();
         $siteSetting = $plugins->get('siteSetting');
@@ -79,8 +80,8 @@ class Selection extends AbstractBlockLayout
             : $allowIndividualSelect === 'yes';
 
         $vars = [
-            'site' => $block->page()->site(),
             'block' => $block,
+            'site' => $block->page()->site(),
             'user' => $user,
             'selectionId' => $selectionId,
             'selections' => $selectionContainer->selections,
@@ -91,10 +92,6 @@ class Selection extends AbstractBlockLayout
             'disposition' => $disposition,
         ];
 
-        $template = $block->dataValue('template', self::PARTIAL_NAME);
-
-        return $template !== self::PARTIAL_NAME && $view->resolver($template)
-            ? $view->partial($template, $vars)
-            : $view->partial(self::PARTIAL_NAME, $vars);
+        return $view->partial($templateViewScript, $vars);
     }
 }

@@ -36,7 +36,7 @@ return  [
     ],
     'form_elements' => [
         'invokables' => [
-            Form\Selection::class => Form\Selection::class,
+            Form\SelectionFieldset::class => Form\SelectionFieldset::class,
             Form\SiteSettingsFieldset::class => Form\SiteSettingsFieldset::class,
         ],
     ],
@@ -168,7 +168,6 @@ return  [
             'selection' => [
                 'disposition' => 'list',
                 'individual_select' => 'auto',
-                'template' => '',
             ],
         ],
     ],
