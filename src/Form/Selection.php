@@ -13,16 +13,6 @@ class Selection extends Fieldset
         // Attachments fields are managed separately.
 
         $this
-            ->add([
-                'name' => 'o:block[__blockIndex__][o:data][heading]',
-                'type' => Element\Text::class,
-                'options' => [
-                    'label' => 'Block title', // @translate
-                ],
-                'attributes' => [
-                    'id' => 'selection-heading',
-                ],
-            ])
             // TODO Add a third view with a button to let user choose disposition.
             ->add([
                 'name' => 'o:block[__blockIndex__][o:data][disposition]',

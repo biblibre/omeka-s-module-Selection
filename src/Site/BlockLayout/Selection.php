@@ -85,7 +85,6 @@ class Selection extends AbstractBlockLayout
             'selectionId' => $selectionId,
             'selections' => $selectionContainer->selections,
             'records' => $selectionContainer->records,
-            'heading' => $block->dataValue('heading'),
             'isGuestActive' => $plugins->has('guestWidget'),
             'isSession' => !$user,
             'allowIndividualSelect' => $allowIndividualSelect,

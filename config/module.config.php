@@ -166,7 +166,6 @@ return  [
         ],
         'block_settings' => [
             'selection' => [
-                'heading' => '',
                 'disposition' => 'list',
                 'individual_select' => 'auto',
                 'template' => '',

@@ -7,7 +7,6 @@
  * @var \Selection\Api\Representation\SelectionResourceRepresentation[] $selectionResources
  * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $resources
  * @var array $resourcesByType
- * @var string $heading
  * @var bool $isGuestActive
  * @var bool $allowIndividualSelect
  * @var string $disposition "list" or "hierarchy"
@@ -18,9 +17,6 @@ $escape = $plugins->get('escapeHtml');
 ?>
 
 <div class="block block-selection">
-    <?php if (!empty($heading)): ?>
-    <h2><?= $escape($heading) ?></h2>
-    <?php endif; ?>
     <?= $isGuestActive
         ? $this->partial("guest/site/guest/selection-resource-browse-$disposition")
         : $this->partial("selection/site/selection/selection-browse-$disposition") ?>
