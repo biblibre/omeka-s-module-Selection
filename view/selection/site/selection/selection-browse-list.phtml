@@ -76,11 +76,13 @@ $selectText = $escapeAttr($translate('Select resource')); // @translate
     <ul class="resource-list">
         <?php foreach ($selectedRecords as $resourceId => $record):
             $resource = $api->read($record['resource_name'], ['id' => $resourceId])->getContent();
+            $resourceId = $record['id'];
+            $resourceType = $record['type'];
             $heading = $record['heading'];
             $body = $record['body'];
             $linkContent = sprintf('%s<span class="resource-name">%s</span>', $thumbnail($resource, 'medium'), $escape($heading));
             ?>
-        <li class="item resource">
+        <li class="selection-resource resource <?= $resourceType ?>" data-id="<?= $resourceId ?>">
             <?php if ($allowIndividualSelect): ?>
             <input type="checkbox" name="resource_ids[]" class="selected-resource" value="<?= $resourceId ?>" aria-label="<?= $selectText ?>"/>
             <?php endif; ?>
