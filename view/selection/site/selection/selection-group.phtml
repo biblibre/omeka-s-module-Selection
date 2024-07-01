@@ -28,7 +28,7 @@ $bulkExporters = $plugins->has('bulkExporters') ? $plugins->get('bulkExporters')
     <div>
         <h4><span class="group-name">__GROUP_NAME__</span></h4>
         <details class="action-details">
-            <summary class="group-name"><?= $translate('Actions') ?></summary>
+            <summary class="selection-summary group-name" aria-expanded="false"><?= $translate('Actions') ?></summary>
             <ul class="actions">
                 <li><button type="button" class="add-group" data-url="<?= $baseUrl  ?>/add-group"><?= $escape($translate('Add a sub-folder')) ?></button></li>
                 <li><button type="button" class="rename-group" data-url="<?= $baseUrl ?>/rename-group"><?= $escape($translate('Rename folder')) ?></button></li>
@@ -39,7 +39,7 @@ $bulkExporters = $plugins->has('bulkExporters') ? $plugins->get('bulkExporters')
                 foreach ($bulkExporters as $format => $label):
                     $urlFormat = $url('site/resource/output', ['site-slug' => $siteSlug, 'controller' => 'resource', 'action' => 'browse', 'format' => $format]);
                 ?>
-                <li><a class="download-id" href="<?= $urlFormat ?>" download="download"><button type="button" class="export-group download-<?= $format ?>" data-url="<?= $urlFormat ?>"><?= $label ?></button></a></li>
+                <li><a class="download-file download-id" href="<?= $urlFormat ?>" download="download"><button type="button" class="export-group download-<?= $format ?>" data-url="<?= $urlFormat ?>"><?= $label ?></button></a></li>
                 <?php endforeach; ?>
                 <?php endif; ?>
             </ul>

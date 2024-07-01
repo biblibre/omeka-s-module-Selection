@@ -1,6 +1,10 @@
 (function() {
     $(document).ready(function() {
 
+        $(document).on('click', 'summary.selection-summary', function() {
+            this.setAttribute('aria-expanded', this.getAttribute('aria-expanded') === 'true' ? 'false' : 'true');
+        });
+
         /**
          * Hide details summary on outside click.
          * @todo Find a better way to manage only selection details.

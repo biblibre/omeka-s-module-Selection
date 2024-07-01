@@ -35,7 +35,7 @@ $openDetails = (bool) $siteSetting('selection_resource_show_open', true);
 ?>
 
 <details class="selection selection-details" <?= $openDetails ? 'open="open"' : '' ?>>
-    <summary aria-expanded="<?= $openDetails ? 'true' : 'false' ?>"><?= $translate('Selection') ?></summary>
+    <summary class="selection-summary" aria-expanded="<?= $openDetails ? 'true' : 'false' ?>"><?= $translate('Selection') ?></summary>
     <?php if ($isMediaSelectable && count($medias)): ?>
     <h5><?= $translate('Item') ?></h5>
     <?php endif; ?>
@@ -45,7 +45,7 @@ $openDetails = (bool) $siteSetting('selection_resource_show_open', true);
     </div>
     <?php if ($isMediaSelectable && count($medias)): ?>
     <details class="media-list selection-details">
-        <summary><?= $translate('Media') ?></summary>
+        <summary class="selection-summary" aria-expanded="false"><?= $translate('Media') ?></summary>
         <?php foreach ($medias as $media): ?>
         <div class="media resource">
             <?= $selectionButton($media) ?>

@@ -58,7 +58,7 @@ $linkContent = sprintf('%s<span class="resource-name">%s</span>', $thumbnail($re
     </div>
     <?php endif; ?>
     <details class="action-details">
-        <summary class="group-name"><?= $translate('Actions') ?></summary>
+        <summary class="selection-summary group-name" aria-expanded="false"><?= $translate('Actions') ?></summary>
         <ul class="actions">
             <?php if ($selection && $selection['structure']): ?>
             <li><button type="button" class="move-resource" data-url="<?= str_replace('/delete', '/move', $record['url_remove']) ?>"><?= $moveText ?></button></li>
