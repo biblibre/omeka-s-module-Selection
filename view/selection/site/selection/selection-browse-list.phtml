@@ -43,8 +43,8 @@ $recordsByType = array_column($currentRecords, 'resource_name', 'id');
 $countsByType = array_count_values($recordsByType) + ['items' => 0, 'media' => 0, 'item_sets' => 0, 'annotations' => 0];
 
 $baseUrl = dirname($url('site/selection-id', ['id' => $selectionId, 'action' => '__'], true));
-$deleteText = $escapeAttr($translate('Remove from selection')); // @translate
-$selectText = $escapeAttr($translate('Select resource')); // @translate
+$selectText = $escapeAttr($translate('Select resource'));
+$deleteText = $escapeAttr($translate('Remove from selection'));
 
 // TODO Get the resources one time via api (currently only needed for thumbnail, not prepared early).
 ?>
@@ -68,7 +68,7 @@ $selectText = $escapeAttr($translate('Select resource')); // @translate
     <h3 class="selection-count"><?= sprintf($translate('%d resources'), count($currentRecords)) ?></h3>
     <?php else: ?>
     <p class="selection-empty">
-        <?= $translate('The selection is empty.') // @translate ?>
+        <?= $translate('The selection is empty.') ?>
     </p>
     <?php endif; ?>
 

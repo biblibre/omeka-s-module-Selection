@@ -39,7 +39,7 @@ $bulkExporters = $plugins->has('bulkExporters') ? $plugins->get('bulkExporters')
                 foreach ($bulkExporters as $format => $label):
                     $urlFormat = $url('site/resource/output', ['site-slug' => $siteSlug, 'controller' => 'resource', 'action' => 'browse', 'format' => $format]);
                 ?>
-                <li><a class="download-file download-id" href="<?= $urlFormat ?>" download="download"><button type="button" class="export-group download-<?= $format ?>" data-url="<?= $urlFormat ?>"><?= $label ?></button></a></li>
+                <li><a class="download-file download-id" href="<?= $urlFormat ?>" download="download" target="_self"><button type="button" class="export-group download-<?= $format ?>" data-url="<?= $urlFormat ?>"><?= $label ?></button></a></li>
                 <?php endforeach; ?>
                 <?php endif; ?>
             </ul>

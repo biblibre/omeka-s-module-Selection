@@ -38,7 +38,6 @@
 if (!$record) return;
 
 // This is the base url, the query is added via js.
-$baseUrl = pathinfo($url('site/selection-id', ['id' => $selectionId, 'action' => '__'], true), PATHINFO_DIRNAME);
 $resourceId = $record['id'];
 $resourceType = $record['type'];
 $resource = $api->read($record['resource_name'], $resourceId)->getContent();
