@@ -295,6 +295,7 @@ if (version_compare($oldVersion, '3.4.8', '<')) {
     $hasBlockPlus = $this->isModuleActive('BlockPlus');
 
     $pagesUpdated = [];
+    $pagesUpdated2 = [];
     foreach ($pageRepository->findAll() as $page) {
         $pageId = $page->getId();
         $pageSlug = $page->getSlug();
@@ -332,6 +333,15 @@ if (version_compare($oldVersion, '3.4.8', '<')) {
             }
             unset($data['heading']);
 
+            $template = $data['template'] ?? null;
+            if ($template && $template !== 'common/block-layout/selection') {
+                $layoutData = $block->getLayoutData();
+                $layoutData['template_name'] = pathinfo($template, PATHINFO_FILENAME);
+                $block->setLayoutData($layoutData);
+                $pagesUpdated2[$siteSlug][$pageSlug] = $pageSlug;
+            }
+            unset($data['template']);
+
             $block->setData($data);
         }
     }
@@ -346,6 +356,23 @@ if (version_compare($oldVersion, '3.4.8', '<')) {
             ['json' => json_encode($result, 448)]
         );
         $messenger->addWarning($message);
+        $logger->warn($message->getMessage(), $message->getContext());
+    }
+
+    if ($pagesUpdated2) {
+        $result = array_map('array_values', $pagesUpdated2);
+        $message = new PsrMessage(
+            'The setting "template" was moved to the new block layout settings available since Omeka S v4.1. You may check pages for styles: {json}', // @translate
+            ['json' => json_encode($result, 448)]
+        );
+        $messenger->addWarning($message);
+        $logger->warn($message->getMessage(), $message->getContext());
+
+        $message = new PsrMessage(
+            'The template files for the block Selection should be moved from "view/common/block-layout" to "view/common/block-template" in your themes. This process can be done automatically via a task of the module Easy Admin before upgrading the module (important: backup your themes first). You may check your themes for pages: {json}', // @translate
+            ['json' => json_encode($result, 448)]
+        );
+        $messenger->addError($message);
         $logger->warn($message->getMessage(), $message->getContext());
     }
 }
