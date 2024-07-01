@@ -103,6 +103,9 @@
         display: inline-block;
         cursor: pointer;
     }
+    .selections-details summary {
+        font-weight: bold;
+    }
     .action-details > summary::after,
     .selection-details > summary::after {
         content: "";

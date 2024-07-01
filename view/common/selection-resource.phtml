@@ -30,10 +30,12 @@ $this->headScript()
     ->appendFile($this->assetUrl('js/selection.js', 'Selection'), 'text/javascript', ['defer' => 'defer']);
 
 $medias = $resource->getControllerName() === 'item' ? $resource->media() : [];
+
+$openDetails = (bool) $siteSetting('selection_resource_show_open', true);
 ?>
 
-<details class="selection selection-details" <?= $siteSetting('selection_resource_show_open', true) ? 'open="open"' : '' ?>>
-    <summary><h4><?= $translate('Selection') ?></h4></summary>
+<details class="selection selection-details" <?= $openDetails ? 'open="open"' : '' ?>>
+    <summary aria-expanded="<?= $openDetails ? 'true' : 'false' ?>"><?= $translate('Selection') ?></summary>
     <?php if ($isMediaSelectable && count($medias)): ?>
     <h5><?= $translate('Item') ?></h5>
     <?php endif; ?>
@@ -43,7 +45,7 @@ $medias = $resource->getControllerName() === 'item' ? $resource->media() : [];
     </div>
     <?php if ($isMediaSelectable && count($medias)): ?>
     <details class="media-list selection-details">
-        <summary><h5><?= $translate('Media') ?></h5></summary>
+        <summary><?= $translate('Media') ?></summary>
         <?php foreach ($medias as $media): ?>
         <div class="media resource">
             <?= $selectionButton($media) ?>

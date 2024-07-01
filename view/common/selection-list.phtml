@@ -22,12 +22,14 @@ $escapeAttr = $plugins->get('escapeHtmlAttr');
 
 $currentRecords = $records[$selectionId] ?? [];
 
-$selectText = $escapeAttr($translate('Select resource')); // @translate
-$deleteText = $escapeAttr($translate('Remove from selection')); // @translate
+$selectText = $escapeAttr($translate('Select resource'));
+$deleteText = $escapeAttr($translate('Remove from selection'));
+
+$openDetails = (bool) $siteSetting('selection_resource_show_open_list', true);
 ?>
 
-<details class="selection-list selection-details" <?= $siteSetting('selection_resource_show_open_list', true) ? 'open="open"' : '' ?>>
-    <summary><h4><?= $translate('Selected resources') // @translate ?></h4></summary>
+<details class="selection-list selection-details" <?= $openDetails ? 'open="open"' : '' ?>>
+    <summary aria-expanded="<?= $openDetails ? 'true' : 'false' ?>"><?= $translate('Selected resources') ?></summary>
 
     <ul class="selection-resources" data-text-delete="<?= $deleteText ?>">
         <?php foreach ($currentRecords as $resourceId => $record): ?>
@@ -41,6 +43,6 @@ $deleteText = $escapeAttr($translate('Remove from selection')); // @translate
         <?php endforeach; ?>
     </ul>
 
-    <p class="selection-empty<?= count($currentRecords) ? '' : ' active' ?>"><?= $translate('No selection') // @translate ?></p>
+    <p class="selection-empty<?= count($currentRecords) ? '' : ' active' ?>"><?= $translate('No selection') ?></p>
 
 </details>
