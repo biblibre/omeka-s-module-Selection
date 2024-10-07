@@ -288,7 +288,6 @@ if (version_compare($oldVersion, '3.4.8', '<')) {
 
     $logger = $services->get('Omeka\Logger');
     $pageRepository = $entityManager->getRepository(\Omeka\Entity\SitePage::class);
-    $blocksRepository = $entityManager->getRepository(\Omeka\Entity\SitePageBlock::class);
 
     $viewHelpers = $services->get('ViewHelperManager');
     $escape = $viewHelpers->get('escapeHtml');
@@ -297,7 +296,6 @@ if (version_compare($oldVersion, '3.4.8', '<')) {
     $pagesUpdated = [];
     $pagesUpdated2 = [];
     foreach ($pageRepository->findAll() as $page) {
-        $pageId = $page->getId();
         $pageSlug = $page->getSlug();
         $siteSlug = $page->getSite()->getSlug();
         $position = 0;
@@ -307,7 +305,6 @@ if (version_compare($oldVersion, '3.4.8', '<')) {
             if ($layout !== 'selection') {
                 continue;
             }
-            $blockId = $block->getId();
             $data = $block->getData() ?: [];
 
             $heading = $data['heading'] ?? '';
@@ -375,4 +372,36 @@ if (version_compare($oldVersion, '3.4.8', '<')) {
         $messenger->addError($message);
         $logger->warn($message->getMessage(), $message->getContext());
     }
+}
+
+if (version_compare($oldVersion, '3.4.9', '<')) {
+    /**
+     * @var \Omeka\Settings\SiteSettings $siteSettings
+     * @var \Omeka\Site\Theme\Manager $themeManager
+     * @var \Omeka\Api\Representation\SiteRepresentation $site
+     */
+    $themeManager = $services->get('Omeka\Site\ThemeManager');
+    $siteSettings = $services->get('Omeka\Settings\Site');
+    $sites = $api->search('sites')->getContent();
+    foreach ($sites as $site) {
+        $theme = $site->theme();
+        if ($theme && $themeManager->isRegistered($theme)) {
+            $theme = $themeManager->getTheme($theme);
+            $blockOrAfter = $theme->isConfigurableResourcePageBlocks() ? 'block' : 'after';
+            $siteId = $site->id();
+            $siteSettings->setTargetId($siteId);
+            $selectables = $siteSettings->get('selection_selectable_resources', []);
+            $buttons = [];
+            foreach ($selectables as $resourceName) {
+                $buttons[] = "$blockOrAfter/$resourceName";
+            }
+            $siteSettings->set('selection_placement_button', $buttons);
+            $siteSettings->set('selection_placement_list', $buttons);
+        }
+    }
+
+    $message = new PsrMessage(
+        'A new option is added to display selection button and list before, after or via resource blocks. See site settings.' // @translate
+    );
+    $messenger->addSuccess($message);
 }
