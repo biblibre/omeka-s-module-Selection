@@ -354,13 +354,17 @@
          * Update direct links for bulk export according to checkboxes.
          * 
          * Unlike contact us, send all resources when none are set.
+         * Nevertheless, if no resource are set on the page, let the url.
          */
         $('.bulk-export .exporters a.exporter').on('click', function() {
-            var url = new URL($(this).prop('href'));
             var vals = $('input.selected-resource[name="resource_ids[]"]:checked');
             if (!vals.length)  {
                 vals = $('input.selected-resource[name="resource_ids[]"]');
+                if (!vals.length) {
+                    return;
+                }
             }
+            var url = new URL($(this).prop('href'));
             var values = [];
             if (vals.length)  {
                 for (var i = 0; i < vals.length; i++) {
