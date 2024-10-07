@@ -28,6 +28,7 @@ return  [
     'view_helpers' => [
         'invokables' => [
             'selectionButton' => View\Helper\SelectionButton::class,
+            'selectionList' => View\Helper\SelectionList::class,
         ],
         'factories' => [
             'selectionContainer' => Service\ViewHelper\SelectionContainerFactory::class,
