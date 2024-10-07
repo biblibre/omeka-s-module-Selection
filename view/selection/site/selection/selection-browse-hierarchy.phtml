@@ -49,6 +49,8 @@ $currentRecords = $records[$selectionId] ?? [];
 $selectedRecords = $currentRecords;
 $selection = $currentSelection;
 
+$labelSelection = $siteSetting('selection_label', $translate('Selection'));
+
 // All data needed to display each selected resource quickly via partialLoop.
 $selectedRecordModel = [
     'site' => $site,
@@ -88,12 +90,13 @@ $countsByType = array_count_values($recordsByType) + ['items' => 0, 'media' => 0
 <?= $breadcrumbs() ?>
 <?php endif; ?>
 
-<?= $this->pageTitle($selections[$selectionId]['label'] ?? $translate('Selection'), 2) ?>
+<?= $this->pageTitle($selections[$selectionId]['label'] ?? $labelSelection, 2) ?>
 
 <?php if ($isSession): ?>
-<p>
+<?php $labelWarning = $siteSetting('selection_warning_anonymous', $translate('This selection is stored in the session cookie. It will be lost if the cookie is cleared.')); ?>
+<p class="selection-warning-anonymous">
     <strong><?= $translate('Warning') ?></strong>
-    <?= $translate('This selection is stored in the session cookie. It will be lost if the cookie is cleared.') ?>
+    <?= $escape($labelWarning) ?>
 </p>
 <?php endif; ?>
 

@@ -454,7 +454,7 @@ trait TraitSessionController
 
         $selection = [
             'id' => $selectionId,
-            'label' => $this->translate('Selection'), // @translate
+            'label' => $this->siteSettings->get('selection_label', $this->translate('Selection')), // @translate
             'structure' => [],
         ];
 

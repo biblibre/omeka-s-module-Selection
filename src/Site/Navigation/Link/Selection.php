@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace Selection\Site\Navigation\Link;
 
 use Omeka\Api\Representation\SiteRepresentation;

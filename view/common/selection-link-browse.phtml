@@ -8,7 +8,12 @@
  * @var string`null $class
  */
 
-$translate = $this->plugin('translate');
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+$siteSetting = $plugins->get('siteSetting');
+
+$labelSelection = $siteSetting('selection_label', $translate('Selection'));
 ?>
 
-<a class="selection browse <?= $class ?? '' ?>" href="<?= $urlBrowse ?>"><?= $translate('Selection') ?></a>
+<a class="selection browse <?= $class ?? '' ?>" href="<?= $urlBrowse ?>"><?= $escape($labelSelection) ?></a>

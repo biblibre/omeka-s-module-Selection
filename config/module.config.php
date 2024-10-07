@@ -170,6 +170,8 @@ return  [
             'selection_resource_show_open_list' => true,
             'selection_browse_disposition' => 'list',
             'selection_individual_select' => 'auto',
+            'selection_label' => 'Selection', // @translate
+            'selection_warning_anonymous' => 'This selection is stored in the session cookie. It will be lost if the cookie is cleared.', // @translate
         ],
         'block_settings' => [
             'selection' => [

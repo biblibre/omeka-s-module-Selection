@@ -151,6 +151,28 @@ class SiteSettingsFieldset extends Fieldset
                     'id' => 'selection_individual_select',
                 ],
             ])
+            ->add([
+                'name' => 'selection_label',
+                'type' => Element\Text::class,
+                'options' => [
+                    'element_group' => 'selection',
+                    'label' => 'Label for the page Selection', // @translate
+                ],
+                'attributes' => [
+                    'id' => 'selection_label',
+                ],
+            ])
+            ->add([
+                'name' => 'selection_warning_anonymous',
+                'type' => Element\Text::class,
+                'options' => [
+                    'element_group' => 'selection',
+                    'label' => 'Warning for selection by anonymous', // @translate
+                ],
+                'attributes' => [
+                    'id' => 'selection_warning_anonymous',
+                ],
+            ])
         ;
     }
 }

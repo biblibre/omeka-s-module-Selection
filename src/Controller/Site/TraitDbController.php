@@ -640,7 +640,7 @@ trait TraitDbController
     {
         return $api->create('selections', [
             'o:owner' => ['o:id' => $user->getId()],
-            'o:label' => $this->translate('My selection'), // @translate
+            'o:label' => $this->siteSettings()->get('selection_label', $this->translate('Selection')), // @translate
         ])->getContent();
     }
 }

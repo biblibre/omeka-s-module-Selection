@@ -47,7 +47,7 @@ class SelectionContainer extends AbstractHelper
         } else {
             $defaultSelection = [
                 'id' => 1,
-                'label' => $view->translate('Selection'), // @translate
+                'label' => $view->siteSetting('selection_label', $view->translate('Selection')), // @translate
                 'structure' => [],
             ];
             if (empty($container->init)) {
@@ -82,7 +82,7 @@ class SelectionContainer extends AbstractHelper
         if (!$selections) {
             $selection = $this->api->create('selections', [
                 'o:owner' => ['o:id' => $user->getId()],
-                'o:label' => $view->translate('My selection'), // @translate
+                'o:label' => $view->siteSetting('selection_label', $view->translate('Selection')), // @translate
             ])->getContent();
             $selections[] = $selection;
         }
