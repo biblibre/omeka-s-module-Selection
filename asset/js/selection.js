@@ -326,11 +326,11 @@
         emptySelectionGroups.find('.move-resource, .export-group').hide();
 
         const beforeSpin = function (button) {
-            button.find('span').removeClass('fas fa-bookmark').addClass('fas fa-sync fa-spin');
+            button.find('span').addClass('fas fa-sync fa-spin');
         }
 
         const afterSpin = function (button) {
-            button.find('span').removeClass('fas fa-sync fa-spin').addClass('fas fa-bookmark');
+            button.find('span').removeClass('fas fa-sync fa-spin');
         }
 
         /**

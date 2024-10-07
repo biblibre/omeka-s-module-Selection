@@ -175,6 +175,31 @@
         height: 20px;
         width: 15px;
     }
+    .selection-icon {
+        width: 30px;
+        height: 44px;
+        float: right;
+        clear: both;
+        position: relative;
+    }
+    .selected .selection-icon {
+        background: url(../img/bookmark-selected.svg) center / 22px no-repeat;
+    }
+    .unselected .selection-icon {
+        background: url(../img/bookmark-unselected.svg) center / 22px  no-repeat;
+    }
+    span.selection-icon.fa-sync.fa-spin {
+        height: 20px;
+        width: 20px;
+    }
+    span.selection-icon.fa-sync.fa-spin::before {
+        height: 20px;
+        width: 20px;
+        display: flex;
+        position: fixed;
+        top: -5px;
+        left: -5px;
+    }
 
     .selected-resource {
         vertical-align: initial;
