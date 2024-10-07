@@ -22,6 +22,7 @@ $hyperlink = $plugins->get('hyperlink');
 $thumbnail = $plugins->get('thumbnail');
 $escapeAttr = $plugins->get('escapeHtmlAttr');
 $siteSetting = $plugins->get('siteSetting');
+$translatePlural = $plugins->get('translatePlural');
 $breadcrumbs = $plugins->has('breadcrumbs') ? $plugins->get('breadcrumbs') : null;
 $bulkExport = $plugins->has('bulkExport') ? $plugins->get('bulkExport') : null;
 $contactUs = $plugins->has('contactUs') ? $plugins->get('contactUs') : null;
@@ -65,7 +66,9 @@ $deleteText = $escapeAttr($translate('Remove from selection'));
 <div class="selection-list selections selection-flat">
 
     <?php if (count($currentRecords)): ?>
-    <h3 class="selection-count"><?= sprintf($translate('%d resources'), count($currentRecords)) ?></h3>
+    <div class="selection-count">
+        <?= sprintf($translatePlural('%s resource', '%s resources', count($currentRecords)), count($currentRecords)) ?>
+    </div>
     <?php else: ?>
     <p class="selection-empty">
         <?= $translate('The selection is empty.') ?>
