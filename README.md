@@ -78,6 +78,24 @@ Add the block for the basket in the pages you need.
 It is recommended to edit the theme directly to include the selection besides
 the item and the media, in particular in the item/show and the item/browse views.
 
+- Display the button to select current resource:
+
+```php
+echo $this->selectionButton();
+```
+
+- Display a simple list of selected resources:
+
+```php
+echo $this->selectionList();
+```
+
+- Display the link to the board of selected resources:
+
+```php
+echo $this->selectionLinkBrowse();
+```
+
 
 Integration via api (js)
 ------------------------
@@ -253,7 +271,8 @@ Copyright
 * Copyright Daniel Berthereau, 2017-2024 (see [Daniel-KM] on GitLab)
 
 This module was initially based on the fork of the module [Basket] from BibLibre
-and restructured and improved for various projects, like [Collections de la Maison de Salins].
+and restructured and improved for various projects, like [Collections de la Maison de Salins],
+and [Bibliothèque numérique] of Université Paris Sciences et Lettres ([PSL]).
 
 
 [Selection]: https://gitlab.com/Daniel-KM/Omeka-S-module-Selection
@@ -271,4 +290,6 @@ and restructured and improved for various projects, like [Collections de la Mais
 [Biblibre]: https://github.com/biblibre
 [GitLab]: https://gitlab.com/Daniel-KM
 [Collections de la Maison de Salins]: https://collections.maison-salins.fr
+[Bibliothèque numérique]: https://bibnum.explore.psl.eu
+[PSL]: https://psl.eu
 [Daniel-KM]: https://gitlab.com/Daniel-KM "Daniel Berthereau"
