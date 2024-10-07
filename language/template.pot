@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-06 00:00+0000\n"
+"POT-Creation-Date: 2024-10-07 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,13 +22,15 @@ msgstr ""
 msgid "The module %1$s should be upgraded to version %2$s or later."
 msgstr ""
 
-#: data/scripts/upgrade.php:191 Module.php:173
+#: data/scripts/upgrade.php:191 Module.php:221
+#: src/Controller/Site/TraitDbController.php:643
 #: src/Controller/Site/TraitSessionController.php:457
 #: src/View/Helper/SelectionContainer.php:50
-#: view/common/selection-link-browse.phtml:14
-#: view/common/selection-resource.phtml:36
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:86
-#: view/selection/site/selection/selection-browse-list.phtml:51
+#: src/View/Helper/SelectionContainer.php:85
+#: view/common/selection-link-browse.phtml:16
+#: view/common/selection-resource.phtml:37
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:53
+#: view/selection/site/selection/selection-browse-list.phtml:44
 msgid "Selection"
 msgstr ""
 
@@ -96,26 +98,21 @@ msgstr ""
 msgid "Already in"
 msgstr ""
 
-#: src/Controller/Site/TraitDbController.php:643
-#: src/View/Helper/SelectionContainer.php:85
-msgid "My selection"
-msgstr ""
-
 #: view/common/selection-button.phtml:21
 msgid "Add to selection"
 msgstr ""
 
 #: view/common/selection-button.phtml:22 view/common/selection-list.phtml:26
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:75
-#: view/selection/site/selection/selection-browse-list.phtml:45
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:79
+#: view/selection/site/selection/selection-browse-list.phtml:47
 msgid "Remove from selection"
 msgstr ""
 
-#: view/common/selection-list.phtml:30
+#: view/common/selection-list.phtml:32
 msgid "Selected resources"
 msgstr ""
 
-#: view/common/selection-list.phtml:44
+#: view/common/selection-list.phtml:46
 msgid "No selection"
 msgstr ""
 
@@ -123,52 +120,46 @@ msgstr ""
 msgid "See selection"
 msgstr ""
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:74
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:78
 msgid "Move"
 msgstr ""
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:91
-#: view/selection/site/selection/selection-browse-list.phtml:56
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:97
+#: view/selection/site/selection/selection-browse-list.phtml:59
 msgid ""
 "This selection is stored in the session cookie. It will be lost if the "
 "cookie is cleared."
 msgstr ""
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:98
-#: view/selection/site/selection/selection-browse-list.phtml:63
-#, php-format
-msgid "%d resources"
-msgstr ""
-
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:101
-#: view/selection/site/selection/selection-browse-list.phtml:66
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:112
+#: view/selection/site/selection/selection-browse-list.phtml:74
 msgid "The selection is empty."
 msgstr ""
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:108
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:117
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:119
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:128
 msgid "Set folder name"
 msgstr ""
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:108
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:119
 msgid "Create a folder"
 msgstr ""
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:157
-#: view/selection/site/selection/selection-browse-list.phtml:98
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:168
+#: view/selection/site/selection/selection-browse-list.phtml:108
 msgid "Select resources and download metadata"
 msgstr ""
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:171
-#: view/selection/site/selection/selection-browse-list.phtml:112
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:182
+#: view/selection/site/selection/selection-browse-list.phtml:122
 msgid "Select resources and send an email"
 msgstr ""
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:178
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:189
 msgid "Select a folder"
 msgstr ""
 
-#: view/selection/site/selection/selection-group-resource.phtml:61
+#: view/selection/site/selection/selection-group-resource.phtml:60
 #: view/selection/site/selection/selection-group.phtml:31
 msgid "Actions"
 msgstr ""
@@ -248,6 +239,34 @@ msgid ""
 "fully integrated in the selection page."
 msgstr ""
 
+#: data/scripts/upgrade.php:352
+msgid ""
+"The setting \"heading\" was removed from block Selection. New blocks "
+"\"Heading\" or \"Html\" were prepended to all blocks that had a filled "
+"heading. You may check pages for styles: {json}"
+msgstr ""
+
+#: data/scripts/upgrade.php:362
+msgid ""
+"The setting \"template\" was moved to the new block layout settings "
+"available since Omeka S v4.1. You may check pages for styles: {json}"
+msgstr ""
+
+#: data/scripts/upgrade.php:369
+msgid ""
+"The template files for the block Selection should be moved from \"view/"
+"common/block-layout\" to \"view/common/block-template\" in your themes. This "
+"process can be done automatically via a task of the module Easy Admin before "
+"upgrading the module (important: backup your themes first). You may check "
+"your themes for pages: {json}"
+msgstr ""
+
+#: data/scripts/upgrade.php:404
+msgid ""
+"A new option is added to display selection button and list before, after or "
+"via resource blocks. See site settings."
+msgstr ""
+
 #: Module.php:81
 msgid ""
 "The module Basket is present. Upgrade from it was removed since version "
@@ -271,49 +290,87 @@ msgid "Medias"
 msgstr ""
 
 #: src/Form/SiteSettingsFieldset.php:58
-msgid "Open the selection block by default in resource page"
+msgid "Display selection button"
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:69
-msgid "Open the selection list block by default in resource page"
+#: src/Form/SiteSettingsFieldset.php:60 src/Form/SiteSettingsFieldset.php:83
+msgid "Items: Via resource block or custom theme"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:61 src/Form/SiteSettingsFieldset.php:84
+msgid "Media: Via resource block or custom theme"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:62 src/Form/SiteSettingsFieldset.php:85
+msgid "Item set: Via resource block or custom theme"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:63 src/Form/SiteSettingsFieldset.php:86
+msgid "Item: Top"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:64 src/Form/SiteSettingsFieldset.php:87
+msgid "Media: Top"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:65 src/Form/SiteSettingsFieldset.php:88
+msgid "Item set: Top"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:66 src/Form/SiteSettingsFieldset.php:89
+msgid "Item: Bottom"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:67 src/Form/SiteSettingsFieldset.php:90
+msgid "Media: Bottom"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:68 src/Form/SiteSettingsFieldset.php:91
+msgid "Item set: Bottom"
 msgstr ""
 
 #: src/Form/SiteSettingsFieldset.php:81
+msgid "Display selection list"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:104
+msgid "Open the selection block by default in resource page"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:115
+msgid "Open the selection list block by default in resource page"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:127
 msgid "Default disposition of page Selection"
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:84 src/Form/Selection.php:33
+#: src/Form/SiteSettingsFieldset.php:130 src/Form/SelectionFieldset.php:24
 msgid "List"
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:85 src/Form/Selection.php:34
+#: src/Form/SiteSettingsFieldset.php:131 src/Form/SelectionFieldset.php:25
 msgid "Hierarchy"
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:96 src/Form/Selection.php:45
+#: src/Form/SiteSettingsFieldset.php:143 src/Form/SelectionFieldset.php:36
 msgid "Add individual checkboxes for modules Bulk Export and Contact Us"
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:98 src/Form/Selection.php:47
+#: src/Form/SiteSettingsFieldset.php:145 src/Form/SelectionFieldset.php:38
 msgid "When needed"
 msgstr ""
 
-#: src/Form/Selection.php:20
-msgid "Block title"
+#: src/Form/SiteSettingsFieldset.php:159
+msgid "Label for the page Selection"
 msgstr ""
 
-#: src/Form/Selection.php:31
+#: src/Form/SiteSettingsFieldset.php:170
+msgid "Warning for selection by anonymous"
+msgstr ""
+
+#: src/Form/SelectionFieldset.php:22
 msgid "Disposition"
-msgstr ""
-
-#: src/Form/Selection.php:63
-msgid "Template to display"
-msgstr ""
-
-#: src/Form/Selection.php:64
-msgid ""
-"Templates are in folder \"common/block-layout\" of the theme and should "
-"start with \"selection\"."
 msgstr ""
 
 #: src/Api/Adapter/SelectionAdapter.php:183
@@ -353,7 +410,7 @@ msgid ""
 "A selection resource must be unique for the owner when there is no selection."
 msgstr ""
 
-#: src/Site/Navigation/Link/Selection.php:23
+#: src/Site/Navigation/Link/Selection.php:24
 #, php-format
 msgid "Invalid navigation: link without label (%s)"
 msgstr ""
