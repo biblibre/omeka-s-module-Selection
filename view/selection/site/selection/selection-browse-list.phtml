@@ -14,14 +14,12 @@
 // Browse the current selection, not all selections.
 
 $plugins = $this->getHelperPluginManager();
-$url = $plugins->get('url');
 $api = $plugins->get('api');
 $escape = $plugins->get('escapeHtml');
 $assetUrl = $plugins->get('assetUrl');
 $translate = $plugins->get('translate');
 $hyperlink = $plugins->get('hyperlink');
 $thumbnail = $plugins->get('thumbnail');
-$siteSetting = $plugins->get('siteSetting');
 $escapeAttr = $plugins->get('escapeHtmlAttr');
 $breadcrumbs = $plugins->has('breadcrumbs') ? $plugins->get('breadcrumbs') : null;
 $bulkExport = $plugins->has('bulkExport') ? $plugins->get('bulkExport') : null;
@@ -35,14 +33,12 @@ $this->headScript()
 
 $this->htmlElement('body')->appendAttribute('class', 'selection resource browse');
 
-$currentSelection = $selections[$selectionId] ?? [];
 $currentRecords = $records[$selectionId] ?? [];
 $selectedRecords = $currentRecords;
 
 $recordsByType = array_column($currentRecords, 'resource_name', 'id');
 $countsByType = array_count_values($recordsByType) + ['items' => 0, 'media' => 0, 'item_sets' => 0, 'annotations' => 0];
 
-$baseUrl = dirname($url('site/selection-id', ['id' => $selectionId, 'action' => '__'], true));
 $selectText = $escapeAttr($translate('Select resource'));
 $deleteText = $escapeAttr($translate('Remove from selection'));
 
