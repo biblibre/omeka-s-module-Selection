@@ -88,21 +88,42 @@ class Module extends AbstractModule
     public function attachListeners(SharedEventManagerInterface $sharedEventManager): void
     {
         // Display block in resources pages for old themes.
-        $sharedEventManager->attach(
-            'Omeka\Controller\Site\Item',
-            'view.show.after',
-            [$this, 'handleViewShowAfter']
-        );
-        $sharedEventManager->attach(
-            'Omeka\Controller\Site\ItemSet',
-            'view.show.after',
-            [$this, 'handleViewShowAfter']
-        );
-        $sharedEventManager->attach(
-            'Omeka\Controller\Site\Media',
-            'view.show.after',
-            [$this, 'handleViewShowAfter']
-        );
+        // The site is not set yet, so checks are done in method.
+        foreach ([
+            'selection_placement_button' => 'handleShowSelectionButton',
+            'selection_placement_list' => 'handleShowSelectionList',
+        ] as $method) {
+            $sharedEventManager->attach(
+                'Omeka\Controller\Site\Item',
+                'view.show.before',
+                [$this, $method]
+            );
+            $sharedEventManager->attach(
+                'Omeka\Controller\Site\Media',
+                'view.show.before',
+                [$this, $method]
+            );
+            $sharedEventManager->attach(
+                'Omeka\Controller\Site\ItemSet',
+                'view.show.before',
+                [$this, $method]
+            );
+            $sharedEventManager->attach(
+                'Omeka\Controller\Site\Item',
+                'view.show.after',
+                [$this, $method]
+            );
+            $sharedEventManager->attach(
+                'Omeka\Controller\Site\Media',
+                'view.show.after',
+                [$this, $method]
+            );
+            $sharedEventManager->attach(
+                'Omeka\Controller\Site\ItemSet',
+                'view.show.after',
+                [$this, $method]
+            );
+        }
 
         // No need to listen user.logout: session is automatically destroyed.
 
@@ -121,26 +142,17 @@ class Module extends AbstractModule
         );
     }
 
-    public function handleViewShowAfter(Event $event): void
+    public function handleShowSelectionButton(Event $event): void
     {
         /**
-         * @var \Omeka\Site\Theme\Theme $currentTheme
          * @var \Omeka\Settings\SiteSettings $siteSettings
          * @var \Omeka\Entity\User $user
          * @var \Laminas\View\Renderer\PhpRenderer $view
          * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
-         * @var \Omeka\Site\ResourcePageBlockLayout\Manager $blockLayoutManager
+         * @see \Selection\View\Helper\SelectionButton
          */
 
         $services = $this->getServiceLocator();
-
-        // Since Omeka S v4, if the theme support resource blocks, don't add it
-        // via event.
-        $currentTheme = $services->get('Omeka\Site\ThemeManager')->getCurrentTheme();
-        if ($currentTheme->isConfigurableResourcePageBlocks()) {
-            return;
-        }
-
         $siteSettings = $services->get('Omeka\Settings\Site');
 
         $user = $services->get('Omeka\AuthenticationService')->getIdentity();
@@ -151,15 +163,49 @@ class Module extends AbstractModule
 
         $view = $event->getTarget();
         $resource = $view->resource;
+        $resourceName = $resource->resourceName();
 
         $selectables = $siteSettings->get('selection_selectable_resources', ['items']);
-        if (!in_array($resource->resourceName(), $selectables)) {
+        if (!in_array($resourceName, $selectables)) {
             return;
         }
 
-        $blockLayoutManager = $services->get('Omeka\ResourcePageBlockLayoutManager');
-        echo $blockLayoutManager->get('selection')->render($view, $resource);
-        echo $blockLayoutManager->get('selectionList')->render($view, $resource);
+        $placements = $siteSettings->get('selection_placement_button', []);
+        if (in_array('before/' . $resourceName, $placements)
+            || in_array('after/' . $resourceName, $placements)
+        ) {
+            echo $view->selectionButton($resource);
+        }
+    }
+
+    public function handleShowSelectionList(Event $event): void
+    {
+        /**
+         * @var \Omeka\Settings\SiteSettings $siteSettings
+         * @var \Omeka\Entity\User $user
+         * @var \Laminas\View\Renderer\PhpRenderer $view
+         * @see \Selection\View\Helper\SelectionList
+         */
+
+        $services = $this->getServiceLocator();
+        $siteSettings = $services->get('Omeka\Settings\Site');
+
+        $user = $services->get('Omeka\AuthenticationService')->getIdentity();
+        $disableAnonymous = (bool) $siteSettings->get('selection_disable_anonymous');
+        if ($disableAnonymous && !$user) {
+            return;
+        }
+
+        $view = $event->getTarget();
+        $resource = $view->resource;
+        $resourceName = $resource->resourceName();
+
+        $placements = $siteSettings->get('selection_placement_list', []);
+        if (in_array('before/' . $resourceName, $placements)
+            || in_array('after/' . $resourceName, $placements)
+        ) {
+            echo $view->selectionList();
+        }
     }
 
     public function handleGuestWidgets(Event $event): void

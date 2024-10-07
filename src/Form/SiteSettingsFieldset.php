@@ -51,6 +51,52 @@ class SiteSettingsFieldset extends Fieldset
                 ],
             ])
             ->add([
+                'name' => 'selection_placement_button',
+                'type' => CommonElement\OptionalMultiCheckbox::class,
+                'options' => [
+                    'element_group' => 'selection',
+                    'label' => 'Display selection button', // @translate
+                    'value_options' => [
+                        'block/items' => 'Items: Via resource block or custom theme', // @translate
+                        'block/media' => 'Media: Via resource block or custom theme', // @translate
+                        'block/item_sets' => 'Item set: Via resource block or custom theme', // @translate
+                        'before/items' => 'Item: Top', // @translate
+                        'before/media' => 'Media: Top', // @translate
+                        'before/item_sets' => 'Item set: Top', // @translate
+                        'after/items' => 'Item: Bottom', // @translate
+                        'after/media' => 'Media: Bottom', // @translate
+                        'after/item_sets' => 'Item set: Bottom', // @translate
+                    ],
+                ],
+                'attributes' => [
+                    'id' => 'selection_placement_button',
+                    'required' => false,
+                ],
+            ])
+            ->add([
+                'name' => 'selection_placement_list',
+                'type' => CommonElement\OptionalMultiCheckbox::class,
+                'options' => [
+                    'element_group' => 'selection',
+                    'label' => 'Display selection list', // @translate
+                    'value_options' => [
+                        'block/items' => 'Items: Via resource block or custom theme', // @translate
+                        'block/media' => 'Media: Via resource block or custom theme', // @translate
+                        'block/item_sets' => 'Item set: Via resource block or custom theme', // @translate
+                        'before/items' => 'Item: Top', // @translate
+                        'before/media' => 'Media: Top', // @translate
+                        'before/item_sets' => 'Item set: Top', // @translate
+                        'after/items' => 'Item: Bottom', // @translate
+                        'after/media' => 'Media: Bottom', // @translate
+                        'after/item_sets' => 'Item set: Bottom', // @translate
+                    ],
+                ],
+                'attributes' => [
+                    'id' => 'selection_placement_list',
+                    'required' => false,
+                ],
+            ])
+            ->add([
                 'name' => 'selection_resource_show_open',
                 'type' => Element\Checkbox::class,
                 'options' => [
