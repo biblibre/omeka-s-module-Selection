@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Solr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-07 00:00+0000\n"
-"PO-Revision-Date: 2024-10-07 00:00+0000\n"
+"POT-Creation-Date: 2024-12-09 00:00+0000\n"
+"PO-Revision-Date: 2024-12-09 00:00+0000\n"
 "Last-Translator: Daniel Berthereau <Daniel.fr@Berthereau.net>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -30,8 +30,8 @@ msgstr "Le module %1$s doit être mis à niveau à la version %2$s ou supérieur
 #: src/View/Helper/SelectionContainer.php:85
 #: view/common/selection-link-browse.phtml:16
 #: view/common/selection-resource.phtml:37
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:53
-#: view/selection/site/selection/selection-browse-list.phtml:44
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:56
+#: view/selection/site/selection/selection-browse-list.phtml:47
 msgid "Selection"
 msgstr "Sélection"
 
@@ -86,11 +86,11 @@ msgstr "Le groupe ne peut pas être déplacé à l’intérieur de lui-même."
 msgid "The group does not exist."
 msgstr "Le groupe n’existe pas."
 
-#: src/Controller/Site/AbstractSelectionController.php:819
+#: src/Controller/Site/AbstractSelectionController.php:823
 msgid "An internal error occurred."
 msgstr "Une erreur interne est survenue."
 
-#: src/Controller/Site/AbstractSelectionController.php:829
+#: src/Controller/Site/AbstractSelectionController.php:833
 msgid "Permission denied"
 msgstr "Accès interdit"
 
@@ -99,13 +99,13 @@ msgstr "Accès interdit"
 msgid "Already in"
 msgstr "Déjà ajouté"
 
-#: view/common/selection-button.phtml:21
+#: view/common/selection-button.phtml:23
 msgid "Add to selection"
 msgstr "Ajouter à la sélection"
 
-#: view/common/selection-button.phtml:22 view/common/selection-list.phtml:26
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:79
-#: view/selection/site/selection/selection-browse-list.phtml:47
+#: view/common/selection-button.phtml:24 view/common/selection-list.phtml:26
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:82
+#: view/selection/site/selection/selection-browse-list.phtml:50
 msgid "Remove from selection"
 msgstr "Retirer de la sélection"
 
@@ -117,16 +117,16 @@ msgstr "Ressources sélectionnées"
 msgid "No selection"
 msgstr "Pas de sélection"
 
-#: view/guest/site/guest/widget/selection.phtml:15
-msgid "See selection"
-msgstr "Voir la sélection"
+#: view/guest/site/guest/widget/selection.phtml:16
+msgid "My selection"
+msgstr "Ma sélection"
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:78
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:81
 msgid "Move"
 msgstr "Déplacer"
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:97
-#: view/selection/site/selection/selection-browse-list.phtml:59
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:106
+#: view/selection/site/selection/selection-browse-list.phtml:68
 msgid ""
 "This selection is stored in the session cookie. It will be lost if the "
 "cookie is cleared."
@@ -134,31 +134,31 @@ msgstr ""
 "Cette sélection est enregistrée dans le cookie de session. Elle sera perdue "
 "quand le cookie sera supprimé."
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:112
-#: view/selection/site/selection/selection-browse-list.phtml:74
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:121
+#: view/selection/site/selection/selection-browse-list.phtml:83
 msgid "The selection is empty."
 msgstr "La sélection est vide."
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:119
 #: view/selection/site/selection/selection-browse-hierarchy.phtml:128
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:137
 msgid "Set folder name"
 msgstr "Définir le nom du dossier"
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:119
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:128
 msgid "Create a folder"
 msgstr "Créer un dossier"
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:168
-#: view/selection/site/selection/selection-browse-list.phtml:108
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:177
+#: view/selection/site/selection/selection-browse-list.phtml:117
 msgid "Select resources and download metadata"
 msgstr "Choisir les ressources et téléchargez les métadonnées"
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:182
-#: view/selection/site/selection/selection-browse-list.phtml:122
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:191
+#: view/selection/site/selection/selection-browse-list.phtml:131
 msgid "Select resources and send an email"
 msgstr "Choisir des ressources et envoyer un mail"
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:189
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:198
 msgid "Select a folder"
 msgstr "Choisir un dossier"
 
@@ -406,10 +406,27 @@ msgid "When needed"
 msgstr "Si nécessaire"
 
 #: src/Form/SiteSettingsFieldset.php:159
+msgid ""
+"Add a checkbox to select resources individually in lists (browse and search)"
+msgstr ""
+"Ajouter une case à cocher pour choisir les ressources individuellement dans "
+"les listes (parcourir et rechercher)"
+
+#: src/Form/SiteSettingsFieldset.php:160
+msgid "This option is used only with the module Advanced Search for now."
+msgstr ""
+"Cette option est utilisée seulement dans le module Advanced Search "
+"actuellement."
+
+#: src/Form/SiteSettingsFieldset.php:171
 msgid "Label for the page Selection"
 msgstr "Libellé pour la page de Sélection"
 
-#: src/Form/SiteSettingsFieldset.php:170
+#: src/Form/SiteSettingsFieldset.php:182
+msgid "Label for the link in guest account"
+msgstr "Libellé pour le lien dans le compte Invité"
+
+#: src/Form/SiteSettingsFieldset.php:193
 msgid "Warning for selection by anonymous"
 msgstr "Message d’avertissement pour la sélection par un visiteur anonyme"
 
@@ -472,8 +489,8 @@ msgstr "Bouton de sélection"
 msgid "Selection list"
 msgstr "Liste des sélections"
 
-#~ msgid "My selection"
-#~ msgstr "Ma sélection"
+#~ msgid "See selection"
+#~ msgstr "Voir la sélection"
 
 #, php-format
 #~ msgid "%d resources"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-07 00:00+0000\n"
+"POT-Creation-Date: 2024-12-09 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,8 +29,8 @@ msgstr ""
 #: src/View/Helper/SelectionContainer.php:85
 #: view/common/selection-link-browse.phtml:16
 #: view/common/selection-resource.phtml:37
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:53
-#: view/selection/site/selection/selection-browse-list.phtml:44
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:56
+#: view/selection/site/selection/selection-browse-list.phtml:47
 msgid "Selection"
 msgstr ""
 
@@ -85,11 +85,11 @@ msgstr ""
 msgid "The group does not exist."
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:819
+#: src/Controller/Site/AbstractSelectionController.php:823
 msgid "An internal error occurred."
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:829
+#: src/Controller/Site/AbstractSelectionController.php:833
 msgid "Permission denied"
 msgstr ""
 
@@ -98,13 +98,13 @@ msgstr ""
 msgid "Already in"
 msgstr ""
 
-#: view/common/selection-button.phtml:21
+#: view/common/selection-button.phtml:23
 msgid "Add to selection"
 msgstr ""
 
-#: view/common/selection-button.phtml:22 view/common/selection-list.phtml:26
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:79
-#: view/selection/site/selection/selection-browse-list.phtml:47
+#: view/common/selection-button.phtml:24 view/common/selection-list.phtml:26
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:82
+#: view/selection/site/selection/selection-browse-list.phtml:50
 msgid "Remove from selection"
 msgstr ""
 
@@ -116,46 +116,46 @@ msgstr ""
 msgid "No selection"
 msgstr ""
 
-#: view/guest/site/guest/widget/selection.phtml:15
-msgid "See selection"
+#: view/guest/site/guest/widget/selection.phtml:16
+msgid "My selection"
 msgstr ""
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:78
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:81
 msgid "Move"
 msgstr ""
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:97
-#: view/selection/site/selection/selection-browse-list.phtml:59
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:106
+#: view/selection/site/selection/selection-browse-list.phtml:68
 msgid ""
 "This selection is stored in the session cookie. It will be lost if the "
 "cookie is cleared."
 msgstr ""
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:112
-#: view/selection/site/selection/selection-browse-list.phtml:74
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:121
+#: view/selection/site/selection/selection-browse-list.phtml:83
 msgid "The selection is empty."
 msgstr ""
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:119
 #: view/selection/site/selection/selection-browse-hierarchy.phtml:128
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:137
 msgid "Set folder name"
 msgstr ""
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:119
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:128
 msgid "Create a folder"
 msgstr ""
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:168
-#: view/selection/site/selection/selection-browse-list.phtml:108
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:177
+#: view/selection/site/selection/selection-browse-list.phtml:117
 msgid "Select resources and download metadata"
 msgstr ""
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:182
-#: view/selection/site/selection/selection-browse-list.phtml:122
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:191
+#: view/selection/site/selection/selection-browse-list.phtml:131
 msgid "Select resources and send an email"
 msgstr ""
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:189
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:198
 msgid "Select a folder"
 msgstr ""
 
@@ -362,10 +362,23 @@ msgid "When needed"
 msgstr ""
 
 #: src/Form/SiteSettingsFieldset.php:159
+msgid ""
+"Add a checkbox to select resources individually in lists (browse and search)"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:160
+msgid "This option is used only with the module Advanced Search for now."
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:171
 msgid "Label for the page Selection"
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:170
+#: src/Form/SiteSettingsFieldset.php:182
+msgid "Label for the link in guest account"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:193
 msgid "Warning for selection by anonymous"
 msgstr ""
 
