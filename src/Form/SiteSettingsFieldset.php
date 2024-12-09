@@ -152,6 +152,18 @@ class SiteSettingsFieldset extends Fieldset
                 ],
             ])
             ->add([
+                'name' => 'selection_append_items_browse_individual',
+                'type' => Element\Checkbox::class,
+                'options' => [
+                    'element_group' => 'selection',
+                    'label' => 'Add a checkbox to select resources individually in lists (browse and search)', // @translate
+                    'info' => 'This option is used only with the module Advanced Search for now.', // @translate
+                ],
+                'attributes' => [
+                    'id' => 'selection_append_items_browse_individual',
+                ],
+            ])
+            ->add([
                 'name' => 'selection_label',
                 'type' => Element\Text::class,
                 'options' => [
