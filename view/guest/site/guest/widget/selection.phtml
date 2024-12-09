@@ -7,12 +7,13 @@ $plugins = $this->getHelperPluginManager();
 $url = $plugins->get('url');
 $translate = $plugins->get('translate');
 $hyperlink = $plugins->get('hyperlink');
+$siteSetting = $plugins->get('siteSetting');
 ?>
 
 <ul>
     <li>
         <?= $hyperlink(
-            $translate('See selection'), // @translate
+            $siteSetting('selection_label_guest_link') ?: $translate('My selection'), // @translate
             $url('site/guest/selection', [], true)
         ) ?>
     </li>

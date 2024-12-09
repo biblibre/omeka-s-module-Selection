@@ -163,6 +163,17 @@ class SiteSettingsFieldset extends Fieldset
                 ],
             ])
             ->add([
+                'name' => 'selection_label_guest_link',
+                'type' => Element\Text::class,
+                'options' => [
+                    'element_group' => 'selection',
+                    'label' => 'Label for the link in guest account', // @translate
+                ],
+                'attributes' => [
+                    'id' => 'selection_label_guest_link',
+                ],
+            ])
+            ->add([
                 'name' => 'selection_warning_anonymous',
                 'type' => Element\Text::class,
                 'options' => [
