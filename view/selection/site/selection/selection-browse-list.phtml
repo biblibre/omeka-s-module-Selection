@@ -23,9 +23,12 @@ $thumbnail = $plugins->get('thumbnail');
 $escapeAttr = $plugins->get('escapeHtmlAttr');
 $siteSetting = $plugins->get('siteSetting');
 $translatePlural = $plugins->get('translatePlural');
+$guestNavigation = $user && $plugins->has('guestNavigation') ? $plugins->get('guestNavigation')() : null;
 $breadcrumbs = $plugins->has('breadcrumbs') ? $plugins->get('breadcrumbs') : null;
 $bulkExport = $plugins->has('bulkExport') ? $plugins->get('bulkExport') : null;
 $contactUs = $plugins->has('contactUs') ? $plugins->get('contactUs') : null;
+
+$hasGuestNav = $guestNavigation && $guestNavigation->getContainer()->count();
 
 // May be included in main layout.
 $this->headLink()
@@ -49,8 +52,14 @@ $deleteText = $escapeAttr($translate('Remove from selection'));
 // TODO Get the resources one time via api (currently only needed for thumbnail, not prepared early).
 ?>
 
-<?php if ($breadcrumbs): ?>
+<?php if ($breadcrumbs && !$hasGuestNav): ?>
 <?= $breadcrumbs() ?>
+<?php endif; ?>
+
+<?php if ($hasGuestNav): ?>
+<nav class="navigation-guest">
+    <?= $guestNavigation->menu()->renderMenu() ?>
+</nav>
 <?php endif; ?>
 
 <?= $this->pageTitle($selections[$selectionId]['label'] ?? $labelSelection, 2) ?>
