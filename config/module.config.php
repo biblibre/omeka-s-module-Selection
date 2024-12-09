@@ -53,6 +53,11 @@ return  [
             'selectionList' => Site\ResourcePageBlockLayout\SelectionList::class,
         ],
     ],
+    'navigation_links' => [
+        'invokables' => [
+            'selection' => Site\Navigation\Link\Selection::class,
+        ],
+    ],
     'controllers' => [
         'invokables' => [
             'Selection\Controller\Site\Guest' => Controller\Site\GuestController::class,
@@ -64,11 +69,6 @@ return  [
     'controller_plugins' => [
         'factories' => [
             'selectionContainer' => Service\ControllerPlugin\SelectionContainerFactory::class,
-        ],
-    ],
-    'navigation_links' => [
-        'invokables' => [
-            'selection' => Site\Navigation\Link\Selection::class,
         ],
     ],
     'navigation' => [
