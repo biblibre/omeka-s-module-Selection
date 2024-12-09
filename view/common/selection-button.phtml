@@ -16,14 +16,18 @@
  * and options passed from the caller.
  */
 
-$translate = $this->plugin('translate');
+$plugins = $this->getHelperPluginManager();
+$translate = $plugins->get('translate');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
 
 $textSelect['unselected'] = $translate('Add to selection');
 $textSelect['selected'] = $translate('Remove from selection');
+$textSelect['add'] = $textSelect['unselected'];
+$textSelect['delete'] = $textSelect['selected'];
 $class = $value === 'selected' ? 'selected' : 'unselected';
-$text = $textSelect[$class];
+$text = in_array($action, ['add', 'delete']) ? $textSelect[$action] : $textSelect[$class];
 ?>
 
-<button class="selection-button selection-update <?= $class ?>" data-id="<?= $resource->id() ?>" title="<?= $text ?>" data-title-selected="<?= $textSelect['selected'] ?>" data-title-unselected="<?= $textSelect['unselected'] ?>" data-url="<?= $urlButton ?>">
+<button class="selection-button selection-update <?= $class ?> selection-<?= $escapeAttr($action) ?>" data-id="<?= $resource->id() ?>" title="<?= $text ?>" data-action="<?= $escapeAttr($action) ?>" data-title-selected="<?= $textSelect['selected'] ?>" data-title-unselected="<?= $textSelect['unselected'] ?>" data-url="<?= $urlButton ?>">
     <span class="selection-icon"></span>
 </button>

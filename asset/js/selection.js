@@ -39,6 +39,8 @@
             .done(function(data) {
                 if (data.status === 'success') {
                     const selectionResource = data.data.selection_resource;
+                    // The status may be "fail" when the action is add/delete
+                    // and the item is already added or deleted.
                     if (selectionResource.status === 'success') {
                         updateSelectionButton(selectionResource);
                         updateSelectionList(selectionResource);

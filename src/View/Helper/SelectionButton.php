@@ -67,7 +67,7 @@ class SelectionButton extends AbstractHelper
             'isGuestActive' => $plugins->has('guestWidget'),
             'isSession' => !$user,
             'value' => isset($selectionContainer->records[$selectionId][$resourceId]) ? 'selected' : 'unselected',
-            'action' => 'toggle',
+            'action' => $options['action'] ?? 'toggle',
             'urlButton' => $selectionId
                 ? $url("site/selection-id", ['site-slug' => $siteSlug, 'action' => $options['action'] ?? 'toggle', 'id' => $selectionId], ['query' => ['id' => $resourceId]])
                 : $url("site/selection", ['site-slug' => $siteSlug, 'action' => $options['action'] ?? 'toggle'], ['query' => ['id' => $resourceId]]),
