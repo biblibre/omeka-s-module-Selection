@@ -660,7 +660,9 @@ abstract class AbstractSelectionController extends AbstractActionController
         $params = $this->params();
         $id = $params->fromQuery('id');
         if (!$id) {
-            return ['has_result' => false];
+            return [
+                'has_result' => false,
+            ];
         }
 
         $isMultiple = is_array($id);
@@ -681,7 +683,9 @@ abstract class AbstractSelectionController extends AbstractActionController
         }
 
         if (!count($resources)) {
-            return ['has_result' => false];
+            return [
+                'has_result' => false,
+            ];
         }
 
         return [
