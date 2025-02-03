@@ -11,6 +11,7 @@ use Common\Stdlib\PsrMessage;
  * @var string $oldVersion
  *
  * @var \Omeka\Api\Manager $api
+ * @var \Laminas\Log\Logger $logger
  * @var \Omeka\Settings\Settings $settings
  * @var \Omeka\Settings\SiteSettings $siteSettings
  * @var \Doctrine\DBAL\Connection $connection
@@ -19,6 +20,7 @@ use Common\Stdlib\PsrMessage;
  */
 $plugins = $services->get('ControllerPluginManager');
 $api = $plugins->get('api');
+$logger = $services->get('Omeka\Logger');
 $settings = $services->get('Omeka\Settings');
 $translate = $plugins->get('translate');
 $connection = $services->get('Omeka\Connection');
@@ -274,12 +276,9 @@ if (version_compare($oldVersion, '3.4.8', '<')) {
      * Replace filled settting "heading" by a specific block "Heading".
      * Move setting template to block layout template.
      *
-     * @var \Laminas\Log\Logger $logger
-     *
      * @see \Omeka\Db\Migrations\MigrateBlockLayoutData
      */
 
-    $logger = $services->get('Omeka\Logger');
     $pageRepository = $entityManager->getRepository(\Omeka\Entity\SitePage::class);
 
     $viewHelpers = $services->get('ViewHelperManager');
@@ -397,4 +396,37 @@ if (version_compare($oldVersion, '3.4.9', '<')) {
         'A new option is added to display selection button and list before, after or via resource blocks. See site settings.' // @translate
     );
     $messenger->addSuccess($message);
+}
+
+if (version_compare($oldVersion, '3.4.11', '<')) {
+    // See version 3.4.7.
+    $manageModuleAndResources = $this->getManageModuleAndResources();
+    $strings = [
+        'selectionButtonToggle(',
+        // Deprecated aliases.
+        'showSelectionLink(',
+        'updateSelectionLink(',
+        'containerSelection(',
+        // Renamed to selectionButton, selectionList, selectionContainer and selectionLinkBrowse.
+    ];
+    $globs = [
+        'themes/*/view/common/*',
+        'themes/*/view/common/*/*',
+        'themes/*/view/guest/site/guest/*',
+        'themes/*/view/guest/site/guest/*/*',
+        'themes/*/view/selection/site/selection/*',
+    ];
+    $result = [];
+    foreach ($globs as $glob) {
+        $res = $manageModuleAndResources->checkStringsInFiles($strings, $glob) ?? [];
+        $result = array_merge($result, $res);
+    }
+    if ($result) {
+        $message = new PsrMessage(
+            'The view helpers "selectionButtonToggle", "containerSelection", "showSelectionLink" and "updateSelectionLink" were renamed "selectionButton", "selectionList", "selectionContainer" and you should update your theme. Check your theme. Matching templates: {json}', // @translate
+            ['json' => json_encode($result, 448)]
+        );
+        $logger->err($message->getMessage(), $message->getContext());
+        $messenger->addError($message);
+    }
 }
