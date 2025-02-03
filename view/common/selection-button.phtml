@@ -28,6 +28,6 @@ $class = $value === 'selected' ? 'selected' : 'unselected';
 $text = in_array($action, ['add', 'delete']) ? $textSelect[$action] : $textSelect[$class];
 ?>
 
-<button class="selection-button selection-update <?= $class ?> selection-<?= $escapeAttr($action) ?>" data-id="<?= $resource->id() ?>" title="<?= $text ?>" data-action="<?= $escapeAttr($action) ?>" data-title-selected="<?= $textSelect['selected'] ?>" data-title-unselected="<?= $textSelect['unselected'] ?>" data-url="<?= $urlButton ?>">
+<button type="button" class="button selection-button selection-update <?= $class ?> selection-<?= $escapeAttr($action) ?>" data-id="<?= $resource->id() ?>" title="<?= $text ?>" data-action="<?= $escapeAttr($action) ?>" data-title-selected="<?= $textSelect['selected'] ?>" data-title-unselected="<?= $textSelect['unselected'] ?>" data-url="<?= $urlButton ?>">
     <span class="selection-icon"></span>
 </button>

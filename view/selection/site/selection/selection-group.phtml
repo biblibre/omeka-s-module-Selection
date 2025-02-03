@@ -30,11 +30,11 @@ $bulkExporters = $plugins->has('bulkExporters') ? $plugins->get('bulkExporters')
         <details class="action-details">
             <summary class="selection-summary group-name" aria-expanded="false"><?= $translate('Actions') ?></summary>
             <ul class="actions">
-                <li><button type="button" class="add-group" data-url="<?= $baseUrl  ?>/add-group"><?= $escape($translate('Add a sub-folder')) ?></button></li>
-                <li><button type="button" class="rename-group" data-url="<?= $baseUrl ?>/rename-group"><?= $escape($translate('Rename folder')) ?></button></li>
-                <li><button type="button" class="move-group" data-url="<?= $baseUrl ?>/move-group"><?= $escape($translate('Move folder')) ?></button></li>
-                <li><button type="button" class="delete-group" data-url="<?= $baseUrl ?>/delete-group"><?= $escape($translate('Delete folder')) ?></button></li>
-                <li><button type="button" class="move-resource" data-url="<?= $baseUrl ?>/move"><?= $escape($translate('Move resources')) ?></button></li>
+                <li><button type="button" class="button add-group" data-url="<?= $baseUrl  ?>/add-group"><?= $escape($translate('Add a sub-folder')) ?></button></li>
+                <li><button type="button" class="button rename-group" data-url="<?= $baseUrl ?>/rename-group"><?= $escape($translate('Rename folder')) ?></button></li>
+                <li><button type="button" class="button move-group" data-url="<?= $baseUrl ?>/move-group"><?= $escape($translate('Move folder')) ?></button></li>
+                <li><button type="button" class="button delete-group" data-url="<?= $baseUrl ?>/delete-group"><?= $escape($translate('Delete folder')) ?></button></li>
+                <li><button type="button" class="button move-resource" data-url="<?= $baseUrl ?>/move"><?= $escape($translate('Move resources')) ?></button></li>
                 <?php if ($bulkExporters):
                 foreach ($bulkExporters as $format => $label):
                     $urlFormat = $url('site/resource/output', ['site-slug' => $siteSlug, 'controller' => 'resource', 'action' => 'browse', 'format' => $format]);
