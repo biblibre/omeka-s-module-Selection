@@ -13,11 +13,11 @@
  */
 
 $plugins = $this->getHelperPluginManager();
-$escape = $plugins->get('escapeHtml');
+$partial = $plugins->get('partial');
 ?>
 
 <div class="block block-selection">
     <?= $isGuestActive
-        ? $this->partial("guest/site/guest/selection-resource-browse-$disposition")
-        : $this->partial("selection/site/selection/selection-browse-$disposition") ?>
+        ? $partial("guest/site/guest/selection-resource-browse-$disposition")
+        : $partial("selection/site/selection/selection-browse-$disposition") ?>
 </div>
