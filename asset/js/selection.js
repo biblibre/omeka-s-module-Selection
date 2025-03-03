@@ -21,6 +21,19 @@
         */
 
         /**
+         * Check all check boxes of a selection.
+         *
+         * Only available when the a checkbox with id "selection-check-all" is present,
+         * for example for BulkExport.
+         */
+        $('body').on('change', '.selection-list #selection-check-all',  function() {
+            const checked = $(this).prop('checked');
+            $('.resource-list .selection-check-group, .resource-list .selection-check-resource').toArray().forEach(function(input) {
+                $(input).prop('checked', checked);
+            });
+        });
+
+        /**
          * Add multiple resources to a selection.
          */
         $('body').on('click', '.selection-button', function(e) {
