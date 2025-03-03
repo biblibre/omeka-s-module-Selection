@@ -358,7 +358,7 @@ if (version_compare($oldVersion, '3.4.8', '<')) {
         $logger->warn($message->getMessage(), $message->getContext());
 
         $message = new PsrMessage(
-            'The template files for the block Selection should be moved from "view/common/block-layout" to "view/common/block-template" in your themes. This process can be done automatically via a task of the module Easy Admin before upgrading the module (important: backup your themes first). You may check your themes for pages: {json}', // @translate
+            'The template files for the block Selection should be moved from "view/common/block-layout" to "view/common/block-template" in your themes. You may check your themes for pages: {json}', // @translate
             ['json' => json_encode($result, 448)]
         );
         $messenger->addError($message);
