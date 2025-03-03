@@ -121,6 +121,7 @@
             .done(function(data) {
                 if (data.status === 'success') {
                     // TODO Add events to update select, etc.
+                    // TODO Reemove return false (for info for now).
                     window.location.reload();
                     return false;
                     // Path is checked and does not contain forbidden characters.
@@ -328,7 +329,7 @@
         }
 
         function resourceGroupIds(selectionGroup) {
-            ids = [];
+            var ids = [];
             selectionGroup.find(':not(.selection-group) .selection-resource[data-id != ""]').toArray()
                 .forEach(function(el) { ids.push(el.dataset.id); });
             return ids;
