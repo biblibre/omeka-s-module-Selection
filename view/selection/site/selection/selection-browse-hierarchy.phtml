@@ -160,6 +160,7 @@ $countsByType = array_count_values($recordsByType) + ['items' => 0, 'media' => 0
     </ul>
 
     <?php // Remaining selected resources without group. ?>
+    <?php if (count($selectedRecords)): ?>
     <ul class="resource-list selection-resources">
         <?php // Prepare the partial loop.
         $selectedRecordModels = [];
@@ -169,6 +170,7 @@ $countsByType = array_count_values($recordsByType) + ['items' => 0, 'media' => 0
         } ?>
         <?= $partialLoop('selection/site/selection/selection-group-resource', $selectedRecordModels) ?>
     </ul>
+    <?php endif; ?>
 
     <?php $this->trigger('view.browse.after'); ?>
 

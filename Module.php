@@ -17,7 +17,7 @@ use Omeka\Module\AbstractModule;
  * Selection.
  *
  * @copyright Biblibre, 2016
- * @copyright Daniel Berthereau 2019-2024
+ * @copyright Daniel Berthereau 2019-2025
  * @license http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.txt
  */
 class Module extends AbstractModule
@@ -30,8 +30,8 @@ class Module extends AbstractModule
     {
         parent::onBootstrap($event);
 
-        $services = $this->getServiceLocator();
-        $acl = $services->get('Omeka\Acl');
+        /** @var \Omeka\Permissions\Acl $acl */
+        $acl = $this->getServiceLocator()->get('Omeka\Acl');
 
         // Since Omeka 1.4, modules are ordered, so Guest come before Selection.
         $roles = $acl->getRoles();
@@ -210,7 +210,6 @@ class Module extends AbstractModule
 
     public function handleGuestWidgets(Event $event): void
     {
-        $widgets = $event->getParam('widgets');
         $services = $this->getServiceLocator();
         $plugins = $services->get('ViewHelperManager');
         $partial = $plugins->get('partial');
@@ -220,8 +219,9 @@ class Module extends AbstractModule
         $widget = [];
         $widget['label'] = $siteSettings->get('selection_label', $translate('Selection')); // @translate
         $widget['content'] = $partial('guest/site/guest/widget/selection');
-        $widgets['selection'] = $widget;
 
+        $widgets = $event->getParam('widgets');
+        $widgets['selection'] = $widget;
         $event->setParam('widgets', $widgets);
     }
 }

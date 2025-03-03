@@ -85,6 +85,7 @@ $deleteText = $escapeAttr($translate('Remove from selection'));
     <?php endif; ?>
 
     <?php $this->trigger('view.browse.before'); ?>
+
     <ul class="resource-list">
         <?php foreach ($selectedRecords as $resourceId => $record):
             $resource = $api->read($record['resource_name'], ['id' => $resourceId])->getContent();
@@ -110,6 +111,7 @@ $deleteText = $escapeAttr($translate('Remove from selection'));
         </li>
         <?php endforeach; ?>
     </ul>
+
     <?php $this->trigger('view.browse.after'); ?>
 
     <?php
