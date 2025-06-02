@@ -483,13 +483,14 @@
             $(this).prop('href', url.toString());
         });
 
-       /**
-         * Append resource_ids for contact us.
+        /**
+         * Append resource_ids for contact us on the selection page.
          */
-        $('#contact-us').on('submit', function() {
-            var selecteds = $('input.selected-resource');
+        $('body.selection.browse #contact-us').on('submit', function() {
+            const selecteds = $('input.selected-resource');
             selecteds.prop('name', 'fields[id][]');
             selecteds.attr('form', 'contact-us');
+            $('#contact-us [name="fields[id]"]').remove();
             return true;
         });
 
