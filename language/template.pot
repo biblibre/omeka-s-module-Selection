@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-09 00:00+0000\n"
+"POT-Creation-Date: 2025-06-02 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,14 +17,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: data/scripts/upgrade.php:31 Module.php:66
+#: data/scripts/upgrade.php:33 Module.php:66
 #, php-format
 msgid "The module %1$s should be upgraded to version %2$s or later."
 msgstr ""
 
-#: data/scripts/upgrade.php:191 Module.php:221
-#: src/Controller/Site/TraitDbController.php:643
-#: src/Controller/Site/TraitSessionController.php:457
+#: Module.php:220 src/Controller/Site/TraitDbController.php:619
+#: src/Controller/Site/TraitSessionController.php:433
 #: src/View/Helper/SelectionContainer.php:50
 #: src/View/Helper/SelectionContainer.php:85
 #: view/common/selection-link-browse.phtml:16
@@ -35,61 +34,46 @@ msgid "Selection"
 msgstr ""
 
 #: src/Controller/Site/AbstractSelectionController.php:175
-#: src/Controller/Site/AbstractSelectionController.php:394
-#: src/Controller/Site/AbstractSelectionController.php:487
+#: src/Controller/Site/AbstractSelectionController.php:351
+#: src/Controller/Site/AbstractSelectionController.php:432
 msgid "The group name is unchanged."
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:185
-#: src/Controller/Site/AbstractSelectionController.php:506
-#: src/Controller/Site/AbstractSelectionController.php:518
-#, php-format
-msgid "The group \"%s\" does not exist."
-msgstr ""
-
-#: src/Controller/Site/AbstractSelectionController.php:197
-#: src/Controller/Site/AbstractSelectionController.php:209
-#, php-format
-msgid "The destination group \"%s\" does not exist."
-msgstr ""
-
-#: src/Controller/Site/AbstractSelectionController.php:252
-#: src/Controller/Site/AbstractSelectionController.php:356
-#: src/Controller/Site/AbstractSelectionController.php:366
-#: src/Controller/Site/AbstractSelectionController.php:472
-#: src/Controller/Site/AbstractSelectionController.php:624
+#: src/Controller/Site/AbstractSelectionController.php:234
+#: src/Controller/Site/AbstractSelectionController.php:324
+#: src/Controller/Site/AbstractSelectionController.php:331
+#: src/Controller/Site/AbstractSelectionController.php:420
+#: src/Controller/Site/AbstractSelectionController.php:554
 msgid "No group set."
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:269
-#: src/Controller/Site/AbstractSelectionController.php:383
-#, php-format
-msgid "The group name contains invalid characters (%s)."
-msgstr ""
-
-#: src/Controller/Site/AbstractSelectionController.php:282
-#: src/Controller/Site/AbstractSelectionController.php:405
+#: src/Controller/Site/AbstractSelectionController.php:256
+#: src/Controller/Site/AbstractSelectionController.php:359
 msgid "The parent group does not exist."
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:292
-#: src/Controller/Site/AbstractSelectionController.php:418
+#: src/Controller/Site/AbstractSelectionController.php:263
+#: src/Controller/Site/AbstractSelectionController.php:369
 msgid "The group exists already."
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:496
+#: src/Controller/Site/AbstractSelectionController.php:438
 msgid "The group cannot be moved inside itself."
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:633
+#: src/Controller/Site/AbstractSelectionController.php:451
+msgid "The group \"{name}\" does not exist."
+msgstr ""
+
+#: src/Controller/Site/AbstractSelectionController.php:560
 msgid "The group does not exist."
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:823
+#: src/Controller/Site/AbstractSelectionController.php:748
 msgid "An internal error occurred."
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:833
+#: src/Controller/Site/AbstractSelectionController.php:757
 msgid "Permission denied"
 msgstr ""
 
@@ -124,38 +108,38 @@ msgstr ""
 msgid "Move"
 msgstr ""
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:106
-#: view/selection/site/selection/selection-browse-list.phtml:68
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:107
+#: view/selection/site/selection/selection-browse-list.phtml:69
 msgid ""
 "This selection is stored in the session cookie. It will be lost if the "
 "cookie is cleared."
 msgstr ""
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:121
-#: view/selection/site/selection/selection-browse-list.phtml:83
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:122
+#: view/selection/site/selection/selection-browse-list.phtml:84
 msgid "The selection is empty."
 msgstr ""
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:128
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:137
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:129
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:138
 msgid "Set folder name"
 msgstr ""
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:128
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:129
 msgid "Create a folder"
 msgstr ""
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:177
-#: view/selection/site/selection/selection-browse-list.phtml:117
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:180
+#: view/selection/site/selection/selection-browse-list.phtml:120
 msgid "Select resources and download metadata"
 msgstr ""
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:191
-#: view/selection/site/selection/selection-browse-list.phtml:131
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:194
+#: view/selection/site/selection/selection-browse-list.phtml:134
 msgid "Select resources and send an email"
 msgstr ""
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:198
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:201
 msgid "Select a folder"
 msgstr ""
 
@@ -190,81 +174,88 @@ msgid ""
 "version."
 msgstr ""
 
-#: data/scripts/upgrade.php:195
+#: data/scripts/upgrade.php:191
 msgid "It is now possible to organize selected resources in a structured way."
 msgstr ""
 
-#: data/scripts/upgrade.php:199
+#: data/scripts/upgrade.php:195
 msgid "The structure is not available for anonymous visitors yet."
 msgstr ""
 
-#: data/scripts/upgrade.php:203
+#: data/scripts/upgrade.php:199
 msgid ""
 "Some url routes have been updated to use query arguments. Check your theme "
 "if needed."
 msgstr ""
 
-#: data/scripts/upgrade.php:241
+#: data/scripts/upgrade.php:236
 msgid ""
 "The option \"selection_visitor_allow\" was renamed "
 "\"selection_disable_anonymous\" and \"selection_open\" as "
 "\"selection_resource_show_open\". Update your theme if you customized it."
 msgstr ""
 
-#: data/scripts/upgrade.php:246
+#: data/scripts/upgrade.php:241
 msgid "The views were restructured, so check your theme if you customized it."
 msgstr ""
 
-#: data/scripts/upgrade.php:251
+#: data/scripts/upgrade.php:246
 msgid ""
 "A new option in site settings and in block settings allows to display the "
 "selection flat, by default, or hierarchically."
 msgstr ""
 
-#: data/scripts/upgrade.php:256
+#: data/scripts/upgrade.php:251
 msgid ""
 "A new option in site settings allows to define selectable resources (items, "
 "medias, item sets)."
 msgstr ""
 
-#: data/scripts/upgrade.php:261
+#: data/scripts/upgrade.php:256
 msgid ""
 "The resource block \"Selection\" was split into a block \"Selection\" and a "
 "block \"Selection list\"."
 msgstr ""
 
-#: data/scripts/upgrade.php:266
+#: data/scripts/upgrade.php:261
 msgid ""
 "Modules {link_1}Bulk Export{link_end} and {link_2}Contact Us{link_end} are "
 "fully integrated in the selection page."
 msgstr ""
 
-#: data/scripts/upgrade.php:352
+#: data/scripts/upgrade.php:344
 msgid ""
 "The setting \"heading\" was removed from block Selection. New blocks "
 "\"Heading\" or \"Html\" were prepended to all blocks that had a filled "
 "heading. You may check pages for styles: {json}"
 msgstr ""
 
-#: data/scripts/upgrade.php:362
+#: data/scripts/upgrade.php:354
 msgid ""
 "The setting \"template\" was moved to the new block layout settings "
 "available since Omeka S v4.1. You may check pages for styles: {json}"
 msgstr ""
 
-#: data/scripts/upgrade.php:369
+#: data/scripts/upgrade.php:361
 msgid ""
 "The template files for the block Selection should be moved from \"view/"
-"common/block-layout\" to \"view/common/block-template\" in your themes. This "
-"process can be done automatically via a task of the module Easy Admin before "
-"upgrading the module (important: backup your themes first). You may check "
-"your themes for pages: {json}"
+"common/block-layout\" to \"view/common/block-template\" in your themes. You "
+"may check your themes for pages: {json}"
 msgstr ""
 
-#: data/scripts/upgrade.php:404
+#: data/scripts/upgrade.php:396
 msgid ""
 "A new option is added to display selection button and list before, after or "
 "via resource blocks. See site settings."
+msgstr ""
+
+#: data/scripts/upgrade.php:426
+msgid ""
+"The view helpers \"selectionButtonToggle\", \"showSelectionLink\", "
+"\"updateSelectionLink\" , and \"containerSelection\" were renamed "
+"\"selectionButton\", \"selectionList\", \"selectionLinkBrowse\", and "
+"\"selectionContainer\". You should update your theme. Matching templates: "
+"{json}"
 msgstr ""
 
 #: Module.php:81
@@ -421,6 +412,16 @@ msgstr ""
 #: src/Api/Adapter/SelectionResourceAdapter.php:261
 msgid ""
 "A selection resource must be unique for the owner when there is no selection."
+msgstr ""
+
+#: src/Controller/Site/AbstractSelectionController.php:188
+#: src/Controller/Site/AbstractSelectionController.php:195
+msgid "The destination group \"{name}\" does not exist."
+msgstr ""
+
+#: src/Controller/Site/AbstractSelectionController.php:247
+#: src/Controller/Site/AbstractSelectionController.php:344
+msgid "The group name contains invalid characters ({characters})."
 msgstr ""
 
 #: src/Site/Navigation/Link/Selection.php:24
