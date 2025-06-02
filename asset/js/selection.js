@@ -3,6 +3,109 @@
 (function() {
     $(document).ready(function() {
 
+        /**
+         * @see ContactUs, Guest, SearchHistory, Selection, TwoFactorAuth.
+         */
+
+        const beforeSpin = function (element) {
+            var span = $(element).find('span');
+            if (!span.length) {
+                span = $(element).next('span.appended');
+                if (!span.length) {
+                    $('<span class="appended"></span>').insertAfter($(element));
+                    span = $(element).next('span');
+                }
+            }
+            element.hide();
+            span.addClass('fas fa-sync fa-spin');
+        };
+
+        const afterSpin = function (element) {
+            var span = $(element).find('span');
+            if (!span.length) {
+                span = $(element).next('span.appended');
+                if (span.length) {
+                    span.remove();
+                }
+            } else {
+                span.removeClass('fas fa-sync fa-spin');
+            }
+            element.show();
+        };
+
+        /**
+         * Get the main message of jSend output, in particular for status fail.
+         */
+        const jSendMessage = function(data) {
+            if (typeof data !== 'object') {
+                return null;
+            }
+            if (data.message) {
+                return data.message;
+            }
+            if (!data.data) {
+                return null;
+            }
+            if (data.data.message) {
+                return data.data.message;
+            }
+            for (let value of Object.values(data.data)) {
+                if (typeof value === 'string' && value.length) {
+                    return value;
+                }
+            }
+            return null;
+        }
+
+        const dialogMessage = function (message, nl2br = false) {
+            // Use a dialog to display a message, that should be escaped.
+            var dialog = document.querySelector('dialog.popup-message');
+            if (!dialog) {
+                dialog = `
+    <dialog class="popup popup-dialog dialog-message popup-message" data-is-dynamic="1">
+        <div class="dialog-background">
+            <div class="dialog-panel">
+                <div class="dialog-header">
+                    <button type="button" class="dialog-header-close-button" title="Close" autofocus="autofocus">
+                        <span class="dialog-close">🗙</span>
+                    </button>
+                </div>
+                <div class="dialog-contents">
+                    {{ message }}
+                </div>
+            </div>
+        </div>
+    </dialog>`;
+                $('body').append(dialog);
+                dialog = document.querySelector('dialog.dialog-message');
+            }
+            if (nl2br) {
+                message = message.replace(/(?:\r\n|\r|\n)/g, '<br/>');
+            }
+            dialog.innerHTML = dialog.innerHTML.replace('{{ message }}', message);
+            dialog.showModal();
+            $(dialog).trigger('o:dialog-opened');
+        };
+
+        /**
+         * Manage ajax fail.
+         *
+         * @param {Object} xhr
+         * @param {string} textStatus
+         * @param {string} errorThrown
+         */
+        const handleAjaxFail = function(xhr, textStatus, errorThrown) {
+            const data = xhr.responseJSON;
+            if (data && data.status === 'fail') {
+                let msg = jSendMessage(data);
+                dialogMessage(msg ? msg : 'Check input', true);
+            } else {
+                // Error is a server error (in particular cannot send mail).
+                let msg = data && data.status === 'error' && data.message && data.message.length ? data.message : 'An error occurred.';
+                dialogMessage(msg, true);
+            }
+        };
+
         $(document).on('click', 'summary.selection-summary', function() {
             this.setAttribute('aria-expanded', this.getAttribute('aria-expanded') === 'true' ? 'false' : 'true');
         });
@@ -52,17 +155,16 @@
                 beforeSend: beforeSpin(button),
             })
             .done(function(data) {
-                if (data.status === 'success') {
-                    const selectionResource = data.data.selection_resource;
-                    // The status may be "fail" when the action is add/delete
-                    // and the item is already added or deleted.
-                    if (selectionResource.status === 'success') {
-                        updateSelectionButton(selectionResource);
-                        updateSelectionList(selectionResource);
-                        button.closest('body.selection.browse .selection-list .resource').remove();
-                    }
+                const selectionResource = data.data.selection_resource;
+                // The status may be "fail" when the action is add/delete
+                // and the item is already added or deleted.
+                if (selectionResource.status === 'success') {
+                    updateSelectionButton(selectionResource);
+                    updateSelectionList(selectionResource);
+                    button.closest('body.selection.browse .selection-list .resource').remove();
                 }
             })
+            .fail(handleAjaxFail)
             .always(function () {
                 afterSpin(button)
             });
@@ -85,14 +187,13 @@
                 beforeSend: beforeSpin(button),
             })
             .done(function(data) {
-                if (data.status === 'success') {
-                    const selectionResource = data.data.selection_resource;
-                    if (selectionResource.status === 'success' && selectionResource.value === 'unselected') {
-                        updateSelectionButton(selectionResource);
-                        updateSelectionList(selectionResource);
-                    }
+                const selectionResource = data.data.selection_resource;
+                if (selectionResource.status === 'success' && selectionResource.value === 'unselected') {
+                    updateSelectionButton(selectionResource);
+                    updateSelectionList(selectionResource);
                 }
             })
+            .fail(handleAjaxFail)
             .always(function () {
                 afterSpin(button)
             });
@@ -121,30 +222,25 @@
                 },
             })
             .done(function(data) {
-                if (data.status === 'success') {
-                    // TODO Add events to update select, etc.
-                    // TODO Reemove return false (for info for now).
-                    window.location.reload();
-                    return false;
-                    // Path is checked and does not contain forbidden characters.
-                    const parent = data.data.group && data.data.group.path
-                        ? $('.selection-structure .selection-group[data-path="' + data.data.group.path + '"]')
-                        : $('.selection-structure');
-                    parent.append($('.selection-structure').data('template-group')
-                        .replace('__GROUP_LEVEL__', data.data.group.path + '/' + data.data.group.id)
-                        .replace('__GROUP_PATH__', data.data.group.path + '/' + data.data.group.id)
-                        .replace('__GROUP_NAME__',
-                            (data.data.group.path && data.data.group.path.length ? '<span>' + data.data.group.path.substring(1).replaceAll('/', '</span><span>') + '</span>' : '')
-                            + '<span>' + data.data.group.id + '</span>'
-                        )
-                        .replace('__GROUP_RESOURCES__', '')
-                    );
-                } else if (data.status === 'fail') {
-                    alert(data.data.message ? data.data.message : 'An error occurred.');
-                } else {
-                    alert(data.message ? data.message : 'An error occurred.');
-                }
-            });
+                // TODO Add events to update select, etc.
+                // TODO Remove return false (for info for now).
+                window.location.reload();
+                return false;
+                // Path is checked and does not contain forbidden characters.
+                const parent = data.data.group && data.data.group.path
+                    ? $('.selection-structure .selection-group[data-path="' + data.data.group.path + '"]')
+                    : $('.selection-structure');
+                parent.append($('.selection-structure').data('template-group')
+                    .replace('__GROUP_LEVEL__', data.data.group.path + '/' + data.data.group.id)
+                    .replace('__GROUP_PATH__', data.data.group.path + '/' + data.data.group.id)
+                    .replace('__GROUP_NAME__',
+                        (data.data.group.path && data.data.group.path.length ? '<span>' + data.data.group.path.substring(1).replaceAll('/', '</span><span>') + '</span>' : '')
+                        + '<span>' + data.data.group.id + '</span>'
+                    )
+                    .replace('__GROUP_RESOURCES__', '')
+                );
+            })
+            .fail(handleAjaxFail);
         });
 
         /**
@@ -176,16 +272,11 @@
                 },
             })
             .done(function(data) {
-                if (data.status === 'success') {
-                    // TODO Add events to update select, etc.
-                    window.location.reload();
-                    return false;
-                } else if (data.status === 'fail') {
-                    alert(data.data.message ? data.data.message : 'An error occurred.');
-                } else {
-                    alert(data.message ? data.message : 'An error occurred.');
-                }
-            });
+                // TODO Add events to update select, etc.
+                window.location.reload();
+                return false;
+            })
+            .fail(handleAjaxFail);
         });
 
         /**
@@ -210,16 +301,11 @@
                 },
             })
             .done(function(data) {
-                if (data.status === 'success') {
-                    // TODO Add events to update select, etc.
-                    window.location.reload();
-                    return false;
-                } else if (data.status === 'fail') {
-                    alert(data.data.message ? data.data.message : 'An error occurred.');
-                } else {
-                    alert(data.message ? data.message : 'An error occurred.');
-                }
-            });
+                // TODO Add events to update select, etc.
+                window.location.reload();
+                return false;
+            })
+            .fail(handleAjaxFail);
         });
 
         /**
@@ -269,16 +355,11 @@
                 },
             })
             .done(function(data) {
-                if (data.status === 'success') {
-                    // TODO Add events to update select, etc.
-                    window.location.reload();
-                    return false;
-                } else if (data.status === 'fail') {
-                    alert(data.data.message ? data.data.message : 'An error occurred.');
-                } else {
-                    alert(data.message ? data.message : 'An error occurred.');
-                }
-            });
+                // TODO Add events to update select, etc.
+                window.location.reload();
+                return false;
+            })
+            .fail(handleAjaxFail);
         });
 
         const updateSelectionButton = function(selectionResource) {
@@ -343,14 +424,6 @@
         const emptySelectionGroups = $('.selection-group .selection-resources:not(:has(.selection-resource))').closest('.selection-group');
         emptySelectionGroups.find('.move-resource, .export-group').hide();
 
-        const beforeSpin = function (button) {
-            button.find('span').addClass('fas fa-sync fa-spin');
-        }
-
-        const afterSpin = function (button) {
-            button.find('span').removeClass('fas fa-sync fa-spin');
-        }
-
         /**
          * Prepare initial ids for groups and buttons.
          */
@@ -367,6 +440,18 @@
                     });
                 }
             });
+
+        $(document).on('click', '.dialog-header-close-button', function(e) {
+            const dialog = this.closest('dialog.popup');
+            if (dialog) {
+                dialog.close();
+                if (dialog.hasAttribute('data-is-dynamic') && dialog.getAttribute('data-is-dynamic')) {
+                    dialog.remove();
+                }
+            } else {
+                $(this).closest('.popup').addClass('hidden').hide();
+            }
+        });
 
         /**
          * Update direct links for bulk export according to checkboxes.

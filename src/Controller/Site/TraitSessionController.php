@@ -2,8 +2,8 @@
 
 namespace Selection\Controller\Site;
 
+use Common\Mvc\Controller\Plugin\JSend;
 use Laminas\Session\Container;
-use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 
 /**
@@ -114,10 +114,7 @@ trait TraitSessionController
             ];
         }
 
-        return new JsonModel([
-            'status' => 'success',
-            'data' => $data,
-        ]);
+        return $this->jSend(JSend::SUCCESS, $data);
     }
 
     /**
@@ -169,10 +166,7 @@ trait TraitSessionController
             ];
         }
 
-        return new JsonModel([
-            'status' => 'success',
-            'data' => $data,
-        ]);
+        return $this->jSend(JSend::SUCCESS, $data);
     }
 
     /**
@@ -238,10 +232,7 @@ trait TraitSessionController
             ];
         }
 
-        return new JsonModel([
-            'status' => 'success',
-            'data' => $data,
-        ]);
+        return $this->jSend(JSend::SUCCESS, $data);
     }
 
     /**
@@ -283,13 +274,10 @@ trait TraitSessionController
 
         $selectionContainer->selections[$selectionId]['structure'] = $structure;
 
-        return new JsonModel([
-            'status' => 'success',
-            'data' => [
-                'selection' => ['o:id' => $selectionId],
-                'source' => $structure[$source] ?? null,
-                'group' => $structure[$destination] ?? null,
-            ],
+        return $this->jSend(JSend::SUCCESS, [
+            'selection' => ['o:id' => $selectionId],
+            'source' => $structure[$source] ?? null,
+            'group' => $structure[$destination] ?? null,
         ]);
     }
 
@@ -318,12 +306,9 @@ trait TraitSessionController
 
         $selectionContainer->selections[$selectionId]['structure'] = $structure;
 
-        return new JsonModel([
-            'status' => 'success',
-            'data' => [
-                'selection' => ['o:id' => $selectionId],
-                'group' => $group,
-            ],
+        return $this->jSend(JSend::SUCCESS, [
+            'selection' => ['o:id' => $selectionId],
+            'group' => $group,
         ]);
     }
 
@@ -352,12 +337,9 @@ trait TraitSessionController
 
         $selectionContainer->selections[$selectionId]['structure'] = $structure;
 
-        return new JsonModel([
-            'status' => 'success',
-            'data' => [
-                'selection' => ['o:id' => $selectionId],
-                'structure' => $structure,
-            ],
+        return $this->jSend(JSend::SUCCESS, [
+            'selection' => ['o:id' => $selectionId],
+            'structure' => $structure,
         ]);
     }
 
@@ -386,12 +368,9 @@ trait TraitSessionController
 
         $selectionContainer->selections[$selectionId]['structure'] = $structure;
 
-        return new JsonModel([
-            'status' => 'success',
-            'data' => [
-                'selection' => ['o:id' => $selectionId],
-                'structure' => $structure,
-            ],
+        return $this->jSend(JSend::SUCCESS, [
+            'selection' => ['o:id' => $selectionId],
+            'structure' => $structure,
         ]);
     }
 
@@ -425,12 +404,9 @@ trait TraitSessionController
 
         $selectionContainer->selections[$selectionId]['structure'] = $structure;
 
-        return new JsonModel([
-            'status' => 'success',
-            'data' => [
-                'selection' => ['o:id' => $selectionId],
-                'structure' => $structure,
-            ],
+        return $this->jSend(JSend::SUCCESS, [
+            'selection' => ['o:id' => $selectionId],
+            'structure' => $structure,
         ]);
     }
 

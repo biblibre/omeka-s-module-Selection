@@ -30,7 +30,9 @@
 
 namespace Selection\Controller\Site;
 
-use Laminas\Http\Response;
+use Common\Mvc\Controller\Plugin\JSend;
+use Common\Stdlib\PsrMessage;
+use Laminas\Http\Response as HttpResponse;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\JsonModel;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
@@ -169,48 +171,30 @@ abstract class AbstractSelectionController extends AbstractActionController
         $destination = trim((string) $this->params()->fromQuery('name'));
 
         if ($source === $destination) {
-            return new JsonModel([
-                'status' => 'fail',
-                'data' => [
-                    'message' => $this->translate('The group name is unchanged.'), // @translate
-                ],
-            ]);
+            return $this->jSend(JSend::FAIL, null,
+                $this->translate('The group name is unchanged.') // @translate
+            );
         }
 
         if (strlen($source) && !isset($structure[$source])) {
-            return new JsonModel([
-                'status' => 'fail',
-                'data' => [
-                    'message' => sprintf(
-                        $this->translate('The group "%s" does not exist.'), // @translate
-                        strtr($source, ['/' => ' / '])
-                    ),
-                ],
-            ]);
+            return $this->jSend(JSend::FAIL, null, (new PsrMessage(
+                'The group "{name}" does not exist.', // @translate
+                ['name' => strtr($source, ['/' => ' / '])]
+            ))->setTranslator($this->translator()));
         }
 
         if (strlen($destination) && !isset($structure[$destination])) {
-            return new JsonModel([
-                'status' => 'fail',
-                'data' => [
-                    'message' => sprintf(
-                        $this->translate('The destination group "%s" does not exist.'), // @translate
-                        strtr($destination, ['/' => ' / '])
-                    ),
-                ],
-            ]);
+            return $this->jSend(JSend::FAIL, null, (new PsrMessage(
+                'The destination group "{name}" does not exist.', // @translate
+                ['name' => strtr($destination, ['/' => ' / '])]
+            ))->setTranslator($this->translator()));
         }
 
         if (strlen($destination) && !isset($structure[$destination])) {
-            return new JsonModel([
-                'status' => 'fail',
-                'data' => [
-                    'message' => sprintf(
-                        $this->translate('The destination group "%s" does not exist.'), // @translate
-                        strtr($destination, ['/' => ' / '])
-                    ),
-                ],
-            ]);
+            return $this->jSend(JSend::FAIL, null, (new PsrMessage(
+                'The destination group "{name}" does not exist.', // @translate
+                ['name' => strtr($destination, ['/' => ' / '])]
+            ))->setTranslator($this->translator()));
         }
 
         return [
@@ -246,12 +230,9 @@ abstract class AbstractSelectionController extends AbstractActionController
         $path = trim((string) $this->params()->fromQuery('group'));
         $groupName = trim((string) $this->params()->fromQuery('name'));
         if (!strlen($groupName)) {
-            return new JsonModel([
-                'status' => 'fail',
-                'data' => [
-                    'message' => $this->translate('No group set.'), // @translate
-                ],
-            ]);
+            return $this->jSend(JSend::FAIL, null,
+                $this->translate('No group set.') // @translate
+            );
         }
 
         $invalidCharacters = '/\\?<>*%|"`&';
@@ -262,36 +243,25 @@ abstract class AbstractSelectionController extends AbstractActionController
             || $groupName === '..'
             || preg_match($invalidCharactersRegex, $groupName)
         ) {
-            return new JsonModel([
-                'status' => 'fail',
-                'data' => [
-                    'message' => sprintf(
-                        $this->translate('The group name contains invalid characters (%s).'), // @translate
-                        $invalidCharacters
-                    ),
-                ],
-            ]);
+            return $this->jSend(JSend::FAIL, null, (new PsrMessage(
+                'The group name contains invalid characters ({characters}).', // @translate
+                ['characters' => $invalidCharacters]
+            ))->setTranslator($this->translator()));
         }
 
         // Check the parent for security.
         $hasParent = strlen($path);
         if ($hasParent && !isset($structure[$path])) {
-            return new JsonModel([
-                'status' => 'fail',
-                'data' => [
-                    'message' => $this->translate('The parent group does not exist.'), // @translate
-                ],
-            ]);
+            return $this->jSend(JSend::FAIL, null,
+                $this->translate('The parent group does not exist.') // @translate
+            );
         }
 
         $fullPath = "$path/$groupName";
         if (isset($structure[$fullPath])) {
-            return new JsonModel([
-                'status' => 'fail',
-                'data' => [
-                    'message' => $this->translate('The group exists already.'), // @translate
-                ],
-            ]);
+            return $this->jSend(JSend::FAIL, null,
+                $this->translate('The group exists already.') // @translate
+            );
         }
 
         // Insert the group inside the parent path.
@@ -350,22 +320,16 @@ abstract class AbstractSelectionController extends AbstractActionController
         $path = trim((string) $this->params()->fromQuery('group'));
         $currentGroupName = basename($path);
         if (!strlen($currentGroupName)) {
-            return new JsonModel([
-                'status' => 'fail',
-                'data' => [
-                    'message' => $this->translate('No group set.'), // @translate
-                ],
-            ]);
+            return $this->jSend(JSend::FAIL, null,
+                $this->translate('No group set.') // @translate
+            );
         }
 
         $groupName = trim((string) $this->params()->fromQuery('name'));
         if (!strlen($groupName)) {
-            return new JsonModel([
-                'status' => 'fail',
-                'data' => [
-                    'message' => $this->translate('No group set.'), // @translate
-                ],
-            ]);
+            return $this->jSend(JSend::FAIL, null,
+                $this->translate('No group set.') // @translate
+            );
         }
 
         $invalidCharacters = '/\\?<>*%|"`&';
@@ -376,35 +340,24 @@ abstract class AbstractSelectionController extends AbstractActionController
             || $groupName === '..'
             || preg_match($invalidCharactersRegex, $groupName)
         ) {
-            return new JsonModel([
-                'status' => 'fail',
-                'data' => [
-                    'message' => sprintf(
-                        $this->translate('The group name contains invalid characters (%s).'), // @translate
-                        $invalidCharacters
-                    ),
-                ],
-            ]);
+            return $this->jSend(JSend::FAIL, null, (new PsrMessage(
+                'The group name contains invalid characters ({characters}).', // @translate
+                ['characters' => $invalidCharacters]
+            ))->setTranslator($this->translator()));
         }
 
         if ($currentGroupName === $groupName) {
-            return new JsonModel([
-                'status' => 'fail',
-                'data' => [
-                    'message' => $this->translate('The group name is unchanged.'), // @translate
-                ],
-            ]);
+            return $this->jSend(JSend::FAIL, null,
+                $this->translate('The group name is unchanged.') // @translate
+            );
         }
 
         // Check the parent for security.
         $hasParent = strlen($path);
         if ($hasParent && !isset($structure[$path])) {
-            return new JsonModel([
-                'status' => 'fail',
-                'data' => [
-                    'message' => $this->translate('The parent group does not exist.'), // @translate
-                ],
-            ]);
+            return $this->jSend(JSend::FAIL, null,
+                $this->translate('The parent group does not exist.') // @translate
+            );
         }
 
         $currentFullPath = $path;
@@ -412,12 +365,9 @@ abstract class AbstractSelectionController extends AbstractActionController
 
         $fullPath = "$parentPath/$groupName";
         if (isset($structure[$fullPath])) {
-            return new JsonModel([
-                'status' => 'fail',
-                'data' => [
-                    'message' => $this->translate('The group exists already.'), // @translate
-                ],
-            ]);
+            return $this->jSend(JSend::FAIL, null,
+                $this->translate('The group exists already.') // @translate
+            );
         }
 
         // Rename the group and all children: even if each group is managed as a
@@ -466,12 +416,9 @@ abstract class AbstractSelectionController extends AbstractActionController
         $source = trim((string) $this->params()->fromQuery('group'));
         $groupName = basename($source);
         if (!strlen($source) || !strlen($groupName)) {
-            return new JsonModel([
-                'status' => 'fail',
-                'data' => [
-                    'message' => $this->translate('No group set.'), // @translate
-                ],
-            ]);
+            return $this->jSend(JSend::FAIL, null,
+                $this->translate('No group set.') // @translate
+            );
         }
 
         $parentDestination = trim((string) $this->params()->fromQuery('name'));
@@ -481,45 +428,29 @@ abstract class AbstractSelectionController extends AbstractActionController
 
         $destination = ($parentDestination === '/' ? '' : $parentDestination) . '/' . $groupName;
         if ($source === $destination) {
-            return new JsonModel([
-                'status' => 'fail',
-                'data' => [
-                    'message' => $this->translate('The group name is unchanged.'), // @translate
-                ],
-            ]);
+            return $this->jSend(JSend::FAIL, null,
+                $this->translate('The group name is unchanged.') // @translate
+            );
         }
 
         if (mb_strpos($destination . '/', $source . '/') === 0) {
-            return new JsonModel([
-                'status' => 'fail',
-                'data' => [
-                    'message' => $this->translate('The group cannot be moved inside itself.'), // @translate
-                ],
-            ]);
+            return $this->jSend(JSend::FAIL, null,
+                $this->translate('The group cannot be moved inside itself.') // @translate
+            );
         }
 
         if (!isset($structure[$source])) {
-            return new JsonModel([
-                'status' => 'fail',
-                'data' => [
-                    'message' => sprintf(
-                        $this->translate('The group "%s" does not exist.'), // @translate
-                        strtr($source, ['/' => ' / '])
-                    ),
-                ],
-            ]);
+            return $this->jSend(JSend::FAIL, null, (new PsrMessage(
+                'The group "{name}" does not exist.', // @translate
+                ['name' => strtr($source, ['/' => ' / '])]
+            ))->setTranslator($this->translator()));
         }
 
         if ($parentDestination !== '/' && !isset($structure[$parentDestination])) {
-            return new JsonModel([
-                'status' => 'fail',
-                'data' => [
-                    'message' => sprintf(
-                        $this->translate('The group "%s" does not exist.'), // @translate
-                        strtr($parentDestination, ['/' => ' / '])
-                    ),
-                ],
-            ]);
+            return $this->jSend(JSend::FAIL, null, (new PsrMessage(
+                $this->translate('The group "{name}" does not exist.'), // @translate
+                ['name' => strtr($parentDestination, ['/' => ' / '])]
+            ))->setTranslator($this->translator()));
         }
 
         $sourceParentPath = dirname($source);
@@ -619,21 +550,15 @@ abstract class AbstractSelectionController extends AbstractActionController
     {
         $path = trim((string) $this->params()->fromQuery('group'));
         if (!strlen($path) || $path === '/') {
-            return new JsonModel([
-                'status' => 'error',
-                'data' => [
-                    'message' => $this->translate('No group set.'), // @translate
-                ],
-            ]);
+            return $this->jSend(JSend::FAIL, null,
+                $this->translate('No group set.') // @translate
+            );
         }
 
         if (!isset($structure[$path])) {
-            return new JsonModel([
-                'status' => 'fail',
-                'data' => [
-                    'message' => $this->translate('The group does not exist.'), // @translate
-                ],
-            ]);
+            return $this->jSend(JSend::FAIL, null,
+                $this->translate('The group does not exist.') // @translate
+            );
         }
 
         // Get selected resources in all children groups.
@@ -807,31 +732,30 @@ abstract class AbstractSelectionController extends AbstractActionController
 
     protected function jsonErrorNotFound(): JsonModel
     {
-        $response = $this->getResponse();
-        $response->setStatusCode(Response::STATUS_CODE_404);
-        return new JsonModel([
-            'status' => 'error',
-            'message' => $this->translate('Not found'), // @translate
-        ]);
+        return $this->jSend(
+            JSend::FAIL,
+            null,
+            $this->translate('Not found'),
+            HttpResponse::STATUS_CODE_404
+        );
     }
 
     protected function jsonInternalError(): JsonModel
     {
-        $response = $this->getResponse();
-        $response->setStatusCode(Response::STATUS_CODE_500);
-        return new JsonModel([
-            'status' => 'error',
-            'message' => $this->translate('An internal error occurred.'), // @translate
-        ]);
+        return $this->jSend(
+            JSend::ERROR,
+            null,
+            $this->translate('An internal error occurred.') // @translate
+        );
     }
 
     protected function jsonPermissionDenied(): JsonModel
     {
-        $response = $this->getResponse();
-        $response->setStatusCode(Response::STATUS_CODE_403);
-        return new JsonModel([
-            'status' => 'error',
-            'message' => $this->translate('Permission denied'), // @translate
-        ]);
+        return $this->jSend(
+            JSend::FAIL,
+            null,
+            $this->translate('Permission denied'), // @translate
+            HttpResponse::STATUS_CODE_403
+        );
     }
 }

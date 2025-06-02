@@ -2,8 +2,8 @@
 
 namespace Selection\Controller\Site;
 
+use Common\Mvc\Controller\Plugin\JSend;
 use Exception;
-use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use Omeka\Entity\User;
 use Selection\Api\Representation\SelectionRepresentation;
@@ -137,10 +137,7 @@ trait TraitDbController
 
         // $this->selectionContainer();
 
-        return new JsonModel([
-            'status' => 'success',
-            'data' => $data,
-        ]);
+        return $this->jSend(JSend::SUCCESS, $data);
     }
 
     /**
@@ -209,10 +206,7 @@ trait TraitDbController
 
         // $this->selectionContainer();
 
-        return new JsonModel([
-            'status' => 'success',
-            'data' => $data,
-        ]);
+        return $this->jSend(JSend::SUCCESS, $data);
     }
 
     /**
@@ -303,10 +297,7 @@ trait TraitDbController
 
         // $this->selectionContainer();
 
-        return new JsonModel([
-            'status' => 'success',
-            'data' => $data,
-        ]);
+        return $this->jSend(JSend::SUCCESS, $data);
     }
 
     /**
@@ -354,13 +345,10 @@ trait TraitDbController
 
         // $this->selectionContainer();
 
-        return new JsonModel([
-            'status' => 'success',
-            'data' => [
-                'selection' => $selection ? $selection->getReference() : null,
-                'source' => $structure[$source] ?? null,
-                'group' => $structure[$destination] ?? null,
-            ],
+        return $this->jSend(JSend::SUCCESS, [
+            'selection' => $selection ? $selection->getReference() : null,
+            'source' => $structure[$source] ?? null,
+            'group' => $structure[$destination] ?? null,
         ]);
     }
 
@@ -397,12 +385,9 @@ trait TraitDbController
 
         // $this->selectionContainer();
 
-        return new JsonModel([
-            'status' => 'success',
-            'data' => [
-                'selection' => $selection ? $selection->getReference() : null,
-                'group' => $group,
-            ],
+        return $this->jSend(JSend::SUCCESS, [
+            'selection' => $selection ? $selection->getReference() : null,
+            'group' => $group,
         ]);
     }
 
@@ -439,12 +424,9 @@ trait TraitDbController
 
         // $this->selectionContainer();
 
-        return new JsonModel([
-            'status' => 'success',
-            'data' => [
-                'selection' => $selection ? $selection->getReference() : null,
-                'structure' => $selection->structure(),
-            ],
+        return $this->jSend(JSend::SUCCESS, [
+            'selection' => $selection ? $selection->getReference() : null,
+            'structure' => $selection->structure(),
         ]);
     }
 
@@ -481,12 +463,9 @@ trait TraitDbController
 
         // $this->selectionContainer();
 
-        return new JsonModel([
-            'status' => 'success',
-            'data' => [
-                'selection' => $selection ? $selection->getReference() : null,
-                'structure' => $selection->structure(),
-            ],
+        return $this->jSend(JSend::SUCCESS, [
+            'selection' => $selection ? $selection->getReference() : null,
+            'structure' => $selection->structure(),
         ]);
     }
 
@@ -535,12 +514,9 @@ trait TraitDbController
 
         // $this->selectionContainer();
 
-        return new JsonModel([
-            'status' => 'success',
-            'data' => [
-                'selection' => $selection ? $selection->getReference() : null,
-                'structure' => $selection->structure(),
-            ],
+        return $this->jSend(JSend::SUCCESS, [
+            'selection' => $selection ? $selection->getReference() : null,
+            'structure' => $selection->structure(),
         ]);
     }
 
