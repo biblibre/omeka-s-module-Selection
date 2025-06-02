@@ -50,6 +50,7 @@ $selectText = $escapeAttr($translate('Select resource'));
 $deleteText = $escapeAttr($translate('Remove from selection'));
 
 // TODO Get the resources one time via api (currently only needed for thumbnail, not prepared early).
+// $resources = $selectedRecords ? $api->search('items', ['id' => array_keys($selectedRecords)])->getContent() : [];
 ?>
 
 <?php if ($breadcrumbs && !$hasGuestNav): ?>
@@ -76,7 +77,7 @@ $deleteText = $escapeAttr($translate('Remove from selection'));
 
     <?php if (count($currentRecords)): ?>
     <div class="selection-count">
-        <?= sprintf($translatePlural('%s resource', '%s resources', count($currentRecords)), count($currentRecords)) ?>
+        <?= sprintf($translate($translatePlural('%s resource', '%s resources', count($currentRecords))), count($currentRecords)) ?>
     </div>
     <?php else: ?>
     <p class="selection-empty">

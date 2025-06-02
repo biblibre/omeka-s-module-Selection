@@ -88,6 +88,7 @@ $recordsByType = array_column($currentRecords, 'resource_name', 'id');
 $countsByType = array_count_values($recordsByType) + ['items' => 0, 'media' => 0, 'item_sets' => 0, 'annotations' => 0];
 
 // TODO Get the resources one time via api (currently only needed for thumbnail, not prepared early).
+// $resources = $selectedRecords ? $api->search('items', ['id' => array_keys($selectedRecords)])->getContent() : [];
 ?>
 
 <?php if ($breadcrumbs && !$hasGuestNav): ?>
@@ -114,7 +115,7 @@ $countsByType = array_count_values($recordsByType) + ['items' => 0, 'media' => 0
 
     <?php if (count($currentRecords)): ?>
     <div class="selection-count">
-        <?= sprintf($translatePlural('%s resource', '%s resources', count($currentRecords)), count($currentRecords)) ?>
+        <?= sprintf($translate($translatePlural('%s resource', '%s resources', count($currentRecords))), count($currentRecords)) ?>
     </div>
     <?php else: ?>
     <p class="selection-empty">
@@ -150,12 +151,12 @@ $countsByType = array_count_values($recordsByType) + ['items' => 0, 'media' => 0
             $replace = [
                 '__GROUP_LEVEL__' => substr_count($groupFullPath, '/'),
                 '__GROUP_PATH__' => $escapeAttr($groupFullPath),
-                '__GROUP_NAME__' => '<span>' . str_replace('/', '</span><span>', ltrim($groupFullPath, '/')) . '</span>',
+                '__GROUP_NAME__' => '<span>' . strtr(ltrim($groupFullPath, '/'), ['/' => '</span><span>']) . '</span>',
                 '__GROUP_RESOURCES__' => $selectedRecordModels
                     ? $partialLoop('selection/site/selection/selection-group-resource', $selectedRecordModels)
                     : '',
             ]; ?>
-        <?= str_replace(array_keys($replace), array_values($replace), $templateGroup) ?>
+        <?= strtr($templateGroup, $replace) ?>
         <?php endforeach; ?>
     </ul>
 
@@ -200,7 +201,7 @@ $countsByType = array_count_values($recordsByType) + ['items' => 0, 'media' => 0
     <select name="group" aria-label="<?= $translate('Select a folder') ?>">
         <option value="">/</option>
         <?php foreach ($selection ? array_keys($selection['structure']) : [] as $groupFullPath): ?>
-        <option value="<?= $groupFullPath ?>"><?= str_replace('/', ' / ', $groupFullPath) ?></option>
+        <option value="<?= $groupFullPath ?>"><?= strtr($groupFullPath, ['/' => ' / ']) ?></option>
         <?php endforeach ?>
     </select>
 </div>

@@ -2,7 +2,7 @@
 
 /*
  * Copyright BibLibre, 2016
- * Copyright Daniel Berthereau, 2019-2024
+ * Copyright Daniel Berthereau, 2019-2025
  *
  * This software is governed by the CeCILL license under French law and abiding
  * by the rules of distribution of free software.  You can use, modify and/ or
@@ -183,7 +183,7 @@ abstract class AbstractSelectionController extends AbstractActionController
                 'data' => [
                     'message' => sprintf(
                         $this->translate('The group "%s" does not exist.'), // @translate
-                        str_replace('/', ' / ', $source)
+                        strtr($source, ['/' => ' / '])
                     ),
                 ],
             ]);
@@ -195,7 +195,7 @@ abstract class AbstractSelectionController extends AbstractActionController
                 'data' => [
                     'message' => sprintf(
                         $this->translate('The destination group "%s" does not exist.'), // @translate
-                        str_replace('/', ' / ', $destination)
+                        strtr($destination, ['/' => ' / '])
                     ),
                 ],
             ]);
@@ -207,7 +207,7 @@ abstract class AbstractSelectionController extends AbstractActionController
                 'data' => [
                     'message' => sprintf(
                         $this->translate('The destination group "%s" does not exist.'), // @translate
-                        str_replace('/', ' / ', $destination)
+                        strtr($destination, ['/' => ' / '])
                     ),
                 ],
             ]);
@@ -504,7 +504,7 @@ abstract class AbstractSelectionController extends AbstractActionController
                 'data' => [
                     'message' => sprintf(
                         $this->translate('The group "%s" does not exist.'), // @translate
-                        str_replace('/', ' / ', $source)
+                        strtr($source, ['/' => ' / '])
                     ),
                 ],
             ]);
@@ -516,7 +516,7 @@ abstract class AbstractSelectionController extends AbstractActionController
                 'data' => [
                     'message' => sprintf(
                         $this->translate('The group "%s" does not exist.'), // @translate
-                        str_replace('/', ' / ', $parentDestination)
+                        strtr($parentDestination, ['/' => ' / '])
                     ),
                 ],
             ]);
@@ -525,7 +525,8 @@ abstract class AbstractSelectionController extends AbstractActionController
         $sourceParentPath = dirname($source);
         $sourceParentPathLength = strlen($sourceParentPath);
 
-        // The group and all sub-groups should be moved at the right place, so prepare them all.
+        // The group and all sub-groups should be moved at the right place, so
+        // prepare them all.
         // Note: normally, the tree of groups is logical: a branch is always
         // after its parent branch.
         $sourceGroups = [];
