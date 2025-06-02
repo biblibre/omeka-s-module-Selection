@@ -162,6 +162,7 @@
                     updateSelectionButton(selectionResource);
                     updateSelectionList(selectionResource);
                     button.closest('body.selection.browse .selection-list .resource').remove();
+                    $(document).trigger('o:selection-updated', data);
                 }
             })
             .fail(handleAjaxFail)
@@ -191,6 +192,7 @@
                 if (selectionResource.status === 'success' && selectionResource.value === 'unselected') {
                     updateSelectionButton(selectionResource);
                     updateSelectionList(selectionResource);
+                    $(document).trigger('o:selection-updated', data);
                 }
             })
             .fail(handleAjaxFail)
@@ -239,6 +241,7 @@
                     )
                     .replace('__GROUP_RESOURCES__', '')
                 );
+                $(document).trigger('o:selection-updated', data);
             })
             .fail(handleAjaxFail);
         });
