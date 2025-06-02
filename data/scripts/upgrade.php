@@ -407,7 +407,7 @@ if (version_compare($oldVersion, '3.4.11', '<')) {
         'showSelectionLink(',
         'updateSelectionLink(',
         'containerSelection(',
-        // Renamed to selectionButton, selectionList, selectionContainer and selectionLinkBrowse.
+        // Renamed to selectionButton, selectionList, selectionLinkBrowse, selectionContainer.
     ];
     $globs = [
         'themes/*/view/common/*',
@@ -423,7 +423,7 @@ if (version_compare($oldVersion, '3.4.11', '<')) {
     }
     if ($result) {
         $message = new PsrMessage(
-            'The view helpers "selectionButtonToggle", "containerSelection", "showSelectionLink" and "updateSelectionLink" were renamed "selectionButton", "selectionList", "selectionContainer" and you should update your theme. Check your theme. Matching templates: {json}', // @translate
+            'The view helpers "selectionButtonToggle", "showSelectionLink", "updateSelectionLink" , and "containerSelection" were renamed "selectionButton", "selectionList", "selectionLinkBrowse", and "selectionContainer". You should update your theme. Matching templates: {json}', // @translate
             ['json' => json_encode($result, 448)]
         );
         $logger->err($message->getMessage(), $message->getContext());
