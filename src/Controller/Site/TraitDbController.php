@@ -614,7 +614,7 @@ trait TraitDbController
      */
     protected function createSelectionStatic(User $user): SelectionRepresentation
     {
-        return $api->create('selections', [
+        return $this->api()->create('selections', [
             'o:owner' => ['o:id' => $user->getId()],
             'o:label' => $this->siteSettings()->get('selection_label', $this->translate('Selection')), // @translate
         ])->getContent();
