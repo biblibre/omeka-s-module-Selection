@@ -84,7 +84,7 @@ trait TraitSessionController
         foreach ($resources as $resourceId => $resource) {
             if (isset($selectedRecords[$resourceId])) {
                 $data = $selectedRecords[$resourceId];
-                $data['status'] = 'fail';
+                $data['status'] = 'success';
                 $data['data'] = [
                     'message' => $this->translate('Already in'), // @translate
                 ];
