@@ -2,7 +2,7 @@
 
 namespace Selection\Controller\Site;
 
-use Common\Mvc\Controller\Plugin\JSend;
+use Selection\Mvc\Controller\Plugin\JSend;
 use Exception;
 use Laminas\View\Model\ViewModel;
 use Omeka\Entity\User;
@@ -137,7 +137,7 @@ trait TraitDbController
 
         // $this->selectionContainer();
 
-        return $this->jSend(JSend::SUCCESS, $data);
+        return $this->selectionJSend(JSend::SUCCESS, $data);
     }
 
     /**
@@ -206,7 +206,7 @@ trait TraitDbController
 
         // $this->selectionContainer();
 
-        return $this->jSend(JSend::SUCCESS, $data);
+        return $this->selectionJSend(JSend::SUCCESS, $data);
     }
 
     /**
@@ -297,7 +297,7 @@ trait TraitDbController
 
         // $this->selectionContainer();
 
-        return $this->jSend(JSend::SUCCESS, $data);
+        return $this->selectionJSend(JSend::SUCCESS, $data);
     }
 
     /**
@@ -345,7 +345,7 @@ trait TraitDbController
 
         // $this->selectionContainer();
 
-        return $this->jSend(JSend::SUCCESS, [
+        return $this->selectionJSend(JSend::SUCCESS, [
             'selection' => $selection ? $selection->getReference() : null,
             'source' => $structure[$source] ?? null,
             'group' => $structure[$destination] ?? null,
@@ -385,7 +385,7 @@ trait TraitDbController
 
         // $this->selectionContainer();
 
-        return $this->jSend(JSend::SUCCESS, [
+        return $this->selectionJSend(JSend::SUCCESS, [
             'selection' => $selection ? $selection->getReference() : null,
             'group' => $group,
         ]);
@@ -424,7 +424,7 @@ trait TraitDbController
 
         // $this->selectionContainer();
 
-        return $this->jSend(JSend::SUCCESS, [
+        return $this->selectionJSend(JSend::SUCCESS, [
             'selection' => $selection ? $selection->getReference() : null,
             'structure' => $selection->structure(),
         ]);
@@ -463,7 +463,7 @@ trait TraitDbController
 
         // $this->selectionContainer();
 
-        return $this->jSend(JSend::SUCCESS, [
+        return $this->selectionJSend(JSend::SUCCESS, [
             'selection' => $selection ? $selection->getReference() : null,
             'structure' => $selection->structure(),
         ]);
@@ -514,7 +514,7 @@ trait TraitDbController
 
         // $this->selectionContainer();
 
-        return $this->jSend(JSend::SUCCESS, [
+        return $this->selectionJSend(JSend::SUCCESS, [
             'selection' => $selection ? $selection->getReference() : null,
             'structure' => $selection->structure(),
         ]);

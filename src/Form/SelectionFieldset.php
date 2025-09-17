@@ -1,8 +1,6 @@
 <?php declare(strict_types=1);
 
 namespace Selection\Form;
-
-use Common\Form\Element as CommonElement;
 use Laminas\Form\Element;
 use Laminas\Form\Fieldset;
 
@@ -17,7 +15,7 @@ class SelectionFieldset extends Fieldset
             // TODO Move this to a layout block-template?
             ->add([
                 'name' => 'o:block[__blockIndex__][o:data][disposition]',
-                'type' => CommonElement\OptionalRadio::class,
+                'type' => CommonElement\Radio::class,
                 'options' => [
                     'label' => 'Disposition', // @translate
                     'value_options' => [
@@ -31,7 +29,7 @@ class SelectionFieldset extends Fieldset
             ])
             ->add([
                 'name' => 'o:block[__blockIndex__][o:data][individual_select]',
-                'type' => CommonElement\OptionalRadio::class,
+                'type' => CommonElement\Radio::class,
                 'options' => [
                     'label' => 'Add individual checkboxes for modules Bulk Export and Contact Us', // @translate
                     'value_options' => [

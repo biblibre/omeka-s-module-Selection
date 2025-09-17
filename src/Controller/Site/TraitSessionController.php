@@ -2,7 +2,7 @@
 
 namespace Selection\Controller\Site;
 
-use Common\Mvc\Controller\Plugin\JSend;
+use Selection\Mvc\Controller\Plugin\JSend;
 use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
 
@@ -114,7 +114,7 @@ trait TraitSessionController
             ];
         }
 
-        return $this->jSend(JSend::SUCCESS, $data);
+        return $this->selectionJSend(JSend::SUCCESS, $data);
     }
 
     /**
@@ -166,7 +166,7 @@ trait TraitSessionController
             ];
         }
 
-        return $this->jSend(JSend::SUCCESS, $data);
+        return $this->selectionJSend(JSend::SUCCESS, $data);
     }
 
     /**
@@ -232,7 +232,7 @@ trait TraitSessionController
             ];
         }
 
-        return $this->jSend(JSend::SUCCESS, $data);
+        return $this->selectionJSend(JSend::SUCCESS, $data);
     }
 
     /**
@@ -274,7 +274,7 @@ trait TraitSessionController
 
         $selectionContainer->selections[$selectionId]['structure'] = $structure;
 
-        return $this->jSend(JSend::SUCCESS, [
+        return $this->selectionJSend(JSend::SUCCESS, [
             'selection' => ['o:id' => $selectionId],
             'source' => $structure[$source] ?? null,
             'group' => $structure[$destination] ?? null,
@@ -306,7 +306,7 @@ trait TraitSessionController
 
         $selectionContainer->selections[$selectionId]['structure'] = $structure;
 
-        return $this->jSend(JSend::SUCCESS, [
+        return $this->selectionJSend(JSend::SUCCESS, [
             'selection' => ['o:id' => $selectionId],
             'group' => $group,
         ]);
@@ -337,7 +337,7 @@ trait TraitSessionController
 
         $selectionContainer->selections[$selectionId]['structure'] = $structure;
 
-        return $this->jSend(JSend::SUCCESS, [
+        return $this->selectionJSend(JSend::SUCCESS, [
             'selection' => ['o:id' => $selectionId],
             'structure' => $structure,
         ]);
@@ -368,7 +368,7 @@ trait TraitSessionController
 
         $selectionContainer->selections[$selectionId]['structure'] = $structure;
 
-        return $this->jSend(JSend::SUCCESS, [
+        return $this->selectionJSend(JSend::SUCCESS, [
             'selection' => ['o:id' => $selectionId],
             'structure' => $structure,
         ]);
@@ -404,7 +404,7 @@ trait TraitSessionController
 
         $selectionContainer->selections[$selectionId]['structure'] = $structure;
 
-        return $this->jSend(JSend::SUCCESS, [
+        return $this->selectionJSend(JSend::SUCCESS, [
             'selection' => ['o:id' => $selectionId],
             'structure' => $structure,
         ]);

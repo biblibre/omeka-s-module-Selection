@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-02 00:00+0000\n"
+"POT-Creation-Date: 2025-09-17 09:29+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,12 +17,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: data/scripts/upgrade.php:33 Module.php:66
+#: data/scripts/upgrade.php:33
 #, php-format
 msgid "The module %1$s should be upgraded to version %2$s or later."
 msgstr ""
 
-#: Module.php:220 src/Controller/Site/TraitDbController.php:619
+#: Module.php:74
+msgid ""
+"This module cannot install its tables, because they exist already. Try to "
+"remove them first."
+msgstr ""
+
+#: Module.php:567 src/Controller/Site/TraitDbController.php:619
 #: src/Controller/Site/TraitSessionController.php:433
 #: src/View/Helper/SelectionContainer.php:50
 #: src/View/Helper/SelectionContainer.php:85
@@ -33,53 +39,76 @@ msgstr ""
 msgid "Selection"
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:175
-#: src/Controller/Site/AbstractSelectionController.php:351
-#: src/Controller/Site/AbstractSelectionController.php:432
+#: src/Controller/Site/AbstractSelectionController.php:173
+#: src/Controller/Site/AbstractSelectionController.php:344
+#: src/Controller/Site/AbstractSelectionController.php:425
 msgid "The group name is unchanged."
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:234
-#: src/Controller/Site/AbstractSelectionController.php:324
-#: src/Controller/Site/AbstractSelectionController.php:331
-#: src/Controller/Site/AbstractSelectionController.php:420
-#: src/Controller/Site/AbstractSelectionController.php:554
+#: src/Controller/Site/AbstractSelectionController.php:179
+#: src/Controller/Site/AbstractSelectionController.php:437
+#: src/Controller/Site/AbstractSelectionController.php:443
+#, php-format
+msgid "The group \"%s\" does not exist."
+msgstr ""
+
+#: src/Controller/Site/AbstractSelectionController.php:185
+#: src/Controller/Site/AbstractSelectionController.php:191
+#, php-format
+msgid "The destination group \"%s\" does not exist."
+msgstr ""
+
+#: src/Controller/Site/AbstractSelectionController.php:229
+#: src/Controller/Site/AbstractSelectionController.php:318
+#: src/Controller/Site/AbstractSelectionController.php:325
+#: src/Controller/Site/AbstractSelectionController.php:413
+#: src/Controller/Site/AbstractSelectionController.php:545
 msgid "No group set."
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:256
-#: src/Controller/Site/AbstractSelectionController.php:359
+#: src/Controller/Site/AbstractSelectionController.php:242
+#: src/Controller/Site/AbstractSelectionController.php:338
+#, php-format
+msgid "The group name contains invalid characters (%s)."
+msgstr ""
+
+#: src/Controller/Site/AbstractSelectionController.php:250
+#: src/Controller/Site/AbstractSelectionController.php:352
 msgid "The parent group does not exist."
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:263
-#: src/Controller/Site/AbstractSelectionController.php:369
+#: src/Controller/Site/AbstractSelectionController.php:257
+#: src/Controller/Site/AbstractSelectionController.php:362
 msgid "The group exists already."
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:438
+#: src/Controller/Site/AbstractSelectionController.php:431
 msgid "The group cannot be moved inside itself."
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:451
-msgid "The group \"{name}\" does not exist."
-msgstr ""
-
-#: src/Controller/Site/AbstractSelectionController.php:560
+#: src/Controller/Site/AbstractSelectionController.php:551
 msgid "The group does not exist."
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:748
+#: src/Controller/Site/AbstractSelectionController.php:739
 msgid "An internal error occurred."
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:757
+#: src/Controller/Site/AbstractSelectionController.php:748
 msgid "Permission denied"
 msgstr ""
 
 #: src/Controller/Site/TraitDbController.php:100
 #: src/Controller/Site/TraitSessionController.php:89
 msgid "Already in"
+msgstr ""
+
+#: src/Mvc/Controller/Plugin/JSend.php:55
+msgid "Check your input for invalid data."
+msgstr ""
+
+#: src/Mvc/Controller/Plugin/JSend.php:74
+msgid "An internal error has occurred."
 msgstr ""
 
 #: view/common/selection-button.phtml:23
@@ -166,6 +195,17 @@ msgstr ""
 
 #: view/selection/site/selection/selection-group.phtml:37
 msgid "Move resources"
+msgstr ""
+
+#: Module.php:86
+msgid ""
+"The module Basket is present. Upgrade from it was removed since version "
+"3.4.7. Install the previous version if you want to upgrade it."
+msgstr ""
+
+#: Module.php:147
+#, php-format
+msgid "The module removed tables \"%s\" from a previous broken install."
 msgstr ""
 
 #: data/scripts/upgrade.php:136
@@ -258,125 +298,6 @@ msgid ""
 "{json}"
 msgstr ""
 
-#: Module.php:81
-msgid ""
-"The module Basket is present. Upgrade from it was removed since version "
-"3.4.7. Install the previous version if you want to upgrade it."
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:14
-msgid "Selection module"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:30
-msgid "Disable selection stored in session for anonymous visitors"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:41
-msgid "Limit selections to specific resources"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:44
-msgid "Medias"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:58
-msgid "Display selection button"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:60 src/Form/SiteSettingsFieldset.php:83
-msgid "Items: Via resource block or custom theme"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:61 src/Form/SiteSettingsFieldset.php:84
-msgid "Media: Via resource block or custom theme"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:62 src/Form/SiteSettingsFieldset.php:85
-msgid "Item set: Via resource block or custom theme"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:63 src/Form/SiteSettingsFieldset.php:86
-msgid "Item: Top"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:64 src/Form/SiteSettingsFieldset.php:87
-msgid "Media: Top"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:65 src/Form/SiteSettingsFieldset.php:88
-msgid "Item set: Top"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:66 src/Form/SiteSettingsFieldset.php:89
-msgid "Item: Bottom"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:67 src/Form/SiteSettingsFieldset.php:90
-msgid "Media: Bottom"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:68 src/Form/SiteSettingsFieldset.php:91
-msgid "Item set: Bottom"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:81
-msgid "Display selection list"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:104
-msgid "Open the selection block by default in resource page"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:115
-msgid "Open the selection list block by default in resource page"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:127
-msgid "Default disposition of page Selection"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:130 src/Form/SelectionFieldset.php:24
-msgid "List"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:131 src/Form/SelectionFieldset.php:25
-msgid "Hierarchy"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:143 src/Form/SelectionFieldset.php:36
-msgid "Add individual checkboxes for modules Bulk Export and Contact Us"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:145 src/Form/SelectionFieldset.php:38
-msgid "When needed"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:159
-msgid ""
-"Add a checkbox to select resources individually in lists (browse and search)"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:160
-msgid "This option is used only with the module Advanced Search for now."
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:171
-msgid "Label for the page Selection"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:182
-msgid "Label for the link in guest account"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:193
-msgid "Warning for selection by anonymous"
-msgstr ""
-
-#: src/Form/SelectionFieldset.php:22
-msgid "Disposition"
-msgstr ""
-
 #: src/Api/Adapter/SelectionAdapter.php:183
 msgid "A selection must have an owner."
 msgstr ""
@@ -414,19 +335,122 @@ msgid ""
 "A selection resource must be unique for the owner when there is no selection."
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:188
-#: src/Controller/Site/AbstractSelectionController.php:195
-msgid "The destination group \"{name}\" does not exist."
+#: src/Form/SelectionFieldset.php:20
+msgid "Disposition"
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:247
-#: src/Controller/Site/AbstractSelectionController.php:344
-msgid "The group name contains invalid characters ({characters})."
+#: src/Form/SelectionFieldset.php:22 src/Form/SiteSettingsFieldset.php:129
+msgid "List"
 msgstr ""
 
-#: src/Site/Navigation/Link/Selection.php:24
+#: src/Form/SelectionFieldset.php:23 src/Form/SiteSettingsFieldset.php:130
+msgid "Hierarchy"
+msgstr ""
+
+#: src/Form/SelectionFieldset.php:34 src/Form/SiteSettingsFieldset.php:142
+msgid "Add individual checkboxes for modules Bulk Export and Contact Us"
+msgstr ""
+
+#: src/Form/SelectionFieldset.php:36 src/Form/SiteSettingsFieldset.php:144
+msgid "When needed"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:13
+msgid "Selection module"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:29
+msgid "Disable selection stored in session for anonymous visitors"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:40
+msgid "Limit selections to specific resources"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:43
+msgid "Medias"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:57
+msgid "Display selection button"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:59 src/Form/SiteSettingsFieldset.php:82
+msgid "Items: Via resource block or custom theme"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:60 src/Form/SiteSettingsFieldset.php:83
+msgid "Media: Via resource block or custom theme"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:61 src/Form/SiteSettingsFieldset.php:84
+msgid "Item set: Via resource block or custom theme"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:62 src/Form/SiteSettingsFieldset.php:85
+msgid "Item: Top"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:63 src/Form/SiteSettingsFieldset.php:86
+msgid "Media: Top"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:64 src/Form/SiteSettingsFieldset.php:87
+msgid "Item set: Top"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:65 src/Form/SiteSettingsFieldset.php:88
+msgid "Item: Bottom"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:66 src/Form/SiteSettingsFieldset.php:89
+msgid "Media: Bottom"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:67 src/Form/SiteSettingsFieldset.php:90
+msgid "Item set: Bottom"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:80
+msgid "Display selection list"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:103
+msgid "Open the selection block by default in resource page"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:114
+msgid "Open the selection list block by default in resource page"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:126
+msgid "Default disposition of page Selection"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:158
+msgid ""
+"Add a checkbox to select resources individually in lists (browse and search)"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:159
+msgid "This option is used only with the module Advanced Search for now."
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:170
+msgid "Label for the page Selection"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:181
+msgid "Label for the link in guest account"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:192
+msgid "Warning for selection by anonymous"
+msgstr ""
+
+#: src/Mvc/Controller/Plugin/JSend.php:89
 #, php-format
-msgid "Invalid navigation: link without label (%s)"
+msgid "The status \"%s\" is not supported by jSend."
 msgstr ""
 
 #: src/Site/ResourcePageBlockLayout/SelectionButton.php:13

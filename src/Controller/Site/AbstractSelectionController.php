@@ -29,9 +29,7 @@
  */
 
 namespace Selection\Controller\Site;
-
-use Common\Mvc\Controller\Plugin\JSend;
-use Common\Stdlib\PsrMessage;
+use Selection\Mvc\Controller\Plugin\JSend;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\JsonModel;
@@ -171,30 +169,27 @@ abstract class AbstractSelectionController extends AbstractActionController
         $destination = trim((string) $this->params()->fromQuery('name'));
 
         if ($source === $destination) {
-            return $this->jSend(JSend::FAIL, null,
+            return $this->selectionJSend(JSend::FAIL, null,
                 $this->translate('The group name is unchanged.') // @translate
             );
         }
 
         if (strlen($source) && !isset($structure[$source])) {
-            return $this->jSend(JSend::FAIL, null, (new PsrMessage(
-                'The group "{name}" does not exist.', // @translate
-                ['name' => strtr($source, ['/' => ' / '])]
-            ))->setTranslator($this->translator()));
+            return $this->selectionJSend(JSend::FAIL, null, (new Message(sprintf(
+                $this->translate('The group "%s" does not exist.'), // @translate
+                strtr($source, ['/' => ' / '])))));
         }
 
         if (strlen($destination) && !isset($structure[$destination])) {
-            return $this->jSend(JSend::FAIL, null, (new PsrMessage(
-                'The destination group "{name}" does not exist.', // @translate
-                ['name' => strtr($destination, ['/' => ' / '])]
-            ))->setTranslator($this->translator()));
+            return $this->selectionJSend(JSend::FAIL, null, (new Message(sprintf(
+                $this->translate('The destination group "%s" does not exist.'), // @translate
+                strtr($destination, ['/' => ' / '])))));
         }
 
         if (strlen($destination) && !isset($structure[$destination])) {
-            return $this->jSend(JSend::FAIL, null, (new PsrMessage(
-                'The destination group "{name}" does not exist.', // @translate
-                ['name' => strtr($destination, ['/' => ' / '])]
-            ))->setTranslator($this->translator()));
+            return $this->selectionJSend(JSend::FAIL, null, (new Message(sprintf(
+                $this->translate('The destination group "%s" does not exist.'), // @translate
+                strtr($destination, ['/' => ' / '])))));
         }
 
         return [
@@ -230,7 +225,7 @@ abstract class AbstractSelectionController extends AbstractActionController
         $path = trim((string) $this->params()->fromQuery('group'));
         $groupName = trim((string) $this->params()->fromQuery('name'));
         if (!strlen($groupName)) {
-            return $this->jSend(JSend::FAIL, null,
+            return $this->selectionJSend(JSend::FAIL, null,
                 $this->translate('No group set.') // @translate
             );
         }
@@ -243,23 +238,22 @@ abstract class AbstractSelectionController extends AbstractActionController
             || $groupName === '..'
             || preg_match($invalidCharactersRegex, $groupName)
         ) {
-            return $this->jSend(JSend::FAIL, null, (new PsrMessage(
-                'The group name contains invalid characters ({characters}).', // @translate
-                ['characters' => $invalidCharacters]
-            ))->setTranslator($this->translator()));
+            return $this->selectionJSend(JSend::FAIL, null, (new Message(sprintf(
+                $this->translate('The group name contains invalid characters (%s).'), // @translate
+                $invalidCharacters))));
         }
 
         // Check the parent for security.
         $hasParent = strlen($path);
         if ($hasParent && !isset($structure[$path])) {
-            return $this->jSend(JSend::FAIL, null,
+            return $this->selectionJSend(JSend::FAIL, null,
                 $this->translate('The parent group does not exist.') // @translate
             );
         }
 
         $fullPath = "$path/$groupName";
         if (isset($structure[$fullPath])) {
-            return $this->jSend(JSend::FAIL, null,
+            return $this->selectionJSend(JSend::FAIL, null,
                 $this->translate('The group exists already.') // @translate
             );
         }
@@ -320,14 +314,14 @@ abstract class AbstractSelectionController extends AbstractActionController
         $path = trim((string) $this->params()->fromQuery('group'));
         $currentGroupName = basename($path);
         if (!strlen($currentGroupName)) {
-            return $this->jSend(JSend::FAIL, null,
+            return $this->selectionJSend(JSend::FAIL, null,
                 $this->translate('No group set.') // @translate
             );
         }
 
         $groupName = trim((string) $this->params()->fromQuery('name'));
         if (!strlen($groupName)) {
-            return $this->jSend(JSend::FAIL, null,
+            return $this->selectionJSend(JSend::FAIL, null,
                 $this->translate('No group set.') // @translate
             );
         }
@@ -340,14 +334,13 @@ abstract class AbstractSelectionController extends AbstractActionController
             || $groupName === '..'
             || preg_match($invalidCharactersRegex, $groupName)
         ) {
-            return $this->jSend(JSend::FAIL, null, (new PsrMessage(
-                'The group name contains invalid characters ({characters}).', // @translate
-                ['characters' => $invalidCharacters]
-            ))->setTranslator($this->translator()));
+            return $this->selectionJSend(JSend::FAIL, null, (new Message(sprintf(
+                $this->translate('The group name contains invalid characters (%s).'), // @translate
+                $invalidCharacters))));
         }
 
         if ($currentGroupName === $groupName) {
-            return $this->jSend(JSend::FAIL, null,
+            return $this->selectionJSend(JSend::FAIL, null,
                 $this->translate('The group name is unchanged.') // @translate
             );
         }
@@ -355,7 +348,7 @@ abstract class AbstractSelectionController extends AbstractActionController
         // Check the parent for security.
         $hasParent = strlen($path);
         if ($hasParent && !isset($structure[$path])) {
-            return $this->jSend(JSend::FAIL, null,
+            return $this->selectionJSend(JSend::FAIL, null,
                 $this->translate('The parent group does not exist.') // @translate
             );
         }
@@ -365,7 +358,7 @@ abstract class AbstractSelectionController extends AbstractActionController
 
         $fullPath = "$parentPath/$groupName";
         if (isset($structure[$fullPath])) {
-            return $this->jSend(JSend::FAIL, null,
+            return $this->selectionJSend(JSend::FAIL, null,
                 $this->translate('The group exists already.') // @translate
             );
         }
@@ -416,7 +409,7 @@ abstract class AbstractSelectionController extends AbstractActionController
         $source = trim((string) $this->params()->fromQuery('group'));
         $groupName = basename($source);
         if (!strlen($source) || !strlen($groupName)) {
-            return $this->jSend(JSend::FAIL, null,
+            return $this->selectionJSend(JSend::FAIL, null,
                 $this->translate('No group set.') // @translate
             );
         }
@@ -428,29 +421,27 @@ abstract class AbstractSelectionController extends AbstractActionController
 
         $destination = ($parentDestination === '/' ? '' : $parentDestination) . '/' . $groupName;
         if ($source === $destination) {
-            return $this->jSend(JSend::FAIL, null,
+            return $this->selectionJSend(JSend::FAIL, null,
                 $this->translate('The group name is unchanged.') // @translate
             );
         }
 
         if (mb_strpos($destination . '/', $source . '/') === 0) {
-            return $this->jSend(JSend::FAIL, null,
+            return $this->selectionJSend(JSend::FAIL, null,
                 $this->translate('The group cannot be moved inside itself.') // @translate
             );
         }
 
         if (!isset($structure[$source])) {
-            return $this->jSend(JSend::FAIL, null, (new PsrMessage(
-                'The group "{name}" does not exist.', // @translate
-                ['name' => strtr($source, ['/' => ' / '])]
-            ))->setTranslator($this->translator()));
+            return $this->selectionJSend(JSend::FAIL, null, (new Message(sprintf(
+                $this->translate('The group "%s" does not exist.'), // @translate
+                strtr($source, ['/' => ' / '])))));
         }
 
         if ($parentDestination !== '/' && !isset($structure[$parentDestination])) {
-            return $this->jSend(JSend::FAIL, null, (new PsrMessage(
-                $this->translate('The group "{name}" does not exist.'), // @translate
-                ['name' => strtr($parentDestination, ['/' => ' / '])]
-            ))->setTranslator($this->translator()));
+            return $this->selectionJSend(JSend::FAIL, null, (new Message(sprintf(
+                $this->translate('The group "%s" does not exist.'), // @translate
+                strtr($parentDestination, ['/' => ' / '])))));
         }
 
         $sourceParentPath = dirname($source);
@@ -550,13 +541,13 @@ abstract class AbstractSelectionController extends AbstractActionController
     {
         $path = trim((string) $this->params()->fromQuery('group'));
         if (!strlen($path) || $path === '/') {
-            return $this->jSend(JSend::FAIL, null,
+            return $this->selectionJSend(JSend::FAIL, null,
                 $this->translate('No group set.') // @translate
             );
         }
 
         if (!isset($structure[$path])) {
-            return $this->jSend(JSend::FAIL, null,
+            return $this->selectionJSend(JSend::FAIL, null,
                 $this->translate('The group does not exist.') // @translate
             );
         }
@@ -732,7 +723,7 @@ abstract class AbstractSelectionController extends AbstractActionController
 
     protected function jsonErrorNotFound(): JsonModel
     {
-        return $this->jSend(
+        return $this->selectionJSend(
             JSend::FAIL,
             null,
             $this->translate('Not found'),
@@ -742,7 +733,7 @@ abstract class AbstractSelectionController extends AbstractActionController
 
     protected function jsonInternalError(): JsonModel
     {
-        return $this->jSend(
+        return $this->selectionJSend(
             JSend::ERROR,
             null,
             $this->translate('An internal error occurred.') // @translate
@@ -751,7 +742,7 @@ abstract class AbstractSelectionController extends AbstractActionController
 
     protected function jsonPermissionDenied(): JsonModel
     {
-        return $this->jSend(
+        return $this->selectionJSend(
             JSend::FAIL,
             null,
             $this->translate('Permission denied'), // @translate

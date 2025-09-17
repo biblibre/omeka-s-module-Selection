@@ -70,6 +70,9 @@ return  [
         'factories' => [
             'selectionContainer' => Service\ControllerPlugin\SelectionContainerFactory::class,
         ],
+        'invokables' => [
+            'selectionJSend' => Mvc\Controller\Plugin\JSend::class,
+        ]
     ],
     'navigation' => [
         'site' => [
