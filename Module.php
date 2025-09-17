@@ -10,6 +10,7 @@ use Laminas\EventManager\SharedEventManagerInterface;
 use Laminas\Mvc\MvcEvent;
 use Omeka\Module\AbstractModule;
 use Omeka\Stdlib\Message;
+use Omeka\Settings\SettingsInterface;
 
 /**
  * Selection.
@@ -31,6 +32,33 @@ class Module extends AbstractModule
     public function getConfig()
     {
         return include OMEKA_PATH . '/modules/' . static::NAMESPACE . '/config/module.config.php';
+    }
+
+    /** 
+     * Get the settings of the current module.
+     *
+     * The settings are the default config of config, settings, site settings,
+     * user settings, block settings, etc.
+     *
+     * The config of the module is not merged with Omeka main config for
+     * services before the end of install. So it is locally cached to avoid to
+     * reload and reprocess the file. It is used to manage the forms too.
+     */
+    protected function getModuleSiteConfig(): ?array
+    {
+        static $localConfig;
+
+        if (!isset($localConfig)) {
+            $space = strtolower(static::NAMESPACE);
+            $localConfig = $this->getConfig();
+            $localConfig = $localConfig[$space] ?? false;
+        }
+
+        if ($localConfig === false) {
+            return null;
+        }
+
+        return $localConfig['site_settings'] ?? [];
     }
 
     public function onBootstrap(MvcEvent $event): void
@@ -88,12 +116,42 @@ class Module extends AbstractModule
             $messenger = $serviceLocator->get('ControllerPluginManager')->get('messenger');
             $messenger->addWarning($message);
         }
+
+        $defaultSettings = $this->getModuleSiteConfig();
+
+        if ($defaultSettings)
+        {
+            $settings = $this->getServiceLocator()->get('Omeka\Settings\Site');
+            $api = $this->getServiceLocator()->get('Omeka\ApiManager');
+            $ids = $api->search('sites', [], ['returnScalar' => 'id'])->getContent();
+            foreach ($ids as $id) {
+                $settings->setTargetId($id);
+                foreach ($defaultSettings as $name => $value) {
+                    $settings->set($name, $value);
+                }
+            }
+        }
     }
 
     public function uninstall(ServiceLocatorInterface $serviceLocator): void
     {
         $this->setServiceLocator($serviceLocator);
         $this->execSqlFromFile(OMEKA_PATH . '/modules/' . static::NAMESPACE . '/data/install/uninstall.sql');
+        
+        $defaultSettings = $this->getModuleSiteConfig();
+
+        if ($defaultSettings)
+        {
+            $settings = $serviceLocator->get('Omeka\Settings\Site');
+            $api = $this->getServiceLocator()->get('Omeka\ApiManager');
+            $ids = $api->search('sites', [], ['returnScalar' => 'id'])->getContent();
+            foreach ($ids as $id) {
+                $settings->setTargetId($id);
+                foreach ($defaultSettings as $name => $value) {
+                    $settings->delete($name);
+                }
+            }
+        }
     }
 
     /**
@@ -238,63 +296,23 @@ class Module extends AbstractModule
         );
     }
 
-    public function handleSiteSettings(Event $event): void
-    {
-        $this->handleAnySettings($event, 'site_settings');
-    }
-
-        /**
-     * Prepare a settings fieldset.
-     *
-     * @param Event $event
-     * @param string $settingsType
-     * @return \Laminas\Form\Fieldset|null
-     */
-    protected function handleAnySettings(Event $event, string $settingsType): ?\Laminas\Form\Fieldset
+    public function handleSiteSettings(Event $event): ?\Laminas\Form\Fieldset
     {
         global $globalNext;
 
         $services = $this->getServiceLocator();
         $formElementManager = $services->get('FormElementManager');
 
-        // TODO Check fieldsets in the config of the module.
-        $settingFieldsets = [
-            // 'config' => static::NAMESPACE . '\Form\ConfigForm',
-            'settings' => static::NAMESPACE . '\Form\SettingsFieldset',
-            'site_settings' => static::NAMESPACE . '\Form\SiteSettingsFieldset',
-            'user_settings' => static::NAMESPACE . '\Form\UserSettingsFieldset',
-        ];
-        if (!isset($settingFieldsets[$settingsType])
-            || !$formElementManager->has($settingFieldsets[$settingsType])
-        ) {
+        $path = static::NAMESPACE . '\Form\SiteSettingsFieldset';
+
+        if (!$formElementManager->has($path))
             return null;
-        }
 
-        $settingsTypes = [
-            // 'config' => 'Omeka\Settings',
-            'settings' => 'Omeka\Settings',
-            'site_settings' => 'Omeka\Settings\Site',
-            'user_settings' => 'Omeka\Settings\User',
-        ];
+        $settings = $services->get('Omeka\Settings\Site');
 
-        $settings = $services->get($settingsTypes[$settingsType]);
+        $site = $services->get('ControllerPluginManager')->get('currentSite');
+        $id = $site()->id();
 
-        switch ($settingsType) {
-            case 'settings':
-                $id = null;
-                break;
-            case 'site_settings':
-                $site = $services->get('ControllerPluginManager')->get('currentSite');
-                $id = $site()->id();
-                break;
-            case 'user_settings':
-                /** @var \Laminas\Router\Http\RouteMatch $routeMatch */
-                $routeMatch = $services->get('Application')->getMvcEvent()->getRouteMatch();
-                $id = $routeMatch->getParam('id');
-                break;
-            default:
-                return null;
-        }
 
         // Simplify config of settings.
         if (empty($globalNext)) {
@@ -304,11 +322,12 @@ class Module extends AbstractModule
         }
 
         // Allow to use a form without an id, for example to create a user.
-        if ($settingsType !== 'settings' && !$id) {
+        if (!$id) {
             $data = [];
-        } else {
-            $this->initDataToPopulate($settings, $settingsType, $id);
-            $data = $this->prepareDataToPopulate($settings, $settingsType);
+        }
+        else {
+            $this->initDataToPopulate($settings, $id);
+            $data = $this->prepareDataToPopulate($settings);
             if ($data === null) {
                 return null;
             }
@@ -320,173 +339,132 @@ class Module extends AbstractModule
          * @var \Laminas\Form\Fieldset $fieldset
          * @var \Laminas\Form\Form $form
          */
-        $fieldset = $formElementManager->get($settingFieldsets[$settingsType]);
+        $fieldset = $formElementManager->get($path);
         $fieldset->setName($space);
         $form = $event->getTarget();
 
-        // In Omeka S v4, settings  are no more managed with fieldsets, but with
-        // "element groups", to de-correlate setting storage and display.
-
-        // Handle form loading.
-        // There are default element groups:
-        // - Settings:
-        //   - general
-        //   - security
-        // - Site settings:
-        //   - general
-        //   - language
-        //   - browse
-        //   - show
-        //   - search
-        // - User settings: fieldsets "user-information"; "user-settings", "change-password"
-        // and "edit-keys" are kept, but groups are added to fieldset "user-settings":
-        //   - columns
-        //   - browse_defaults
-        // There are two possibilities to manage module features in settings:
-        // - make each module a group
-        // - or create new groups for each set of features: resource metadata,
-        // site and pages params, viewers, contributions, public browse, public
-        // resource, jobs to run…
-        // The second way is more readable for admin, but in most of the cases,
-        // features are very different, so there will be a group by module
-        // anyway. Similar to module config, but config is not end-user friendly
-        // (multiple pages).
-        // So for now, let each module choose during upgrade to v4.
-        // Nevertheless, to use group feature smartly, it is recommended to use
-        // a generic list of groups similar to the site settings ones.
-        // Maybe sub-groups may be interesting, but not possible for now.
-        // In practice, there is a new option to set in each fieldset the group
-        // where params are displayed.
-
-        // TODO Order element groups.
-        // TODO Move main params to site settings and user settings.
-
+        // Allow to save data and to manage modules compatible with
+        // Omeka S v3 and v4.
+        //
+        // In Omeka S v4, settings are no more de-nested, next to the new
+        // "element group" feature, where default elements are attached
+        // directly to the main form with a fake fieldset (not managed by
+        // laminas), without using the formCollection() option.
+        // So un-de-nested params are checked, but no more automatically
+        // saved.
+        // And when data is populated, it is not possible to determinate
+        // directly if the form is valid or not as a whole, because the
+        // check is done after the filling inside the controller.
+        // To manage this new feature, either remove fieldsets and attach
+        // elements directly to the form, either save elements via event
+        // "view.browse.before", where the form is available.
+        // This second way is simpler to manage modules compatible with
+        // Omeka S v3 and v4, but it is not possible because there is a
+        // redirect in the controller when post is successfull.
+        // So append all elements and sub-fieldsets on the root of the form.
         $fieldsetElementGroups = $fieldset->getOption('element_groups');
         if ($fieldsetElementGroups) {
             $form->setOption('element_groups', array_merge($form->getOption('element_groups') ?: [], $fieldsetElementGroups));
         }
 
-        // The user view is managed differently.
-        if ($settingsType === 'user_settings') {
-            // This process allows to save first level elements automatically.
-            // @see \Omeka\Controller\Admin\UserController::editAction()
-            $formFieldset = $form->get('user-settings');
+        if (version_compare(\Omeka\Module::VERSION, '4', '<')) {
+            $form->add($fieldset);
+            $form->get($space)->populateValues($data);
+        } else {
             foreach ($fieldset->getFieldsets() as $subFieldset) {
-                $formFieldset->add($subFieldset);
+                $form->add($subFieldset);
             }
             foreach ($fieldset->getElements() as $element) {
-                $formFieldset->add($element);
+                $form->add($element);
             }
-            $formFieldset->populateValues($data);
-            $fieldset = $formFieldset;
-        } else {
-            // Allow to save data and to manage modules compatible with
-            // Omeka S v3 and v4.
-            //
-            // In Omeka S v4, settings are no more de-nested, next to the new
-            // "element group" feature, where default elements are attached
-            // directly to the main form with a fake fieldset (not managed by
-            // laminas), without using the formCollection() option.
-            // So un-de-nested params are checked, but no more automatically
-            // saved.
-            // And when data is populated, it is not possible to determinate
-            // directly if the form is valid or not as a whole, because the
-            // check is done after the filling inside the controller.
-            // To manage this new feature, either remove fieldsets and attach
-            // elements directly to the form, either save elements via event
-            // "view.browse.before", where the form is available.
-            // This second way is simpler to manage modules compatible with
-            // Omeka S v3 and v4, but it is not possible because there is a
-            // redirect in the controller when post is successfull.
-            // So append all elements and sub-fieldsets on the root of the form.
-            if (version_compare(\Omeka\Module::VERSION, '4', '<')) {
-                $form->add($fieldset);
-                $form->get($space)->populateValues($data);
-            } else {
-                foreach ($fieldset->getFieldsets() as $subFieldset) {
-                    $form->add($subFieldset);
-                }
-                foreach ($fieldset->getElements() as $element) {
-                    $form->add($element);
-                }
-                $form->populateValues($data);
-                $fieldset = $form;
-            }
+            $form->populateValues($data);
+            $fieldset = $form;
         }
 
         return $fieldset;
     }
 
-    public function getConfigForm(PhpRenderer $renderer)
+    /**
+     * Initialize each site settings.
+     *
+     * If the default settings were never registered, it means an incomplete
+     * config, install or upgrade, or a new site or a new user. In all cases,
+     * check it and save default value first.
+     *
+     * @param SettingsInterface $settings
+     * @param int $id Site id or user id.
+     * @param bool True if processed.
+     */
+    protected function initDataToPopulate(SettingsInterface $settings, $id = null): bool
     {
-        return $this->getConfigFormAuto($renderer);
-    }
-
-    protected function getConfigFormAuto(PhpRenderer $renderer): ?string
-    {
-        $services = $this->getServiceLocator();
-
-        $formManager = $services->get('FormElementManager');
-        $formClass = static::NAMESPACE . '\Form\ConfigForm';
-        if (!$formManager->has($formClass)) {
-            return null;
-        }
-
-        // Simplify config of modules.
-        $renderer->ckEditor();
-
-        $settings = $services->get('Omeka\Settings');
-
-        $this->initDataToPopulate($settings, 'config');
-        $data = $this->prepareDataToPopulate($settings, 'config');
-        if ($data === null) {
-            return null;
-        }
-
-        $form = $formManager->get($formClass);
-        $form->init();
-        $form->setData($data);
-        $form->prepare();
-        return $renderer->formCollection($form);
-    }
-
-    public function handleConfigForm(AbstractController $controller)
-    {
-        return $this->handleConfigFormAuto($controller);
-    }
-
-    protected function handleConfigFormAuto(AbstractController $controller): bool
-    {
-        $defaultSettings = $this->getModuleConfig('config');
-        if (!$defaultSettings) {
-            return true;
-        }
-
-        $services = $this->getServiceLocator();
-        $formManager = $services->get('FormElementManager');
-        $formClass = static::NAMESPACE . '\Form\ConfigForm';
-        if (!$formManager->has($formClass)) {
-            return true;
-        }
-
-        $params = $controller->getRequest()->getPost();
-
-        $form = $formManager->get($formClass);
-        $form->init();
-        $form->setData($params);
-        if (!$form->isValid()) {
-            $controller->messenger()->addErrors($form->getMessages());
+        // This method is not in the interface, but is set for config, site and
+        // user settings.
+        if (!method_exists($settings, 'getTableName')) {
             return false;
         }
 
-        $params = $form->getData();
+        $defaultSettings = $this->getModuleSiteConfig();
+        if (!$defaultSettings) {
+            return false;
+        }
 
-        $settings = $services->get('Omeka\Settings');
-        $params = array_intersect_key($params, $defaultSettings);
-        foreach ($params as $name => $value) {
+        /** @var \Doctrine\DBAL\Connection $connection */
+        $services = $this->getServiceLocator();
+        $connection = $services->get('Omeka\Connection');
+        if ($id) {
+            if (!method_exists($settings, 'getTargetIdColumnName')) {
+                return false;
+            }
+            $sql = sprintf('SELECT id, value FROM %s WHERE %s = :target_id', $settings->getTableName(), $settings->getTargetIdColumnName());
+            $stmt = $connection->executeQuery($sql, ['target_id' => $id]);
+        } else {
+            $sql = sprintf('SELECT id, value FROM %s', $settings->getTableName());
+            $stmt = $connection->executeQuery($sql);
+        }
+
+        $currentSettings = $stmt->fetchAllKeyValue();
+
+        // Skip settings that are arrays, because the fields "multi-checkbox"
+        // and "multi-select" are removed when no value are selected, so it's
+        // not possible to determine if it's a new setting or an old empty
+        // setting currently. So fill them via upgrade in that case or fill the
+        // values.
+        // TODO Find a way to save empty multi-checkboxes and multi-selects (core fix).
+        $defaultSettings = array_filter($defaultSettings, fn ($v) => !is_array($v));
+        $missingSettings = array_diff_key($defaultSettings, $currentSettings);
+
+        foreach ($missingSettings as $name => $value) {
             $settings->set($name, $value);
         }
+
         return true;
+    }
+
+    /**
+     * Prepare data for a form or a fieldset.
+     *
+     *
+     * @todo Use form methods to populate.
+     *
+     * @param SettingsInterface $settings
+     * @return array|null
+     */
+    protected function prepareDataToPopulate(SettingsInterface $settings): ?array
+    {
+        // TODO Explain this feature.
+        // Use isset() instead of empty() to give the possibility to display a
+        // specific form.
+        $defaultSettings = $this->getModuleSiteConfig();
+        if ($defaultSettings === null) {
+            return null;
+        }
+
+        $data = [];
+        foreach ($defaultSettings as $name => $value) {
+            $val = $settings->get($name, is_array($value) ? [] : null);
+            $data[$name] = $val;
+        }
+        return $data;
     }
 
     public function handleShowSelectionButton(Event $event): void

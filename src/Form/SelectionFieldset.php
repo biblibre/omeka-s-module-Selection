@@ -15,7 +15,7 @@ class SelectionFieldset extends Fieldset
             // TODO Move this to a layout block-template?
             ->add([
                 'name' => 'o:block[__blockIndex__][o:data][disposition]',
-                'type' => CommonElement\Radio::class,
+                'type' => Element\Radio::class,
                 'options' => [
                     'label' => 'Disposition', // @translate
                     'value_options' => [
@@ -29,7 +29,7 @@ class SelectionFieldset extends Fieldset
             ])
             ->add([
                 'name' => 'o:block[__blockIndex__][o:data][individual_select]',
-                'type' => CommonElement\Radio::class,
+                'type' => Element\Radio::class,
                 'options' => [
                     'label' => 'Add individual checkboxes for modules Bulk Export and Contact Us', // @translate
                     'value_options' => [

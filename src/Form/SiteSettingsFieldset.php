@@ -34,7 +34,7 @@ class SiteSettingsFieldset extends Fieldset
             ])
             ->add([
                 'name' => 'selection_selectable_resources',
-                'type' => CommonElement\MultiCheckbox::class,
+                'type' => Element\MultiCheckbox::class,
                 'options' => [
                     'element_group' => 'selection',
                     'label' => 'Limit selections to specific resources', // @translate
@@ -51,7 +51,7 @@ class SiteSettingsFieldset extends Fieldset
             ])
             ->add([
                 'name' => 'selection_placement_button',
-                'type' => CommonElement\MultiCheckbox::class,
+                'type' => Element\MultiCheckbox::class,
                 'options' => [
                     'element_group' => 'selection',
                     'label' => 'Display selection button', // @translate
@@ -74,7 +74,7 @@ class SiteSettingsFieldset extends Fieldset
             ])
             ->add([
                 'name' => 'selection_placement_list',
-                'type' => CommonElement\MultiCheckbox::class,
+                'type' => Element\MultiCheckbox::class,
                 'options' => [
                     'element_group' => 'selection',
                     'label' => 'Display selection list', // @translate
@@ -120,7 +120,7 @@ class SiteSettingsFieldset extends Fieldset
             // TODO Add a third view with a button to let user choose disposition.
             ->add([
                 'name' => 'selection_browse_disposition',
-                'type' => CommonElement\Radio::class,
+                'type' => Element\Radio::class,
                 'options' => [
                     'element_group' => 'selection',
                     'label' => 'Default disposition of page Selection', // @translate
@@ -136,7 +136,7 @@ class SiteSettingsFieldset extends Fieldset
             ])
             ->add([
                 'name' => 'selection_individual_select',
-                'type' => CommonElement\Radio::class,
+                'type' => Element\Radio::class,
                 'options' => [
                     'element_group' => 'selection',
                     'label' => 'Add individual checkboxes for modules Bulk Export and Contact Us', // @translate
