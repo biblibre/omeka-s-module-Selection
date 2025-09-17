@@ -15,7 +15,7 @@ class Selection implements LinkInterface
 
     public function getFormTemplate()
     {
-        return 'common/navigation-link-form/label';
+        return 'common/navigation-link-form/selection';
     }
 
     public function isValid(array $data, ErrorStore $errorStore)
