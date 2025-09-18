@@ -1,11 +1,14 @@
 Selection (module for Omeka S)
 ==============================
 
+This is the Common-independant version of Selection. To see the original version,
+please see [Selection].
+
 > __New versions of this module and support for Omeka S version 3.0 and above
 > are available on [GitLab], which seems to respect users and privacy better
 > than the previous repository.__
 
-[Selection] is a module for [Omeka S] that allows any users to store one or
+Selection is a module for [Omeka S] that allows any users to store one or
 multiple selections and the same for any visitor via local session. Each
 selections can be saved with a label to simplify management and it is possible
 to create a directory-like hierarchy to arrange resources. The selection can be
@@ -18,13 +21,16 @@ The selection is saved in a cookie for anonymous visitor, so anybody can create
 a selection. When the user is authenticated, in particular as a [Guest], the
 selections is saved in the database and available permanently.
 
+Rationale
+---------
+
+This module was created to make the original aforementioned Selection module
+independant to the Common module, so that it can be installed without it.
 
 Installation
 ------------
 
 See general end user documentation for [installing a module].
-
-The module [Common] must be installed first.
 
 The optional module [Guest] can be used, but Selection is available for
 anonymous users too. The module is integrated with module [Bulk Export] too.
@@ -45,7 +51,7 @@ the module to `Selection`.
 
 ```sh
 cd modules
-git clone https://gitlab.com/Daniel-KM/Omeka-S-module-Selection Selection
+git clone https://github.com/biblibre/omeka-s-module-Selection/ Selection
 ```
 
 Then install it like any other Omeka module and follow the config instructions.
@@ -53,6 +59,9 @@ Then install it like any other Omeka module and follow the config instructions.
 
 Usage
 -----
+
+In the site's settings, the administrator must configure the module however they want.
+By default, the module does not add any block to the website. It must be configured to work.
 
 The user can see a selection in the item page. On a click, the item is added to
 the selection, or removed. The full list of resources in the selection is
@@ -217,6 +226,7 @@ TODO
 - [ ] Allow to query multiple ids (owner id, resource id, selection id) in the api.
 - [x] Add a modified date of a selection (from the selection itself, not only from the list of selected resources).
 - [ ] Add a third view with a button to let user choose disposition.
+This is from the original [Selection] module.
 
 
 Warning
@@ -269,6 +279,7 @@ Copyright
 
 * Copyright Biblibre, 2016-2017 (see [Biblibre])
 * Copyright Daniel Berthereau, 2017-2025 (see [Daniel-KM] on GitLab)
+* Copyright Biblibre, 2025 (see [Biblibre])
 
 This module was initially based on the fork of the module [Basket] from BibLibre
 and restructured and improved for various projects, like [Collections de la Maison de Salins],
