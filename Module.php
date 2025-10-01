@@ -305,9 +305,6 @@ class Module extends AbstractModule
 
         $path = static::NAMESPACE . '\Form\SiteSettingsFieldset';
 
-        if (!$formElementManager->has($path))
-            return null;
-
         $settings = $services->get('Omeka\Settings\Site');
 
         $site = $services->get('ControllerPluginManager')->get('currentSite');
@@ -343,43 +340,19 @@ class Module extends AbstractModule
         $fieldset->setName($space);
         $form = $event->getTarget();
 
-        // Allow to save data and to manage modules compatible with
-        // Omeka S v3 and v4.
-        //
-        // In Omeka S v4, settings are no more de-nested, next to the new
-        // "element group" feature, where default elements are attached
-        // directly to the main form with a fake fieldset (not managed by
-        // laminas), without using the formCollection() option.
-        // So un-de-nested params are checked, but no more automatically
-        // saved.
-        // And when data is populated, it is not possible to determinate
-        // directly if the form is valid or not as a whole, because the
-        // check is done after the filling inside the controller.
-        // To manage this new feature, either remove fieldsets and attach
-        // elements directly to the form, either save elements via event
-        // "view.browse.before", where the form is available.
-        // This second way is simpler to manage modules compatible with
-        // Omeka S v3 and v4, but it is not possible because there is a
-        // redirect in the controller when post is successfull.
-        // So append all elements and sub-fieldsets on the root of the form.
         $fieldsetElementGroups = $fieldset->getOption('element_groups');
         if ($fieldsetElementGroups) {
             $form->setOption('element_groups', array_merge($form->getOption('element_groups') ?: [], $fieldsetElementGroups));
         }
 
-        if (version_compare(\Omeka\Module::VERSION, '4', '<')) {
-            $form->add($fieldset);
-            $form->get($space)->populateValues($data);
-        } else {
-            foreach ($fieldset->getFieldsets() as $subFieldset) {
-                $form->add($subFieldset);
-            }
-            foreach ($fieldset->getElements() as $element) {
-                $form->add($element);
-            }
-            $form->populateValues($data);
-            $fieldset = $form;
+        foreach ($fieldset->getFieldsets() as $subFieldset) {
+            $form->add($subFieldset);
         }
+        foreach ($fieldset->getElements() as $element) {
+            $form->add($element);
+        }
+        $form->populateValues($data);
+        $fieldset = $form;
 
         return $fieldset;
     }
