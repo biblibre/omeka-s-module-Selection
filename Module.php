@@ -31,14 +31,11 @@ class Module extends AbstractModule
      */
     public function getConfig()
     {
-        return include OMEKA_PATH . '/modules/' . static::NAMESPACE . '/config/module.config.php';
+        return include OMEKA_PATH . '/modules/Selection/config/module.config.php';
     }
 
     /** 
-     * Get the settings of the current module.
-     *
-     * The settings are the default config of config, settings, site settings,
-     * user settings, block settings, etc.
+     * Get the site settings of the current module.
      *
      * The config of the module is not merged with Omeka main config for
      * services before the end of install. So it is locally cached to avoid to
@@ -49,9 +46,8 @@ class Module extends AbstractModule
         static $localConfig;
 
         if (!isset($localConfig)) {
-            $space = strtolower(static::NAMESPACE);
             $localConfig = $this->getConfig();
-            $localConfig = $localConfig[$space] ?? false;
+            $localConfig = $localConfig['selection'] ?? false;
         }
 
         if ($localConfig === false) {
@@ -96,7 +92,7 @@ class Module extends AbstractModule
         $translator = $serviceLocator->get('ControllerPluginManager')->get('translate');
         $this->setServiceLocator($serviceLocator);
 
-        $sqlFile = OMEKA_PATH . '/modules/' . static::NAMESPACE . '/data/install/schema.sql';
+        $sqlFile = OMEKA_PATH . '/modules/Selection/data/install/schema.sql';
         if (!$this->checkNewTablesFromFile($sqlFile)) {
             $message = new Message(
                 $translator->translate('This module cannot install its tables, because they exist already. Try to remove them first.') // @translate
@@ -106,19 +102,9 @@ class Module extends AbstractModule
 
         $this->execSqlFromFile($sqlFile);
 
-        /** @var \Omeka\Module\Manager $moduleManager */
-        $moduleManager = $serviceLocator->get('Omeka\ModuleManager');
-        $module = $moduleManager->getModule('Basket');
-        if ($module) {
-            $message = new Message(
-                'The module Basket is present. Upgrade from it was removed since version 3.4.7. Install the previous version if you want to upgrade it.', // @translate
-            );
-            $messenger = $serviceLocator->get('ControllerPluginManager')->get('messenger');
-            $messenger->addWarning($message);
-        }
-
         $defaultSettings = $this->getModuleSiteConfig();
 
+        // Adds settings needed by module
         if ($defaultSettings)
         {
             $settings = $this->getServiceLocator()->get('Omeka\Settings\Site');
@@ -136,10 +122,11 @@ class Module extends AbstractModule
     public function uninstall(ServiceLocatorInterface $serviceLocator): void
     {
         $this->setServiceLocator($serviceLocator);
-        $this->execSqlFromFile(OMEKA_PATH . '/modules/' . static::NAMESPACE . '/data/install/uninstall.sql');
+        $this->execSqlFromFile(OMEKA_PATH . '/modules/Selection/data/install/uninstall.sql');
         
         $defaultSettings = $this->getModuleSiteConfig();
 
+        // Delete settings added by module, optional
         if ($defaultSettings)
         {
             $settings = $serviceLocator->get('Omeka\Settings\Site');
@@ -303,12 +290,9 @@ class Module extends AbstractModule
         $services = $this->getServiceLocator();
         $formElementManager = $services->get('FormElementManager');
 
-        $path = static::NAMESPACE . '\Form\SiteSettingsFieldset';
-
         $settings = $services->get('Omeka\Settings\Site');
 
         $site = $services->get('ControllerPluginManager')->get('currentSite');
-        $id = $site()->id();
 
 
         // Simplify config of settings.
@@ -318,26 +302,19 @@ class Module extends AbstractModule
             $ckEditorHelper();
         }
 
-        // Allow to use a form without an id, for example to create a user.
-        if (!$id) {
-            $data = [];
-        }
-        else {
-            $this->initDataToPopulate($settings, $id);
-            $data = $this->prepareDataToPopulate($settings);
-            if ($data === null) {
-                return null;
-            }
+        $this->initDataToPopulate($settings, $site()->id());
+        $data = $this->prepareDataToPopulate($settings);
+        if ($data === null) {
+            return null;
         }
 
-        $space = strtolower(static::NAMESPACE);
 
         /**
          * @var \Laminas\Form\Fieldset $fieldset
          * @var \Laminas\Form\Form $form
          */
-        $fieldset = $formElementManager->get($path);
-        $fieldset->setName($space);
+        $fieldset = $formElementManager->get('Selection\Form\SiteSettingsFieldset');
+        $fieldset->setName('selection');
         $form = $event->getTarget();
 
         $fieldsetElementGroups = $fieldset->getOption('element_groups');
