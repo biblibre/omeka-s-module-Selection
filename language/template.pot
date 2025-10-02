@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-17 09:29+0200\n"
+"POT-Creation-Date: 2025-10-02 10:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,18 +17,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: data/scripts/upgrade.php:33
-#, php-format
-msgid "The module %1$s should be upgraded to version %2$s or later."
-msgstr ""
-
-#: Module.php:74
+#: Module.php:98
 msgid ""
 "This module cannot install its tables, because they exist already. Try to "
 "remove them first."
 msgstr ""
 
-#: Module.php:567 src/Controller/Site/TraitDbController.php:619
+#: Module.php:505 src/Controller/Site/TraitDbController.php:619
 #: src/Controller/Site/TraitSessionController.php:433
 #: src/View/Helper/SelectionContainer.php:50
 #: src/View/Helper/SelectionContainer.php:85
@@ -197,105 +192,9 @@ msgstr ""
 msgid "Move resources"
 msgstr ""
 
-#: Module.php:86
-msgid ""
-"The module Basket is present. Upgrade from it was removed since version "
-"3.4.7. Install the previous version if you want to upgrade it."
-msgstr ""
-
-#: Module.php:147
+#: Module.php:192
 #, php-format
 msgid "The module removed tables \"%s\" from a previous broken install."
-msgstr ""
-
-#: data/scripts/upgrade.php:136
-msgid ""
-"Helpers and templates were renamed. Old ones will be removed in a future "
-"version."
-msgstr ""
-
-#: data/scripts/upgrade.php:191
-msgid "It is now possible to organize selected resources in a structured way."
-msgstr ""
-
-#: data/scripts/upgrade.php:195
-msgid "The structure is not available for anonymous visitors yet."
-msgstr ""
-
-#: data/scripts/upgrade.php:199
-msgid ""
-"Some url routes have been updated to use query arguments. Check your theme "
-"if needed."
-msgstr ""
-
-#: data/scripts/upgrade.php:236
-msgid ""
-"The option \"selection_visitor_allow\" was renamed "
-"\"selection_disable_anonymous\" and \"selection_open\" as "
-"\"selection_resource_show_open\". Update your theme if you customized it."
-msgstr ""
-
-#: data/scripts/upgrade.php:241
-msgid "The views were restructured, so check your theme if you customized it."
-msgstr ""
-
-#: data/scripts/upgrade.php:246
-msgid ""
-"A new option in site settings and in block settings allows to display the "
-"selection flat, by default, or hierarchically."
-msgstr ""
-
-#: data/scripts/upgrade.php:251
-msgid ""
-"A new option in site settings allows to define selectable resources (items, "
-"medias, item sets)."
-msgstr ""
-
-#: data/scripts/upgrade.php:256
-msgid ""
-"The resource block \"Selection\" was split into a block \"Selection\" and a "
-"block \"Selection list\"."
-msgstr ""
-
-#: data/scripts/upgrade.php:261
-msgid ""
-"Modules {link_1}Bulk Export{link_end} and {link_2}Contact Us{link_end} are "
-"fully integrated in the selection page."
-msgstr ""
-
-#: data/scripts/upgrade.php:344
-msgid ""
-"The setting \"heading\" was removed from block Selection. New blocks "
-"\"Heading\" or \"Html\" were prepended to all blocks that had a filled "
-"heading. You may check pages for styles: {json}"
-msgstr ""
-
-#: data/scripts/upgrade.php:354
-msgid ""
-"The setting \"template\" was moved to the new block layout settings "
-"available since Omeka S v4.1. You may check pages for styles: {json}"
-msgstr ""
-
-#: data/scripts/upgrade.php:361
-msgid ""
-"The template files for the block Selection should be moved from \"view/"
-"common/block-layout\" to \"view/common/block-template\" in your themes. You "
-"may check your themes for pages: {json}"
-msgstr ""
-
-#: data/scripts/upgrade.php:396
-msgid ""
-"A new option is added to display selection button and list before, after or "
-"via resource blocks. See site settings."
-msgstr ""
-
-#: data/scripts/upgrade.php:426
-msgid ""
-"The view helpers \"selectionButtonToggle\", \"showSelectionLink\", "
-"\"updateSelectionLink\" , and \"containerSelection\" were renamed "
-"\"selectionButton\", \"selectionList\", \"selectionLinkBrowse\", and "
-"\"selectionContainer\". You should update your theme. Matching templates: "
-"{json}"
 msgstr ""
 
 #: src/Api/Adapter/SelectionAdapter.php:183
