@@ -294,7 +294,6 @@ class Module extends AbstractModule
 
         $site = $services->get('ControllerPluginManager')->get('currentSite');
 
-
         // Simplify config of settings.
         if (empty($globalNext)) {
             $globalNext = true;
@@ -302,12 +301,30 @@ class Module extends AbstractModule
             $ckEditorHelper();
         }
 
-        $this->initDataToPopulate($settings, $site()->id());
-        $data = $this->prepareDataToPopulate($settings);
-        if ($data === null) {
-            return null;
+        $currentSettings = [];
+        $defaultSettings = $this->getModuleSiteConfig();
+
+        foreach ($defaultSettings as $name => $value) {
+            $val = $settings->get($name, is_array($value) ? [] : null);
+            if (!(is_array($val) && $val == []) && $val != null)
+            {
+                $currentSettings[$name] = $val;
+            }
         }
 
+        // Skip settings that are arrays, because the fields "multi-checkbox"
+        // and "multi-select" are removed when no value are selected, so it's
+        // not possible to determine if it's a new setting or an old empty
+        // setting currently. So fill them via upgrade in that case or fill the
+        // values.
+        // TODO Find a way to save empty multi-checkboxes and multi-selects (core fix).
+        $defaultSettings = array_filter($defaultSettings, fn ($v) => !is_array($v));
+        $missingSettings = array_diff_key($defaultSettings, $currentSettings);
+
+        foreach ($missingSettings as $name => $value) {
+            $settings->set($name, $value);
+            $currentSettings[$name] = $value;
+        }
 
         /**
          * @var \Laminas\Form\Fieldset $fieldset
@@ -328,93 +345,10 @@ class Module extends AbstractModule
         foreach ($fieldset->getElements() as $element) {
             $form->add($element);
         }
-        $form->populateValues($data);
+        $form->populateValues($currentSettings);
         $fieldset = $form;
 
         return $fieldset;
-    }
-
-    /**
-     * Initialize each site settings.
-     *
-     * If the default settings were never registered, it means an incomplete
-     * config, install or upgrade, or a new site or a new user. In all cases,
-     * check it and save default value first.
-     *
-     * @param SettingsInterface $settings
-     * @param int $id Site id or user id.
-     * @param bool True if processed.
-     */
-    protected function initDataToPopulate(SettingsInterface $settings, $id = null): bool
-    {
-        // This method is not in the interface, but is set for config, site and
-        // user settings.
-        if (!method_exists($settings, 'getTableName')) {
-            return false;
-        }
-
-        $defaultSettings = $this->getModuleSiteConfig();
-        if (!$defaultSettings) {
-            return false;
-        }
-
-        /** @var \Doctrine\DBAL\Connection $connection */
-        $services = $this->getServiceLocator();
-        $connection = $services->get('Omeka\Connection');
-        if ($id) {
-            if (!method_exists($settings, 'getTargetIdColumnName')) {
-                return false;
-            }
-            $sql = sprintf('SELECT id, value FROM %s WHERE %s = :target_id', $settings->getTableName(), $settings->getTargetIdColumnName());
-            $stmt = $connection->executeQuery($sql, ['target_id' => $id]);
-        } else {
-            $sql = sprintf('SELECT id, value FROM %s', $settings->getTableName());
-            $stmt = $connection->executeQuery($sql);
-        }
-
-        $currentSettings = $stmt->fetchAllKeyValue();
-
-        // Skip settings that are arrays, because the fields "multi-checkbox"
-        // and "multi-select" are removed when no value are selected, so it's
-        // not possible to determine if it's a new setting or an old empty
-        // setting currently. So fill them via upgrade in that case or fill the
-        // values.
-        // TODO Find a way to save empty multi-checkboxes and multi-selects (core fix).
-        $defaultSettings = array_filter($defaultSettings, fn ($v) => !is_array($v));
-        $missingSettings = array_diff_key($defaultSettings, $currentSettings);
-
-        foreach ($missingSettings as $name => $value) {
-            $settings->set($name, $value);
-        }
-
-        return true;
-    }
-
-    /**
-     * Prepare data for a form or a fieldset.
-     *
-     *
-     * @todo Use form methods to populate.
-     *
-     * @param SettingsInterface $settings
-     * @return array|null
-     */
-    protected function prepareDataToPopulate(SettingsInterface $settings): ?array
-    {
-        // TODO Explain this feature.
-        // Use isset() instead of empty() to give the possibility to display a
-        // specific form.
-        $defaultSettings = $this->getModuleSiteConfig();
-        if ($defaultSettings === null) {
-            return null;
-        }
-
-        $data = [];
-        foreach ($defaultSettings as $name => $value) {
-            $val = $settings->get($name, is_array($value) ? [] : null);
-            $data[$name] = $val;
-        }
-        return $data;
     }
 
     public function handleShowSelectionButton(Event $event): void
