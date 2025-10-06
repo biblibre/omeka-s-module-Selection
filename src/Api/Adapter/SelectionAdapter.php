@@ -220,7 +220,7 @@ class SelectionAdapter extends AbstractEntityAdapter
 
         $oResources = $request->getValue('o:resources', null);
         $resources = $request->getValue('resources', null);
-        if (is_null($oResources) && is_null($resources)) {
+        if ($oResources === null && $resources === null) {
             return;
         }
 
@@ -235,7 +235,7 @@ class SelectionAdapter extends AbstractEntityAdapter
         foreach ($resources as $key => $resource) {
             if (is_numeric($key)) {
                 if (is_numeric($resource)) {
-                    if (is_null($resources['replace'])) {
+                    if ($resources['replace'] === null) {
                         $resources['replace'] = [(int) $resource];
                     } else {
                         $resources['replace'][] = (int) $resource;
@@ -247,7 +247,7 @@ class SelectionAdapter extends AbstractEntityAdapter
         $resources = array_intersect_key($resources, $default);
 
         if (is_array($oResources)) {
-            if (is_null($resources['replace'])) {
+            if ($resources['replace'] === null) {
                 $resources['replace'] = [];
             }
             foreach ($oResources as $resource) {
@@ -268,7 +268,7 @@ class SelectionAdapter extends AbstractEntityAdapter
         // Convert each sub-list into numeric id.
         foreach ($resources as &$list) {
             if (!is_array($list)) {
-                if (!is_null($list)) {
+                if ($list !== null) {
                     $list = [];
                 }
                 continue;

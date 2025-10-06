@@ -195,7 +195,7 @@ class SelectionResourceAdapter extends AbstractEntityAdapter
         ) {
             $selection = $request->getValue('o:selection');
             $selectionEntity = null;
-            if (is_null($selection)) {
+            if ($selection === null) {
                 // Nothing to do. No update.
             } elseif (is_array($selection)) {
                 if (!empty($selection['o:id']) && is_numeric($selection['o:id'])) {
@@ -303,7 +303,7 @@ class SelectionResourceAdapter extends AbstractEntityAdapter
         }
 
         foreach ($criteria as $field => $value) {
-            if (is_null($value)) {
+            if ($value === null) {
                 $qb->andWhere($expr->isNull("e.$field"));
             } else {
                 $qb->andWhere($expr->eq(

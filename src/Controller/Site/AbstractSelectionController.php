@@ -747,7 +747,7 @@ abstract class AbstractSelectionController extends AbstractActionController
         static $bodyTerm;
         static $url;
 
-        if (is_null($siteSlug)) {
+        if ($siteSlug === null) {
             $viewHelpers = $this->viewHelpers();
             $siteSlug = $this->currentSite()->slug();
             $lang = $viewHelpers->get('lang')();
