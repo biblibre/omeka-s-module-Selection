@@ -103,6 +103,26 @@ class Module extends AbstractModule
                 [$this, 'handleApiSearchQuery']
             );
         }
+        $controllers = [
+            'Omeka\Controller\Admin\ItemSet',
+            'Omeka\Controller\Admin\Item',
+            'Omeka\Controller\Admin\Media',
+            'Omeka\Controller\Site\ItemSet',
+            'Omeka\Controller\Site\Item',
+            'Omeka\Controller\Site\Media',
+        ];
+        foreach ($controllers as $controller) {
+            $sharedEventManager->attach(
+                $controller,
+                'view.advanced_search',
+                [$this, 'handleViewAdvancedSearch']
+            );
+            $sharedEventManager->attach(
+                $controller,
+                'view.search.filters',
+                [$this, 'handleSearchFilters']
+            );
+        }
 
         // Display block in resources pages for old themes.
         // The site is not set yet, so checks are done in method.
@@ -262,6 +282,59 @@ class Module extends AbstractModule
             )
             ->andWhere($expr->like('selection.structure', ':' . $selectionPathAlias))
             ->setParameter($selectionPathAlias, $preparedPath, ParameterType::STRING);
+    }
+
+    public function handleViewAdvancedSearch(Event $event): void
+    {
+        $partials = $event->getParam('partials');
+        $partials[] = 'common/advanced-search/selections';
+        $event->setParam('partials', $partials);
+    }
+
+    /**
+     * Complete the list of search filters for the browse page.
+     */
+    public function handleSearchFilters(Event $event): void
+    {
+        $filters = $event->getParam('filters');
+        $query = $event->getParam('query', []);
+
+        if (isset($query['selection_id_path']) && $query['selection_id_path']) {
+            [$selectionId, $selectionPath] = explode(':', $query['selection_id_path'], 2) + [1 => ''];
+            $selectionIds = is_numeric($selectionId) ? [(int) $selectionId] : '-';
+            $selectionPaths = [$selectionPath];
+        } else {
+            if (isset($query['selection_id']) && $query['selection_id'] !== '' && $query['selection_id'] !== []) {
+                $selectionIds = is_array($query['selection_id'])
+                    ? array_values(array_unique(array_map('intval', $query['selection_id'])))
+                    : (is_numeric($query['selection_id']) ? [(int) $query['selection_id']] : '-');
+            }
+            if (isset($query['selection_path']) && $query['selection_path'] !== '' && $query['selection_path'] !== []) {
+                $selectionPaths = is_array($query['selection_path'])
+                    ? array_values(array_unique(array_map('strval', $query['selection_path']))) : [
+                    (string) $query['selection_path']
+                ];
+            }
+        }
+
+        if (empty($selectionIds)) {
+            return;
+        }
+
+        $services = $this->getServiceLocator();
+        $translator = $services->get('MvcTranslator');
+        $filterLabel = $translator->translate('Selection'); // @translate
+
+        if ($selectionIds === '-') {
+            $filters[$filterLabel][] = $translator->translate('Invalid selection'); // @translate
+            $event->setParam('filters', $filters);
+        } elseif ($selectionIds === [0]) {
+            $filters[$filterLabel][] = $translator->translate('No selection'); // @translate
+            $event->setParam('filters', $filters);
+        } elseif ($selectionIds) {
+            $filters[$filterLabel] = $selectionIds;
+            $event->setParam('filters', $filters);
+        }
     }
 
     public function handleShowSelectionButton(Event $event): void

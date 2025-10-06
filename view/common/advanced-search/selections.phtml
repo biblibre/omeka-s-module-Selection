@@ -1,0 +1,45 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var array $query
+ */
+
+$plugins = $this->getHelperPluginManager();
+$translate = $plugins->get('translate');
+$resourceSelect = $plugins->get('resourceSelect');
+
+$ids = $query['selection_id'] ?? [];
+$ids = is_array($ids) ? array_filter($ids) : [$ids];
+?>
+
+<div id="selections" class="field" role="group" aria-labelledby="by-selection-label">
+    <div class="field-meta">
+        <span id="by-selection-label" class="label"><?= $translate('Selection') ?></span>
+    </div>
+    <div class="inputs">
+        <div class="value">
+            <?= $resourceSelect([
+                'name' => 'selection_id',
+                'options' => [
+                    'label' => 'Selection', // @translate
+                    'resource_value_options' => [
+                        'resource' => 'selections',
+                        'option_text_callback' => fn (\Selection\Api\Representation\SelectionRepresentation $selection) => trim(sprintf('%s (#%d)', $selection->id(), $selection->id()), ': '),
+                    ],
+                    'prepend_value_options' => [
+                        '0' => '[none]', // @translate
+                    ],
+                    'empty_option' => '',
+                ],
+                'attributes' => [
+                    'id' => 'selection_id',
+                    'value' => $ids,
+                    'multiple' => 'multiple',
+                    'class' => 'resource-select chosen-select',
+                    'aria-labelledby' => 'by-selection-label',
+                    'data-placeholder' => 'Select selections…', // @translate
+                ],
+            ]) ?>
+        </div>
+    </div>
+</div>
