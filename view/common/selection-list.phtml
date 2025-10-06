@@ -35,7 +35,7 @@ $openDetails = (bool) $siteSetting('selection_resource_show_open_list', true);
 <details class="selection-list selection-details" <?= $openDetails ? 'open="open"' : '' ?>>
     <summary class="selection-summary" aria-expanded="<?= $openDetails ? 'true' : 'false' ?>"><?= $translate('Selected resources') ?></summary>
 
-    <ul class="selection-resources" data-text-delete="<?= $deleteText ?>">
+    <ul class="resource-list selection-resources" data-text-delete="<?= $deleteText ?>">
         <?php foreach ($currentRecords as $resourceId => $record): ?>
         <li data-id="<?= $resourceId ?>">
             <?php if ($allowIndividualSelect): ?>
