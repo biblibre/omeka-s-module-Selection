@@ -39,6 +39,7 @@ class SelectionLinkBrowse extends AbstractHelper
         unset($options['template']);
 
         $vars = [
+            'user' => $user,
             'urlBrowse' => $urlBrowse,
             'isGuestActive' => $this->isGuestActive,
         ] + $options;

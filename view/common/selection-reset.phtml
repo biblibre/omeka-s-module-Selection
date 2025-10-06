@@ -10,6 +10,9 @@
  */
 
 $plugins = $this->getHelperPluginManager();
+
+if (!$user && $plugins->get('siteSetting')('selection_disable_anonymous')) return;
+
 $escape = $plugins->get('escapeHtml');
 $translate = $plugins->get('translate');
 $escapeAttr = $plugins->get('escapeHtmlAttr');

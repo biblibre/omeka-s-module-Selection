@@ -1,6 +1,7 @@
 <?php
 /**
  * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Entity\User $user
  * @var string $urlBrowse
  * @var bool $isGuestActive
  *
@@ -9,6 +10,9 @@
  */
 
 $plugins = $this->getHelperPluginManager();
+
+if (!$user && $plugins->get('siteSetting')('selection_disable_anonymous')) return;
+
 $escape = $plugins->get('escapeHtml');
 $translate = $plugins->get('translate');
 $siteSetting = $plugins->get('siteSetting');

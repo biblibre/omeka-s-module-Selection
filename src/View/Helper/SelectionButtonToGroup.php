@@ -34,10 +34,6 @@ class SelectionButtonToGroup extends AbstractHelper
         $siteSetting = $plugins->get('siteSetting');
 
         $user = $view->identity();
-        $disableAnonymous = (bool) $siteSetting('selection_disable_anonymous');
-        if ($disableAnonymous && !$user) {
-            return '';
-        }
 
         if ($first) {
             $assetUrl = $plugins->get('assetUrl');

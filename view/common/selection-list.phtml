@@ -17,6 +17,9 @@
 // unlike the full hierarchical list of selection-browse.
 
 $plugins = $this->getHelperPluginManager();
+
+if (!$user && $plugins->get('siteSetting')('selection_disable_anonymous')) return;
+
 $translate = $plugins->get('translate');
 $siteSetting = $plugins->get('siteSetting');
 $escapeAttr = $plugins->get('escapeHtmlAttr');

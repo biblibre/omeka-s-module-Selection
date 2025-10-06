@@ -49,13 +49,8 @@ class Selection extends AbstractBlockLayout implements TemplateableBlockLayoutIn
     public function render(PhpRenderer $view, SitePageBlockRepresentation $block, $templateViewScript = self::PARTIAL_NAME)
     {
         $plugins = $view->getHelperPluginManager();
-        $siteSetting = $plugins->get('siteSetting');
 
         $user = $view->identity();
-        $disableAnonymous = (bool) $siteSetting('selection_disable_anonymous');
-        if ($disableAnonymous && !$user) {
-            return '';
-        }
 
         // TODO Query in session is used only for pagination, not implemented yet.
         $query = $view->params()->fromQuery();

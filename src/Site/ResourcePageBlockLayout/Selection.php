@@ -25,13 +25,8 @@ class Selection implements ResourcePageBlockLayoutInterface
     public function render(PhpRenderer $view, AbstractResourceEntityRepresentation $resource) : string
     {
         $plugins = $view->getHelperPluginManager();
-        $siteSetting = $plugins->get('siteSetting');
 
         $user = $view->identity();
-        $disableAnonymous = (bool) $siteSetting('selection_disable_anonymous');
-        if ($disableAnonymous && !$user) {
-            return '';
-        }
 
         // TODO Query in session is used only for pagination, not implemented yet.
         $query = $view->params()->fromQuery();

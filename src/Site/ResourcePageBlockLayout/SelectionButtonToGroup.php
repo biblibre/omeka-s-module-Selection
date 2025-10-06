@@ -24,15 +24,6 @@ class SelectionButtonToGroup implements ResourcePageBlockLayoutInterface
 
     public function render(PhpRenderer $view, AbstractResourceEntityRepresentation $resource) : string
     {
-        $plugins = $view->getHelperPluginManager();
-        $siteSetting = $plugins->get('siteSetting');
-
-        $user = $view->identity();
-        $disableAnonymous = (bool) $siteSetting('selection_disable_anonymous');
-        if ($disableAnonymous && !$user) {
-            return '';
-        }
-
         return $view->partial('common/resource-page-block-layout/selection-button-to-group', [
             'site' => $view->layout()->site,
             'resource' => $resource,
