@@ -373,7 +373,72 @@
             const resourceId = selector.data('resource-id');
             const url = selector.data('url');
 
-            if (!selectedGroups || !selectedGroups.length) {
+            const selectedOption = select.find('option:selected');
+            const action = selectedOption.data('action');
+
+            if (action === 'add-group') {
+                // Open dialog to create a new group.
+                const addGroupUrl = url.replace(/\/update/, '/add-group');
+                CommonDialog.dialogPrompt({ message: Omeka.jsTranslate('Enter new group name:') })
+                    .then(function(groupName) {
+                        if (groupName && groupName.trim().length) {
+                            // TODO Use CommonDialog.jSend.
+                            $.ajax({
+                                url: addGroupUrl,
+                                method: 'GET',
+                                // TODO No parent group for now: create at root for flat hierarchy.
+                                data: { name: groupName.trim(), group: '/' },
+                                beforeSend: function() { CommonDialog.spinnerEnable(select[0]); },
+                            })
+                            .done(function(data) {
+                                if (data.status === 'success' && data.data && data.data.group) {
+                                    const groupLabel = data.data.group.id;
+                                    const newOption = $('<option>')
+                                        .val('/' + groupLabel)
+                                        .text(groupLabel)
+                                        .prop('selected', true);
+                                    // Insert before the first selection-action option.
+                                    select.find('option.selection-action').first().before(newOption);
+                                    select.prop('disabled', false);
+                                    select.trigger('chosen:updated');
+                                }
+                                $(document).trigger('o:selection-updated', data);
+                            })
+                            .fail(function() {
+                                select.find('option[value="' + resourceId + '"]').remove();
+                                select.trigger('chosen:updated');
+                                CommonDialog.jSendFail();
+                            })
+                            .always(function () {
+                                CommonDialog.spinnerDisable(select[0]);
+                            });
+                        }
+                    });
+                return;
+            } else if (action === 'delete' || !selectedGroups || !selectedGroups.length) {
+                const removeFromGroupUrl = url.replace(/\/update/, '/delete');
+                // Confirm and remove from group.
+                CommonDialog.dialogConfirm({ message: Omeka.jsTranslate('Remove from group?') })
+                    .then(function(confirmed) {
+                        if (confirmed) {
+                            $.ajax({
+                                url: removeFromGroupUrl,
+                                method: 'POST',
+                                data: { id: resourceId },
+                               beforeSend: function() { CommonDialog.spinnerEnable(select[0]); },
+                            })
+                            .done(function() {
+                                select.find('option:selected').prop('selected', false);
+                                select.prop('disabled', false);
+                                select.trigger('chosen:updated');
+                                $(document).trigger('o:selection-updated');
+                            })
+                            .fail(CommonDialog.jSendFail)
+                            .always(function () {
+                                CommonDialog.spinnerDisable(select[0]);
+                            });
+                        }
+                    });
                 return;
             }
 

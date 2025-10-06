@@ -314,7 +314,9 @@ abstract class AbstractSelectionController extends AbstractActionController
             );
         }
 
-        $fullPath = "$path/$groupName";
+        $parentPath = dirname($path) === '/' ? '' : dirname($path);
+
+        $fullPath = "$parentPath/$groupName";
         if (isset($structure[$fullPath])) {
             return $this->jSend(JSend::FAIL, null,
                 $this->translate('The group exists already.') // @translate

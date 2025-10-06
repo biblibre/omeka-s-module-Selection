@@ -51,6 +51,8 @@ $placeholder = $escapeAttr($placeholder ?? $translate('Choose a selection'));
             <?php foreach ($selections ? $selections['structure'] ?? [] : [] as $groupFullPath => $selection): ?>
             <option value="<?= $groupFullPath ?>"<?= in_array($resourceId, $selection['resources'] ?? []) ? ' selected="selected"' : '' ?>><?= strtr($disposition === 'hierarchy' || $groupFullPath === '/' ? $groupFullPath : trim($groupFullPath, '/'), ['/' => ' / ']) ?></option>
             <?php endforeach ?>
+            <option class="selection-action" data-action="add-group" value=""><?= $translate('Create a new selection') ?></option>
+            <option class="selection-action" data-action="delete" value=""><?= $translate('Remove from selection') ?></option>
         </select>
     </div>
 </details>
