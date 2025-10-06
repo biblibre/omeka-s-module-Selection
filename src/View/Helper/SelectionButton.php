@@ -36,8 +36,12 @@ class SelectionButton extends AbstractHelper
 
         if ($first) {
             $assetUrl = $plugins->get('assetUrl');
-            $view->headLink()->appendStylesheet($assetUrl('css/selection.css', 'Selection'));
-            $view->headScript()->appendFile($assetUrl('js/selection.js', 'Selection'), 'text/javascript', ['defer' => 'defer', 'async' => 'async']);
+            $view->headLink()
+                ->appendStylesheet($assetUrl('css/common-dialog.css', 'Common'))
+                ->appendStylesheet($assetUrl('css/selection.css', 'Selection'));
+            $view->headScript()
+                ->appendFile($assetUrl('js/common-dialog.js', 'Common'), 'text/javascript', ['defer' => 'defer'])
+                ->appendFile($assetUrl('js/selection.js', 'Selection'), 'text/javascript', ['defer' => 'defer']);
             $first = false;
         }
 

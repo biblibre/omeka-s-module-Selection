@@ -26,8 +26,10 @@ $selectables = $siteSetting('selection_selectable_resources', ['items']);
 $isMediaSelectable = in_array('media', $selectables);
 
 $this->headLink()
+    ->appendStylesheet($this->assetUrl('css/common-dialog.css', 'Common'))
     ->appendStylesheet($this->assetUrl('css/selection.css', 'Selection'));
 $this->headScript()
+    ->appendFile($this->assetUrl('js/common-dialog.js', 'Common'), 'text/javascript', ['defer' => 'defer'])
     ->appendFile($this->assetUrl('js/selection.js', 'Selection'), 'text/javascript', ['defer' => 'defer']);
 
 $medias = $resource->getControllerName() === 'item' ? $resource->media() : [];
