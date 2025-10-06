@@ -430,3 +430,76 @@ if (version_compare($oldVersion, '3.4.11', '<')) {
         $messenger->addError($message);
     }
 }
+
+if (version_compare($oldVersion, '3.4.15', '<')) {
+    // See version 3.4.7.
+    $manageModuleAndResources = $this->getManageModuleAndResources();
+    $strings = [
+        'selection.js',
+    ];
+    $globs = [
+        'themes/*/view/common/*',
+        'themes/*/view/common/*/*',
+        'themes/*/view/guest/site/guest/*',
+        'themes/*/view/guest/site/guest/*/*',
+        'themes/*/view/selection/site/selection/*',
+    ];
+    $result = [];
+    foreach ($globs as $glob) {
+        $res = $manageModuleAndResources->checkStringsInFiles($strings, $glob) ?? [];
+        $result = array_merge($result, $res);
+    }
+    if ($result) {
+        $strings = [
+            'common-dialog.js',
+        ];
+        $globs = [
+            'themes/*/view/layout/*',
+            'themes/*/view/common/*',
+            'themes/*/view/common/*/*',
+            'themes/*/view/guest/site/guest/*',
+            'themes/*/view/guest/site/guest/*/*',
+            'themes/*/view/selection/site/selection/*',
+        ];
+        $resultWith = [];
+        foreach ($globs as $glob) {
+            $res = $manageModuleAndResources->checkStringsInFiles($strings, $glob) ?? [];
+            $resultWith = array_merge($resultWith, $res);
+        }
+        $resultDiff = array_diff($result, $resultWith);
+        if ($resultDiff) {
+            $message = new PsrMessage(
+                'The js "selection.js" was simplified to use "common-dialog.js", that should be added to the templates. You should check your theme. Matching templates: {json}', // @translate
+                ['json' => json_encode($resultDiff, 448)]
+            );
+            $logger->warn($message->getMessage(), $message->getContext());
+            $messenger->addWarning($message);
+        } else {
+            $message = new PsrMessage(
+                'The js "selection.js" was simplified to use "common-dialog.js", that should be added to the templates. You should check your theme.' // @translate
+            );
+            $logger->err($message->getMessage(), $message->getContext());
+            $messenger->addWarning($message);
+        }
+    }
+
+    $searchFields = $settings->get('advancedsearch_search_fields');
+    if ($searchFields !== null) {
+        $searchFields[] = 'common/advanced-search/selections';
+        $settings->set('advancedsearch_search_fields', $searchFields);
+    }
+
+    $siteIds = $api->search('sites', [], ['returnScalar' => 'id'])->getContent();
+    foreach ($siteIds as $siteId) {
+        $siteSettings->setTargetId($siteId);
+        $v = $siteSettings->get('selection_placement_button', []);
+        $siteSettings->set('selection_placement_button', array_diff($v, ['block/items', 'block/media', 'block/item_sets']));
+        $v = $siteSettings->get('selection_placement_list', []);
+        $siteSettings->set('selection_placement_list', array_diff($v, ['block/items', 'block/media', 'block/item_sets']));
+    }
+
+    $message = new PsrMessage(
+        'It is now possible to display a flat list of named selections of resources.' // @translate
+    );
+    $messenger->addSuccess($message);
+}
