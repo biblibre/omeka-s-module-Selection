@@ -3,6 +3,7 @@
 namespace Selection\Controller\Site;
 
 use Common\Mvc\Controller\Plugin\JSend;
+use Common\Stdlib\PsrMessage;
 use Exception;
 use Laminas\View\Model\ViewModel;
 use Omeka\Entity\User;
@@ -95,12 +96,7 @@ trait TraitDbController
         ], ['returnScalar' => 'resource'])->getContent();
 
         // A check is needed for resources at root that may not be in structure.
-        $inStructure = [];
-        foreach ($selection->structure() as $leaf) {
-            $inStructure = array_merge($inStructure, $leaf['resources']);
-        }
-        $inStructure = array_unique($inStructure);
-        sort($inStructure);
+        $inStructure = $this->resourceIdsFromStructure($selection->structure());
 
         $newResources = [];
         foreach ($resources as $resourceId => $resource) {
@@ -340,6 +336,99 @@ trait TraitDbController
         }
 
         // $this->selectionContainer();
+
+        return $this->jSend(JSend::SUCCESS, $data);
+    }
+
+    /**
+     * Update one or more resources for multiple groups of a selection.
+     *
+     * So like moveDb, but with destination group only.
+     * And unlike add, the resource may be in any path.
+     */
+    protected function updateDb(array $resources, bool $isMultiple, array $groups, User $user)
+    {
+        $selection = $this->checkSelectionFromRouteOrInit($user);
+        if (!$selection) {
+            return $this->jsonErrorNotFound();
+        }
+
+        $selectionId = $selection->id();
+
+        $structure = $selection->structure();
+
+        // Check if group exists.
+        // TODO For now, the module does not support to store the same resource in multiple places.
+        $groups = array_filter($groups);
+        $group = reset($groups);
+        if (!isset($structure[$group])) {
+            return $this->jSend(JSend::FAIL, null, (new PsrMessage(
+                'The destination group is not in the list of groups.', // @translate
+            ))->setTranslator($this->translator()));
+        }
+
+        $results = [];
+
+        /** @var \Omeka\Mvc\Controller\Plugin\Api $api */
+        $api = $this->api();
+        $userId = $user->getId();
+
+        $selectedResourceIds = $api->search('selection_resources', [
+            'owner_id' => $userId,
+            'selection_id' => $selectionId,
+        ], ['returnScalar' => 'resource'])->getContent();
+
+        // Remove resources from all groups.
+        foreach ($structure as &$leaf) {
+            if (!empty($leaf['resources'])) {
+                $leaf['resources'] = array_diff($leaf['resources'], array_keys($resources));
+            }
+        }
+        unset($leaf);
+
+        // Add resources to the target group.
+        if (!isset($structure[$group]['resources'])) {
+            $structure[$group]['resources'] = [];
+        }
+        $structure[$group]['resources'] = array_values(array_unique(array_merge(
+            $structure[$group]['resources'],
+            array_keys($resources)
+        )));
+
+        // Ensure resources are in selection_resources table.
+        foreach ($resources as $resourceId => $resource) {
+            $data = $this->normalizeResource($resource, true, $selectionId);
+            if (!in_array($resourceId, $selectedResourceIds)) {
+                try {
+                    $api->create('selection_resources', [
+                        'o:owner' => ['o:id' => $userId],
+                        'o:resource' => ['o:id' => $resourceId],
+                        'o:selection' => ['o:id' => $selectionId],
+                    ])->getContent();
+                } catch (Exception $e) {
+                }
+            }
+            $data['status'] = 'success';
+            $results[$resourceId] = $data;
+        }
+
+        try {
+            $api->update('selections', $selectionId, ['o:structure' => $structure], [], ['isPartial' => true]);
+        } catch (Exception $e) {
+            return $this->jsonInternalError();
+        }
+
+        if ($isMultiple) {
+            $data = [
+                'selection' => $selection ? $selection->getReference()->jsonSerialize() : null,
+                'selection_resources' => $results,
+            ];
+        } else {
+            $data = [
+                'selection' => $selection ? $selection->getReference()->jsonSerialize() : null,
+                'selection_resource' => reset($results),
+            ];
+        }
 
         return $this->jSend(JSend::SUCCESS, $data);
     }
@@ -599,6 +688,23 @@ trait TraitDbController
             'is_multiple' => $isMultiple,
             'resources' => $resources,
         ];
+    }
+
+    /**
+     * Get all resources ids from a structure.
+     *
+     * May be different from selection resource table, because the resources at
+     * root may not be included.
+     */
+    protected function resourceIdsFromStructure(array $structure): array
+    {
+        $inStructure = [];
+        foreach ($structure as $leaf) {
+            $inStructure = array_merge($inStructure, $leaf['resources']);
+        }
+        $inStructure = array_unique($inStructure);
+        sort($inStructure);
+        return array_combine($inStructure, $inStructure);
     }
 
     protected function checkSelectionFromRouteOrInit(User $user): ?SelectionRepresentation

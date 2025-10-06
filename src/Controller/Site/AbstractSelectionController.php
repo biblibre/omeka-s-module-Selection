@@ -158,6 +158,44 @@ abstract class AbstractSelectionController extends AbstractActionController
     }
 
     /**
+     * Update one or more resources for multiple groups of a selection.
+     *
+     * Same as addAction, but with groups.
+     */
+    public function updateAction()
+    {
+        if (!$this->getRequest()->isXmlHttpRequest()) {
+            return $this->jsonErrorNotFound();
+        }
+
+        $user = $this->identity();
+        if (!$user && $this->siteSettings()->get('selection_disable_anonymous')) {
+            return $this->jsonPermissionDenied();
+        }
+
+        $resourcesData = $this->requestedResources();
+        if (empty($resourcesData['has_result'])) {
+            return $this->jsonErrorNotFound();
+        }
+
+        // TODO For now, the module does not support to store the same resource in multiple places.
+        $group = $groups =$this->params()->fromPost('groups', '');
+        if (is_array($groups)) {
+            $groups = array_filter($groups);
+            $group = reset($groups);
+        }
+        if (!strlen((string) $group)) {
+            return $this->jSend(JSend::FAIL, null, (new PsrMessage(
+                'The destination group is not set.', // @translate
+            ))->setTranslator($this->translator()));
+        }
+
+        return $user
+            ? $this->updateDb($resourcesData['resources'], $resourcesData['is_multiple'], [$group], $user)
+            : $this->updateSession($resourcesData['resources'], $resourcesData['is_multiple'], [$group]);
+    }
+
+    /**
      * Move resource(s) between groups of a selection.
      */
     public function moveAction()

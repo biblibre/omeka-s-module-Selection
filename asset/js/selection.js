@@ -313,7 +313,7 @@
                 return;
             }
             button
-                .prop('title', button.attr('data-title-' + selectionResource.value))
+                .prop('title', button.attr('data-text-' + selectionResource.value))
                 .removeClass('selected unselected')
                 .addClass(selectionResource.value);
         }
@@ -362,6 +362,44 @@
                 .forEach(function(el) { ids.push(el.dataset.id); });
             return ids;
         }
+
+        /**
+         * Include or exclude ids of resources in one or multiple selections.
+         */
+        $(document).on('change', '.selector-group select', function(e) {
+            const select = $(this);
+            const selectedGroups = select.val();
+            const selector = select.closest('.selector-group');
+            const resourceId = selector.data('resource-id');
+            const url = selector.data('url');
+
+            if (!selectedGroups || !selectedGroups.length) {
+                return;
+            }
+
+            CommonDialog.spinnerEnable(select[0]);
+
+            $.ajax({
+                url: url,
+                method: 'POST',
+                data: {
+                    id: resourceId,
+                    groups: selectedGroups
+                }
+            })
+            .done(function(data) {
+                // Optionally update UI or show a success dialog
+                CommonDialog.dialogAlert({
+                    message: Omeka.jsTranslate('Resource added or removed from selections.'),
+                    nl2br: true
+                });
+                $(document).trigger('o:selection-updated', data);
+            })
+            .fail(CommonDialog.jSendFail)
+            .always(function () {
+                CommonDialog.spinnerDisable(select[0]);
+            });
+        });
 
         /**
          * Hide useless button on load.

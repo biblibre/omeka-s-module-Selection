@@ -28,6 +28,7 @@ return  [
     'view_helpers' => [
         'invokables' => [
             'selectionButton' => View\Helper\SelectionButton::class,
+            'selectionButtonToGroup' => View\Helper\SelectionButtonToGroup::class,
             'selectionList' => View\Helper\SelectionList::class,
         ],
         'factories' => [
@@ -51,6 +52,7 @@ return  [
         'invokables' => [
             'selection' => Site\ResourcePageBlockLayout\Selection::class,
             'selectionButton' => Site\ResourcePageBlockLayout\SelectionButton::class,
+            'selectionButtonToGroup' => Site\ResourcePageBlockLayout\SelectionButtonToGroup::class,
             'selectionList' => Site\ResourcePageBlockLayout\SelectionList::class,
         ],
     ],
@@ -94,7 +96,7 @@ return  [
                             'route' => '/selection[/:action]',
                             'constraints' => [
                                 // Set groups first for regex.
-                                'action' => 'browse|add-group|rename-group|move-group|delete-group|add|delete|move|reset|toggle',
+                                'action' => 'browse|add-group|rename-group|move-group|delete-group|add|delete|move|reset|toggle|update',
                             ],
                             'defaults' => [
                                 '__NAMESPACE__' => 'Selection\Controller\Site',
@@ -108,7 +110,7 @@ return  [
                         'options' => [
                             'route' => '/selection/:id[/:action]',
                             'constraints' => [
-                                'action' => 'browse|add-group|rename-group|move-group|delete-group|add|delete|move|toggle',
+                                'action' => 'browse|add-group|rename-group|move-group|delete-group|add|delete|move|toggle|update',
                                 'id' => '\d+',
                             ],
                             'defaults' => [

@@ -3,6 +3,8 @@
 namespace Selection\Controller\Site;
 
 use Common\Mvc\Controller\Plugin\JSend;
+use Common\Stdlib\PsrMessage;
+use Exception;
 use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
 
@@ -243,6 +245,82 @@ trait TraitSessionController
         $structure = $selection['structure'];
         $structure = $this->addResourcesToStructure($structure, array_keys($add)) ?? $structure;
         $structure = $this->removeResourcesFromStructure($structure, array_keys($delete)) ?? $structure;
+        $selectionContainer->selections[$selectionId]['structure'] = $structure;
+
+        if ($isMultiple) {
+            $data = [
+                'selection' => ['o:id' => $selectionId],
+                'selection_resources' => $results,
+            ];
+        } else {
+            $data = [
+                'selection' => ['o:id' => $selectionId],
+                'selection_resource' => reset($results),
+            ];
+        }
+
+        return $this->jSend(JSend::SUCCESS, $data);
+    }
+
+    /**
+     * Update one or more resources for multiple groups of a selection.
+     *
+     * So like moveDb, but with destination group only.
+     * And unlike add, the resource may be in any path.
+     */
+    protected function updateSession(array $resources, bool $isMultiple, array $groups)
+    {
+        /**
+         * Read selection from session.
+         *
+         * @see \Selection\View\Helper\SelectionContainer
+         * @var \Laminas\Session\Container $selectionContainer
+         */
+        $selectionContainer = $this->selectionContainer();
+        $selection = $this->checkSelectionFromRouteOrInitSession($selectionContainer);
+        if (!$selection) {
+            return $this->jsonErrorNotFound();
+        }
+
+        $selectionId = $selection['id'];
+        $structure = $selection['structure'];
+
+        // Check if group exists.
+        $groups = array_filter($groups);
+        $group = reset($groups);
+        if (!isset($structure[$group])) {
+            return $this->jSend(JSend::FAIL, null, (new PsrMessage(
+                'The destination group is not in the list of groups.', // @translate
+            ))->setTranslator($this->translator()));
+        }
+
+        // Remove resources from all groups.
+        foreach ($structure as &$leaf) {
+            if (!empty($leaf['resources'])) {
+                $leaf['resources'] = array_diff($leaf['resources'], array_keys($resources));
+            }
+        }
+        unset($leaf);
+
+        // Add resources to the target group.
+        if (!isset($structure[$group]['resources'])) {
+            $structure[$group]['resources'] = [];
+        }
+        $structure[$group]['resources'] = array_values(array_unique(array_merge(
+            $structure[$group]['resources'],
+            array_keys($resources)
+        )));
+
+        // Update selected records in session.
+        $selectedRecords = $selectionContainer->records[$selectionId] ?? [];
+        $results = [];
+        foreach ($resources as $resourceId => $resource) {
+            $data = $this->normalizeResource($resource, true, $selectionId);
+            $data['status'] = 'success';
+            $selectedRecords[$resourceId] = $data;
+            $results[$resourceId] = $data;
+        }
+        $selectionContainer->records[$selectionId] = $selectedRecords;
         $selectionContainer->selections[$selectionId]['structure'] = $structure;
 
         if ($isMultiple) {

@@ -23,8 +23,8 @@ class SelectionContainer extends AbstractHelper
     /**
      * Prepare and check the session container for the current visitor or user.
      *
-     * There may be multiple selections for a user; but generally, in the user
-     * interface, only one is used.
+     * There may be multiple selections for a user and they can be nested.
+     * By default, there is a single list of selection. See option disposition.
      */
     public function __invoke(): Container
     {

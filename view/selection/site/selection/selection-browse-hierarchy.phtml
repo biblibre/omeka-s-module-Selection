@@ -202,7 +202,7 @@ $countsByType = array_count_values($recordsByType) + ['items' => 0, 'media' => 0
 <?php // Common actions. ?>
 <div id="selector-group" class="selector-group inactive" style="display:none;">
     <select name="group" aria-label="<?= $translate('Choose a selection') ?>">
-        <option value="">/</option>
+        <option value=""><?= $escape($translate('Store without group')) ?></option>
         <?php foreach ($selection ? array_keys($selection['structure']) : [] as $groupFullPath): ?>
         <option value="<?= $groupFullPath ?>"><?= strtr($groupFullPath, ['/' => ' / ']) ?></option>
         <?php endforeach ?>

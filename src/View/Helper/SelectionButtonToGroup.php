@@ -5,20 +5,20 @@ namespace Selection\View\Helper;
 use Laminas\View\Helper\AbstractHelper;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 
-class SelectionButton extends AbstractHelper
+class SelectionButtonToGroup extends AbstractHelper
 {
     /**
      * The default partial view script.
      */
-    const PARTIAL_NAME = 'common/selection-button';
+    const PARTIAL_NAME = 'common/selection-button-to-group';
 
     /**
-     * Create a button to add or remove a resource to/from the selection.
+     * Get a button with a selector to update named groups or a single resource.
      *
      * @param array $options Options for the partial. Managed keys:
-     * - selectionid (int)
-     * - action: "add" or "delete". If not specified, the action is "toggle".
+     * - selectionId (int)
      * - template (string)
+     * See below for more details.
      *
      * Adapted:
      * @see \Selection\View\Helper\SelectionButton
@@ -30,6 +30,7 @@ class SelectionButton extends AbstractHelper
 
         $view = $this->getView();
         $plugins = $view->getHelperPluginManager();
+        $translate = $plugins->get('translate');
         $siteSetting = $plugins->get('siteSetting');
 
         $user = $view->identity();
@@ -76,10 +77,14 @@ class SelectionButton extends AbstractHelper
             'isGuestActive' => $plugins->has('guestWidget'),
             'isSession' => !$user,
             'value' => isset($selectionContainer->records[$selectionId][$resourceId]) ? 'selected' : 'unselected',
-            'action' => $options['action'] ?? 'toggle',
+            'action' => 'update',
             'urlButton' => $selectionId
-                ? $url("site/selection-id", ['site-slug' => $siteSlug, 'action' => $options['action'] ?? 'toggle', 'id' => $selectionId], ['query' => ['id' => $resourceId]])
-                : $url("site/selection", ['site-slug' => $siteSlug, 'action' => $options['action'] ?? 'toggle'], ['query' => ['id' => $resourceId]]),
+                ? $url("site/selection-id", ['site-slug' => $siteSlug, 'action' => 'update', 'id' => $selectionId], ['query' => ['id' => $resourceId]])
+                : $url("site/selection", ['site-slug' => $siteSlug, 'action' => 'update'], ['query' => ['id' => $resourceId]]),
+            'messageSuccess' => $translate('The selection has been updated.'), // @translate
+            'messageError' => $translate('The selection could not be updated.'), // @translate
+            'placeholder' => $translate('Choose a selection'), // @translate
+            'allowStoreNoGroup' => !empty($options['allowStoreNoGroup']),
             'template' => self::PARTIAL_NAME,
         ];
         $options += $defaultOptions;

@@ -1,0 +1,56 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
+ * @var \Omeka\Entity\User $user
+ * @var int $selectionId
+ * @var array $selections
+ * @var array $records
+ * @var string $disposition
+ * @var bool $isGuestActive
+ * @var bool $isSession
+ * @var string $value
+ * @var string $action Always "update".
+ * @var string $urlButton
+ * @var string $messageSuccess
+ * @var string $messageError
+ * @var string $placeholder
+ * @var bool $allowStoreNoGroup
+ *
+ * and options passed from the caller.
+ */
+
+// TODO Manage multiple selections for a resource (require entity update).
+
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+
+$resourceId = $resource->id();
+
+// Only one selection is managed here for now.
+// A selection can have multiple groups, that is enough in most of the cases.
+$selections = $selections ? reset($selections) : [];
+
+$openDetails = false;
+
+$placeholder = $escapeAttr($placeholder ?? $translate('Choose a selection'));
+?>
+
+<details class="selection-groups" <?= $openDetails ? 'open="open"' : '' ?>>
+    <summary><?= $escape($translate('Add to a selection')) ?></summary>
+    <div id="selector-group" class="selector-group inactive" data-id="<?= $resource->id() ?>" data-url="<?= $urlButton ?>" data-action="<?= $escapeAttr($action) ?>">
+        <select name="group" class="chosen-select" aria-label="<?= $placeholder ?>" placeholder="<?= $placeholder ?>" data-placeholder="<?= $placeholder ?>" data-message-success="<?= $escapeAttr($messageSuccess) ?>" data-message-error="<?= $escapeAttr($messageError) ?>">
+            <?php if ($allowStoreNoGroup): ?>
+            <option value=""><?= $disposition === 'hierarchy' ? '/' : $escapeAttr($translate('Store without group')) ?></option>
+            <?php else: // Required for chosen. ?>
+            <option value=""></option>
+            <?php endif; ?>
+            <?php foreach ($selections ? $selections['structure'] ?? [] : [] as $groupFullPath => $selection): ?>
+            <option value="<?= $groupFullPath ?>"<?= in_array($resourceId, $selection['resources'] ?? []) ? ' selected="selected"' : '' ?>><?= strtr($disposition === 'hierarchy' || $groupFullPath === '/' ? $groupFullPath : trim($groupFullPath, '/'), ['/' => ' / ']) ?></option>
+            <?php endforeach ?>
+        </select>
+    </div>
+</details>
