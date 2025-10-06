@@ -28,6 +28,9 @@ $bulkExporters = $plugins->has('bulkExporters') ? $plugins->get('bulkExporters')
 <li class="selection-group group-level-__GROUP_LEVEL__" data-path="__GROUP_PATH__" data-level="__GROUP_LEVEL__">
     <div>
         <h4><span class="group-name">__GROUP_NAME__</span></h4>
+        <div class="selection-header">
+            <span class="selection-count-resources">__GROUP_COUNT_RESOURCES__</span>
+        </div>
         <details class="action-details">
             <summary class="selection-summary group-name" aria-expanded="false"><?= $translate('Actions') ?></summary>
             <ul class="actions">
