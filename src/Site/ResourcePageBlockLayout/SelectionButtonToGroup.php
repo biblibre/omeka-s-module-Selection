@@ -10,7 +10,7 @@ class SelectionButtonToGroup implements ResourcePageBlockLayoutInterface
 {
     public function getLabel() : string
     {
-        return 'Selection button to group'; // @translate
+        return 'Selection: Button to group'; // @translate
     }
 
     public function getCompatibleResourceNames() : array

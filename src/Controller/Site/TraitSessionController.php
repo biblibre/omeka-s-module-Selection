@@ -28,8 +28,12 @@ trait TraitSessionController
         // TODO Query in session is used only for pagination, not implemented yet.
         $query = $this->params()->fromQuery();
 
-        // Read selection from session.
-        /** @var \Laminas\Session\Container $selectionContainer */
+        /**
+         * Read selection from session.
+         *
+         * @see \Selection\View\Helper\SelectionContainer
+         * @var \Laminas\Session\Container $selectionContainer
+         */
         $selectionContainer = $this->selectionContainer();
 
         $selectionId = empty($query['selection_id']) ? 0 : (int) $query['selection_id'];
@@ -72,7 +76,12 @@ trait TraitSessionController
      */
     protected function addSession(array $resources, bool $isMultiple)
     {
-        /** @var \Laminas\Session\Container $selectionContainer */
+        /**
+         * Read selection from session.
+         *
+         * @see \Selection\View\Helper\SelectionContainer
+         * @var \Laminas\Session\Container $selectionContainer
+         */
         $selectionContainer = $this->selectionContainer();
         $selection = $this->checkSelectionFromRouteOrInitSession($selectionContainer);
         if (!$selection) {
@@ -127,7 +136,12 @@ trait TraitSessionController
      */
     protected function deleteSession(array $resources, bool $isMultiple)
     {
-        /** @var \Laminas\Session\Container $selectionContainer */
+        /**
+         * Read selection from session.
+         *
+         * @see \Selection\View\Helper\SelectionContainer
+         * @var \Laminas\Session\Container $selectionContainer
+         */
         $selectionContainer = $this->selectionContainer();
         $selection = $this->checkSelectionFromRouteOrInitSession($selectionContainer);
         if (!$selection) {
@@ -201,7 +215,12 @@ trait TraitSessionController
      */
     protected function toggleSession(array $resources, bool $isMultiple)
     {
-        /** @var \Laminas\Session\Container $selectionContainer */
+        /**
+         * Read selection from session.
+         *
+         * @see \Selection\View\Helper\SelectionContainer
+         * @var \Laminas\Session\Container $selectionContainer
+         */
         $selectionContainer = $this->selectionContainer();
         $selection = $this->checkSelectionFromRouteOrInitSession($selectionContainer);
         if (!$selection) {
@@ -343,7 +362,12 @@ trait TraitSessionController
      */
     protected function moveSession(array $resources, bool $isMultiple)
     {
-        /** @var \Laminas\Session\Container $selectionContainer */
+        /**
+         * Read selection from session.
+         *
+         * @see \Selection\View\Helper\SelectionContainer
+         * @var \Laminas\Session\Container $selectionContainer
+         */
         $selectionContainer = $this->selectionContainer();
         $selection = $this->checkSelectionFromRouteOrInitSession($selectionContainer);
         if (!$selection) {
@@ -389,7 +413,12 @@ trait TraitSessionController
      */
     protected function addGroupSession()
     {
-        /** @var \Laminas\Session\Container $selectionContainer */
+        /**
+         * Read selection from session.
+         *
+         * @see \Selection\View\Helper\SelectionContainer
+         * @var \Laminas\Session\Container $selectionContainer
+         */
         $selectionContainer = $this->selectionContainer();
         $selection = $this->checkSelectionFromRouteOrInitSession($selectionContainer);
         if (!$selection) {
@@ -420,7 +449,12 @@ trait TraitSessionController
      */
     protected function renameGroupSession()
     {
-        /** @var \Laminas\Session\Container $selectionContainer */
+        /**
+         * Read selection from session.
+         *
+         * @see \Selection\View\Helper\SelectionContainer
+         * @var \Laminas\Session\Container $selectionContainer
+         */
         $selectionContainer = $this->selectionContainer();
         $selection = $this->checkSelectionFromRouteOrInitSession($selectionContainer);
         if (!$selection) {
@@ -451,7 +485,12 @@ trait TraitSessionController
      */
     protected function moveGroupSession()
     {
-        /** @var \Laminas\Session\Container $selectionContainer */
+        /**
+         * Read selection from session.
+         *
+         * @see \Selection\View\Helper\SelectionContainer
+         * @var \Laminas\Session\Container $selectionContainer
+         */
         $selectionContainer = $this->selectionContainer();
         $selection = $this->checkSelectionFromRouteOrInitSession($selectionContainer);
         if (!$selection) {
@@ -482,7 +521,12 @@ trait TraitSessionController
      */
     protected function deleteGroupSession()
     {
-        /** @var \Laminas\Session\Container $selectionContainer */
+        /**
+         * Read selection from session.
+         *
+         * @see \Selection\View\Helper\SelectionContainer
+         * @var \Laminas\Session\Container $selectionContainer
+         */
         $selectionContainer = $this->selectionContainer();
         $selection = $this->checkSelectionFromRouteOrInitSession($selectionContainer);
         if (!$selection) {

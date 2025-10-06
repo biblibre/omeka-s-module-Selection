@@ -10,7 +10,7 @@ class SelectionButton implements ResourcePageBlockLayoutInterface
 {
     public function getLabel() : string
     {
-        return 'Selection button'; // @translate
+        return 'Selection: button'; // @translate
     }
 
     public function getCompatibleResourceNames() : array

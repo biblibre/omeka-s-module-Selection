@@ -16,7 +16,7 @@ class SelectionButton extends AbstractHelper
      * Create a button to add or remove a resource to/from the selection.
      *
      * @param array $options Options for the partial. Managed keys:
-     * - selectionid (int)
+     * - selectionId (int)
      * - action: "add" or "delete". If not specified, the action is "toggle".
      * - template (string)
      *
@@ -74,8 +74,8 @@ class SelectionButton extends AbstractHelper
             'value' => isset($selectionContainer->records[$selectionId][$resourceId]) ? 'selected' : 'unselected',
             'action' => $options['action'] ?? 'toggle',
             'urlButton' => $selectionId
-                ? $url("site/selection-id", ['site-slug' => $siteSlug, 'action' => $options['action'] ?? 'toggle', 'id' => $selectionId], ['query' => ['id' => $resourceId]])
-                : $url("site/selection", ['site-slug' => $siteSlug, 'action' => $options['action'] ?? 'toggle'], ['query' => ['id' => $resourceId]]),
+                ? $url('site/selection-id', ['site-slug' => $siteSlug, 'action' => $options['action'] ?? 'toggle', 'id' => $selectionId], ['query' => ['id' => $resourceId]])
+                : $url('site/selection', ['site-slug' => $siteSlug, 'action' => $options['action'] ?? 'toggle'], ['query' => ['id' => $resourceId]]),
             'template' => self::PARTIAL_NAME,
         ];
         $options += $defaultOptions;

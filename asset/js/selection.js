@@ -10,7 +10,7 @@
         /**
          * Use common-dialog.js.
          *
-         * @see ContactUs, Contribute, Generate, Guest, Resa, SearchHistory, Selection, TwoFactorAuth.
+         * @see Comment, ContactUs, Contribute, Generate, Guest, Resa, SearchHistory, Selection, TwoFactorAuth.
          */
 
         $(document).on('click', 'summary.selection-summary', function() {

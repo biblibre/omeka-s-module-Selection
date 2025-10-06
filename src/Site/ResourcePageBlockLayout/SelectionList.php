@@ -10,7 +10,7 @@ class SelectionList implements ResourcePageBlockLayoutInterface
 {
     public function getLabel() : string
     {
-        return 'Selection list'; // @translate
+        return 'Selection: List'; // @translate
     }
 
     public function getCompatibleResourceNames() : array

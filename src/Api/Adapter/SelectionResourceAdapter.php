@@ -73,6 +73,8 @@ class SelectionResourceAdapter extends AbstractEntityAdapter
 
     public function buildQuery(QueryBuilder $qb, array $query): void
     {
+        // TODO Created/modified.
+
         $expr = $qb->expr();
 
         if (isset($query['owner_id']) && is_numeric($query['owner_id'])) {
