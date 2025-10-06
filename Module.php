@@ -8,6 +8,8 @@ if (!class_exists('Common\TraitModule', false)) {
 
 use Common\Stdlib\PsrMessage;
 use Common\TraitModule;
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ParameterType;
 use Laminas\EventManager\Event;
 use Laminas\EventManager\SharedEventManagerInterface;
 use Laminas\Mvc\MvcEvent;
@@ -87,6 +89,21 @@ class Module extends AbstractModule
 
     public function attachListeners(SharedEventManagerInterface $sharedEventManager): void
     {
+        $adapters = [
+            \Omeka\Api\Adapter\ItemSetAdapter::class,
+            \Omeka\Api\Adapter\ItemAdapter::class,
+            \Omeka\Api\Adapter\MediaAdapter::class,
+        ];
+        foreach ($adapters as $adapter) {
+            // Search selected resources with "selection_id=xxx&selection_path=yyy"
+            // or "selection_id_path=xxx:yyy".
+            $sharedEventManager->attach(
+                $adapter,
+                'api.search.query',
+                [$this, 'handleApiSearchQuery']
+            );
+        }
+
         // Display block in resources pages for old themes.
         // The site is not set yet, so checks are done in method.
         foreach ([
@@ -140,6 +157,111 @@ class Module extends AbstractModule
             'form.add_elements',
             [$this, 'handleSiteSettings']
         );
+    }
+
+    /**
+     * Helper to build search queries.
+     */
+    public function handleApiSearchQuery(Event $event): void
+    {
+        /**
+         * @var \Doctrine\ORM\QueryBuilder $qb
+         * @var \Omeka\Api\Adapter\AbstractResourceEntityAdapter $adapter
+         * @var \Omeka\Api\Request $request
+         * @var array $query
+         */
+        $request = $event->getParam('request');
+        $query = $request->getContent();
+
+        // TODO Manage is public.
+
+        if (isset($query['selection_id_path']) && $query['selection_id_path']) {
+            [$selectionId, $selectionPath] = explode(':', $query['selection_id_path'], 2) + [1 => ''];
+            $selectionIds = is_numeric($selectionId) ? [(int) $selectionId] : '-';
+            $selectionPaths = [$selectionPath];
+        } else {
+            if (isset($query['selection_id']) && $query['selection_id'] !== '' && $query['selection_id'] !== []) {
+                $selectionIds = is_array($query['selection_id'])
+                    ? array_values(array_unique(array_map('intval', $query['selection_id'])))
+                    : (is_numeric($query['selection_id']) ? [(int) $query['selection_id']] : '-');
+            }
+            if (isset($query['selection_path']) && $query['selection_path'] !== '' && $query['selection_path'] !== []) {
+                $selectionPaths = is_array($query['selection_path'])
+                    ? array_values(array_unique(array_map('strval', $query['selection_path'])))
+                    : [(string) $query['selection_path']];
+            }
+        }
+
+        if (empty($selectionIds)) {
+            return;
+        }
+
+        $adapter = $event->getTarget();
+        $qb = $event->getParam('queryBuilder');
+        $expr = $qb->expr();
+
+        // Don't return any result when the selection is invalid.
+        if ($selectionIds === '-') {
+            $qb
+                ->innerJoin(
+                    \Selection\Entity\SelectionResource::class,
+                    'selection_resource',
+                    \Doctrine\ORM\Query\Expr\Join::WITH,
+                    "selection_resource.selection = 0"
+                );
+            return;
+        }
+
+        $qb
+            ->leftJoin(
+                \Selection\Entity\SelectionResource::class,
+                'selection_resource',
+                \Doctrine\ORM\Query\Expr\Join::WITH,
+                'selection_resource.resource = omeka_root.id'
+            );
+
+        // Resources that are not in any selection.
+        if ($selectionIds === [0]) {
+            $qb
+                ->andWhere($expr->isNull('selection_resource.resource'));
+            return;
+        }
+
+        $selectionIdsAlias = $adapter->createAlias();
+        if (count($selectionIds) === 1) {
+            // Resources that are in a specific selection.
+            $qb
+                ->andWhere('selection_resource.selection = :' . $selectionIdsAlias)
+                ->setParameter($selectionIdsAlias, reset($selectionIds), ParameterType::INTEGER);
+        } else {
+            // Resources that are in multiple selections (with or).
+            $qb
+                ->andWhere($expr->in('selection_resource.selection', ':' . $selectionIdsAlias))
+                ->setParameter($selectionIdsAlias, $selectionIds, Connection::PARAM_INT_ARRAY);
+        }
+
+        // Search for paths.
+        if (empty($selectionPaths)) {
+            return;
+        }
+
+        $escapeSqlLike = fn ($string) => strtr((string) $string, ['\\' => '\\\\', '%' => '\\%', '_' => '\\_']);
+
+        // TODO For now, only one path is managed. Anyway require like for now.
+        // The simple like is enough, because a resource can have only one path.
+        $selectionPath = reset($selectionPaths);
+        $preparedPath = '%' . $escapeSqlLike('"id":' . json_encode($selectionPath)) . '%';
+
+        $selectionPathAlias = $adapter->createAlias();
+        $qb
+            ->innerJoin(
+                \Selection\Entity\Selection::class,
+                'selection',
+                \Doctrine\ORM\Query\Expr\Join::WITH,
+                'selection.id = selection_resource.selection'
+            )
+            ->andWhere($expr->like('selection.structure', ':' . $selectionPathAlias))
+            ->setParameter($selectionPathAlias, $preparedPath, ParameterType::STRING);
     }
 
     public function handleShowSelectionButton(Event $event): void
