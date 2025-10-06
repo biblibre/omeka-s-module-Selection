@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Solr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-02 00:00+0000\n"
-"PO-Revision-Date: 2025-06-02 00:00+0000\n"
+"POT-Creation-Date: 2025-10-06 00:00+0000\n"
+"PO-Revision-Date: 2025-10-06 00:00+0000\n"
 "Last-Translator: Daniel Berthereau <Daniel.fr@Berthereau.net>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -16,101 +16,145 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.6\n"
 
-#: data/scripts/upgrade.php:33 Module.php:66
+#: data/scripts/upgrade.php:33 Module.php:68
 #, php-format
 msgid "The module %1$s should be upgraded to version %2$s or later."
 msgstr "Le module %1$s doit être mis à niveau à la version %2$s ou supérieure."
 
-#: Module.php:220 src/Controller/Site/TraitDbController.php:619
-#: src/Controller/Site/TraitSessionController.php:433
+#: data/scripts/upgrade.php:187 Module.php:326 Module.php:415
+#: src/Controller/Site/TraitDbController.php:770
+#: src/Controller/Site/TraitSessionController.php:580
 #: src/View/Helper/SelectionContainer.php:50
 #: src/View/Helper/SelectionContainer.php:85
-#: view/common/selection-link-browse.phtml:16
-#: view/common/selection-resource.phtml:37
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:56
-#: view/selection/site/selection/selection-browse-list.phtml:47
+#: view/common/advanced-search/selections.phtml:17
+#: view/common/selection-link-browse.phtml:20
+#: view/common/selection-resource.phtml:42
+#: view/selection/site/selection/selection-browse-grouped.phtml:59
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:59
+#: view/selection/site/selection/selection-browse-list.phtml:51
 msgid "Selection"
 msgstr "Sélection"
 
-#: src/Controller/Site/AbstractSelectionController.php:175
-#: src/Controller/Site/AbstractSelectionController.php:351
-#: src/Controller/Site/AbstractSelectionController.php:432
+#: Module.php:329
+msgid "Invalid selection"
+msgstr "Sélection incorrecte"
+
+#: Module.php:332 view/common/selection-list.phtml:50
+msgid "No selection"
+msgstr "Pas de sélection"
+
+#: src/Controller/Site/AbstractSelectionController.php:232
+#: src/Controller/Site/AbstractSelectionController.php:410
+#: src/Controller/Site/AbstractSelectionController.php:491
 msgid "The group name is unchanged."
 msgstr "Le nom du groupe n’a pas été modifié."
 
-#: src/Controller/Site/AbstractSelectionController.php:234
-#: src/Controller/Site/AbstractSelectionController.php:324
-#: src/Controller/Site/AbstractSelectionController.php:331
-#: src/Controller/Site/AbstractSelectionController.php:420
-#: src/Controller/Site/AbstractSelectionController.php:554
+#: src/Controller/Site/AbstractSelectionController.php:291
+#: src/Controller/Site/AbstractSelectionController.php:383
+#: src/Controller/Site/AbstractSelectionController.php:390
+#: src/Controller/Site/AbstractSelectionController.php:479
+#: src/Controller/Site/AbstractSelectionController.php:613
 msgid "No group set."
 msgstr "Aucun groupe défini."
 
-#: src/Controller/Site/AbstractSelectionController.php:256
-#: src/Controller/Site/AbstractSelectionController.php:359
+#: src/Controller/Site/AbstractSelectionController.php:313
+#: src/Controller/Site/AbstractSelectionController.php:418
 msgid "The parent group does not exist."
 msgstr "Le groupe parent n’existe pas."
 
-#: src/Controller/Site/AbstractSelectionController.php:263
-#: src/Controller/Site/AbstractSelectionController.php:369
+#: src/Controller/Site/AbstractSelectionController.php:322
+#: src/Controller/Site/AbstractSelectionController.php:428
 msgid "The group exists already."
 msgstr "Le groupe existe déjà."
 
-#: src/Controller/Site/AbstractSelectionController.php:438
+#: src/Controller/Site/AbstractSelectionController.php:497
 msgid "The group cannot be moved inside itself."
 msgstr "Le groupe ne peut pas être déplacé à l’intérieur de lui-même."
 
-#: src/Controller/Site/AbstractSelectionController.php:451
+#: src/Controller/Site/AbstractSelectionController.php:510
 msgid "The group \"{name}\" does not exist."
 msgstr "Le groupe « {name} » n’existe pas."
 
-#: src/Controller/Site/AbstractSelectionController.php:560
+#: src/Controller/Site/AbstractSelectionController.php:619
 msgid "The group does not exist."
 msgstr "Le groupe n’existe pas."
 
-#: src/Controller/Site/AbstractSelectionController.php:748
+#: src/Controller/Site/AbstractSelectionController.php:802
 msgid "An internal error occurred."
 msgstr "Une erreur interne est survenue."
 
-#: src/Controller/Site/AbstractSelectionController.php:757
+#: src/Controller/Site/AbstractSelectionController.php:811
 msgid "Permission denied"
 msgstr "Accès interdit"
 
-#: src/Controller/Site/TraitDbController.php:100
-#: src/Controller/Site/TraitSessionController.php:89
+#: src/Controller/Site/TraitDbController.php:108
+#: src/Controller/Site/TraitSessionController.php:103
 msgid "Already in"
 msgstr "Déjà ajouté"
 
-#: view/common/selection-button.phtml:23
-msgid "Add to selection"
-msgstr "Ajouter à la sélection"
+#: src/View/Helper/SelectionButtonToGroup.php:80
+msgid "The selection has been updated."
+msgstr "La sélection a été mise à jour."
 
-#: view/common/selection-button.phtml:24 view/common/selection-list.phtml:26
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:82
-#: view/selection/site/selection/selection-browse-list.phtml:50
+#: src/View/Helper/SelectionButtonToGroup.php:81
+msgid "The selection could not be updated."
+msgstr "La sélection ne peut pas être mise à jour."
+
+#: src/View/Helper/SelectionButtonToGroup.php:82
+#: view/common/selection-button-to-group.phtml:42
+#: view/selection/site/selection/selection-browse-grouped.phtml:208
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:204
+msgid "Choose a selection"
+msgstr "Choisir une sélection"
+
+#: view/common/selection-button-to-group.phtml:46
+msgid "Add to a selection"
+msgstr "Ajouter à une sélection"
+
+#: view/common/selection-button-to-group.phtml:50
+#: view/selection/site/selection/selection-browse-grouped.phtml:209
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:205
+msgid "Store without group"
+msgstr "Enregistrer sans groupe"
+
+#: view/common/selection-button-to-group.phtml:57
+msgid "Create a new selection"
+msgstr "Créer une sélection"
+
+#: view/common/selection-button-to-group.phtml:58
+#: view/common/selection-button.phtml:28 view/common/selection-list.phtml:30
+#: view/selection/site/selection/selection-browse-grouped.phtml:86
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:85
+#: view/selection/site/selection/selection-browse-list.phtml:54
 msgid "Remove from selection"
 msgstr "Retirer de la sélection"
 
-#: view/common/selection-list.phtml:32
+#: view/common/selection-button.phtml:27
+msgid "Add to selection"
+msgstr "Ajouter à la sélection"
+
+#: view/common/selection-list.phtml:36
 msgid "Selected resources"
 msgstr "Ressources sélectionnées"
 
-#: view/common/selection-list.phtml:46
-msgid "No selection"
-msgstr "Pas de sélection"
+#: view/common/selection-reset.phtml:23
+msgid "Clear all selections"
+msgstr "Supprimer toutes les sélections"
 
 #: view/guest/site/guest/widget/selection.phtml:16
 msgid "My selection"
 msgstr "Ma sélection"
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:81
+#: view/selection/site/selection/selection-browse-grouped.phtml:85
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:84
 msgid "Move"
 msgstr "Déplacer"
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:107
-#: view/selection/site/selection/selection-browse-list.phtml:69
+#: view/selection/site/selection/selection-browse-grouped.phtml:111
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:110
+#: view/selection/site/selection/selection-browse-list.phtml:73
 msgid ""
 "This selection is stored in the session cookie. It will be lost if the "
 "cookie is cleared."
@@ -118,56 +162,62 @@ msgstr ""
 "Cette sélection est enregistrée dans le cookie de session. Elle sera perdue "
 "quand le cookie sera supprimé."
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:122
-#: view/selection/site/selection/selection-browse-list.phtml:84
+#: view/selection/site/selection/selection-browse-grouped.phtml:126
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:125
+#: view/selection/site/selection/selection-browse-list.phtml:89
 msgid "The selection is empty."
 msgstr "La sélection est vide."
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:129
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:138
-msgid "Set folder name"
-msgstr "Définir le nom du dossier"
+#: view/selection/site/selection/selection-browse-grouped.phtml:133
+#: view/selection/site/selection/selection-browse-grouped.phtml:142
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:132
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:141
+msgid "Set selection name"
+msgstr "Nommer la sélection"
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:129
-msgid "Create a folder"
-msgstr "Créer un dossier"
+#: view/selection/site/selection/selection-browse-grouped.phtml:133
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:132
+msgid "Create a selection"
+msgstr "Créer une sélection"
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:180
-#: view/selection/site/selection/selection-browse-list.phtml:120
+#: view/selection/site/selection/selection-browse-grouped.phtml:161
+msgid "No resource"
+msgstr "Pas de ressource"
+
+#: view/selection/site/selection/selection-browse-grouped.phtml:187
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:183
+#: view/selection/site/selection/selection-browse-list.phtml:125
 msgid "Select resources and download metadata"
 msgstr "Choisir les ressources et téléchargez les métadonnées"
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:194
-#: view/selection/site/selection/selection-browse-list.phtml:134
+#: view/selection/site/selection/selection-browse-grouped.phtml:201
+#: view/selection/site/selection/selection-browse-hierarchy.phtml:197
+#: view/selection/site/selection/selection-browse-list.phtml:139
 msgid "Select resources and send an email"
 msgstr "Choisir des ressources et envoyer un mail"
 
-#: view/selection/site/selection/selection-browse-hierarchy.phtml:201
-msgid "Select a folder"
-msgstr "Choisir un dossier"
-
-#: view/selection/site/selection/selection-group-resource.phtml:60
-#: view/selection/site/selection/selection-group.phtml:31
+#: view/selection/site/selection/selection-group-resource.phtml:61
+#: view/selection/site/selection/selection-group.phtml:35
 msgid "Actions"
 msgstr "Actions"
 
-#: view/selection/site/selection/selection-group.phtml:33
-msgid "Add a sub-folder"
-msgstr "Ajouter un sous-dossier"
+#: view/selection/site/selection/selection-group.phtml:38
+msgid "Add a sub-selection"
+msgstr "Ajouter une sous-sélection"
 
-#: view/selection/site/selection/selection-group.phtml:34
-msgid "Rename folder"
-msgstr "Renommer un dossier"
+#: view/selection/site/selection/selection-group.phtml:40
+msgid "Rename selection"
+msgstr "Renommer la sélection"
 
-#: view/selection/site/selection/selection-group.phtml:35
-msgid "Move folder"
-msgstr "Déplacer le dossier"
+#: view/selection/site/selection/selection-group.phtml:42
+msgid "Move selection"
+msgstr "Déplacer la sélection"
 
-#: view/selection/site/selection/selection-group.phtml:36
-msgid "Delete folder"
-msgstr "Supprimer le dossier"
+#: view/selection/site/selection/selection-group.phtml:44
+msgid "Delete selection"
+msgstr "Supprimer la sélection"
 
-#: view/selection/site/selection/selection-group.phtml:37
+#: view/selection/site/selection/selection-group.phtml:45
 msgid "Move resources"
 msgstr "Déplacer des ressources"
 
@@ -299,7 +349,31 @@ msgstr ""
 "« selectionContainer ». Vous devez mettre à jour votre thème. Vues "
 "correspondantes : {json}"
 
-#: Module.php:81
+#: data/scripts/upgrade.php:472
+msgid ""
+"The js \"selection.js\" was simplified to use \"common-dialog.js\", that "
+"should be added to the templates. You should check your theme. Matching "
+"templates: {json}"
+msgstr ""
+"Le js \"selection.js\" a été simplifié pour utiliser \"common-dialog.js\", "
+"qui doit être ajouté aux modèles. Vous devez vérifier votre thème. Modèles "
+"correspondants : {json}"
+
+#: data/scripts/upgrade.php:479
+msgid ""
+"The js \"selection.js\" was simplified to use \"common-dialog.js\", that "
+"should be added to the templates. You should check your theme."
+msgstr ""
+"Le js \"selection.js\" a été simplifié pour utiliser \"common-dialog.js\", "
+"qui doit être ajouté aux gabarits. Vous devez vérifier votre thème."
+
+#: data/scripts/upgrade.php:502
+msgid ""
+"It is now possible to display a flat list of named selections of resources."
+msgstr ""
+"Il est désormais possible d’afficher une liste plate de sélections nommées."
+
+#: Module.php:83
 msgid ""
 "The module Basket is present. Upgrade from it was removed since version "
 "3.4.7. Install the previous version if you want to upgrade it."
@@ -307,6 +381,14 @@ msgstr ""
 "Le module Basket est présent. La mise à niveau a été supprimée depuis la "
 "version 3.4.7. Installez une version antérieure si vous voulez le mettre à "
 "niveau."
+
+#: view/common/advanced-search/selections.phtml:30
+msgid "[none]"
+msgstr "[aucun]"
+
+#: view/common/advanced-search/selections.phtml:40
+msgid "Select selections…"
+msgstr "Choisir les sélection…"
 
 #: src/Form/SiteSettingsFieldset.php:14
 msgid "Selection module"
@@ -325,108 +407,108 @@ msgid "Medias"
 msgstr "Médias"
 
 #: src/Form/SiteSettingsFieldset.php:58
-msgid "Display selection button"
-msgstr "Afficher le bouton de sélection"
+msgid "Display selection button (old themes)"
+msgstr "Afficher le bouton de sélection (anciens thèmes)"
 
-#: src/Form/SiteSettingsFieldset.php:60 src/Form/SiteSettingsFieldset.php:83
-msgid "Items: Via resource block or custom theme"
-msgstr "Contenu : via le bloc de ressource ou un thème personnalisé"
-
-#: src/Form/SiteSettingsFieldset.php:61 src/Form/SiteSettingsFieldset.php:84
-msgid "Media: Via resource block or custom theme"
-msgstr "Média : via le bloc de ressource ou un thème personnalisé"
-
-#: src/Form/SiteSettingsFieldset.php:62 src/Form/SiteSettingsFieldset.php:85
-msgid "Item set: Via resource block or custom theme"
-msgstr "Collection : via le bloc de ressource ou un thème personnalisé"
-
-#: src/Form/SiteSettingsFieldset.php:63 src/Form/SiteSettingsFieldset.php:86
+#: src/Form/SiteSettingsFieldset.php:60 src/Form/SiteSettingsFieldset.php:80
 msgid "Item: Top"
 msgstr "Contenu : haut"
 
-#: src/Form/SiteSettingsFieldset.php:64 src/Form/SiteSettingsFieldset.php:87
+#: src/Form/SiteSettingsFieldset.php:61 src/Form/SiteSettingsFieldset.php:81
 msgid "Media: Top"
 msgstr "Média : haut"
 
-#: src/Form/SiteSettingsFieldset.php:65 src/Form/SiteSettingsFieldset.php:88
+#: src/Form/SiteSettingsFieldset.php:62 src/Form/SiteSettingsFieldset.php:82
 msgid "Item set: Top"
 msgstr "Collection : haut"
 
-#: src/Form/SiteSettingsFieldset.php:66 src/Form/SiteSettingsFieldset.php:89
+#: src/Form/SiteSettingsFieldset.php:63 src/Form/SiteSettingsFieldset.php:83
 msgid "Item: Bottom"
 msgstr "Contenu : bas"
 
-#: src/Form/SiteSettingsFieldset.php:67 src/Form/SiteSettingsFieldset.php:90
+#: src/Form/SiteSettingsFieldset.php:64 src/Form/SiteSettingsFieldset.php:84
 msgid "Media: Bottom"
 msgstr "Média : bas"
 
-#: src/Form/SiteSettingsFieldset.php:68 src/Form/SiteSettingsFieldset.php:91
+#: src/Form/SiteSettingsFieldset.php:65 src/Form/SiteSettingsFieldset.php:85
 msgid "Item set: Bottom"
 msgstr "Collection : bas"
 
-#: src/Form/SiteSettingsFieldset.php:81
-msgid "Display selection list"
-msgstr "Afficher la liste des sélections"
+#: src/Form/SiteSettingsFieldset.php:78
+msgid "Display selection list (old themes)"
+msgstr "Afficher la liste des sélections (anciens thèmes)"
 
-#: src/Form/SiteSettingsFieldset.php:104
+#: src/Form/SiteSettingsFieldset.php:98
 msgid "Open the selection block by default in resource page"
 msgstr "Ouvrir le bloc de sélection par défaut dans la page de ressource"
 
-#: src/Form/SiteSettingsFieldset.php:115
+#: src/Form/SiteSettingsFieldset.php:109
 msgid "Open the selection list block by default in resource page"
 msgstr ""
 "Ouvrir le bloc Liste des sélections par défaut dans la page de ressource"
 
-#: src/Form/SiteSettingsFieldset.php:127
+#: src/Form/SiteSettingsFieldset.php:121
 msgid "Default disposition of page Selection"
 msgstr "Disposition par défaut de la page des sélections"
 
-#: src/Form/SiteSettingsFieldset.php:130 src/Form/SelectionFieldset.php:24
-msgid "List"
-msgstr "Liste"
+#: src/Form/SiteSettingsFieldset.php:124
+msgid "List of resources"
+msgstr "Liste de ressources"
 
-#: src/Form/SiteSettingsFieldset.php:131 src/Form/SelectionFieldset.php:25
-msgid "Hierarchy"
-msgstr "Arborescence"
+#: src/Form/SiteSettingsFieldset.php:125
+msgid "List of selections"
+msgstr "Liste de sélections"
 
-#: src/Form/SiteSettingsFieldset.php:143 src/Form/SelectionFieldset.php:36
+#: src/Form/SiteSettingsFieldset.php:126
+msgid "Nested selections"
+msgstr "Arborescence de sélections"
+
+#: src/Form/SiteSettingsFieldset.php:138 src/Form/SelectionFieldset.php:36
 msgid "Add individual checkboxes for modules Bulk Export and Contact Us"
 msgstr ""
 "Ajouter des cases à cocher individuelles pour les modules Bulk Export et "
 "Contact us"
 
-#: src/Form/SiteSettingsFieldset.php:145 src/Form/SelectionFieldset.php:38
+#: src/Form/SiteSettingsFieldset.php:140 src/Form/SelectionFieldset.php:38
 msgid "When needed"
 msgstr "Si nécessaire"
 
-#: src/Form/SiteSettingsFieldset.php:159
+#: src/Form/SiteSettingsFieldset.php:154
 msgid ""
 "Add a checkbox to select resources individually in lists (browse and search)"
 msgstr ""
 "Ajouter une case à cocher pour choisir les ressources individuellement dans "
 "les listes (parcourir et rechercher)"
 
-#: src/Form/SiteSettingsFieldset.php:160
+#: src/Form/SiteSettingsFieldset.php:155
 msgid "This option is used only with the module Advanced Search for now."
 msgstr ""
 "Cette option est utilisée seulement dans le module Advanced Search "
 "actuellement."
 
-#: src/Form/SiteSettingsFieldset.php:171
+#: src/Form/SiteSettingsFieldset.php:166
 msgid "Label for the page Selection"
 msgstr "Libellé pour la page de Sélection"
 
-#: src/Form/SiteSettingsFieldset.php:182
+#: src/Form/SiteSettingsFieldset.php:177
 msgid "Label for the link in guest account"
 msgstr "Libellé pour le lien dans le compte Invité"
 
-#: src/Form/SiteSettingsFieldset.php:193
+#: src/Form/SiteSettingsFieldset.php:188
 msgid "Warning for selection by anonymous"
 msgstr "Message d’avertissement pour la sélection par un visiteur anonyme"
 
 #: src/Form/SelectionFieldset.php:22
 msgid "Disposition"
 msgstr "Disposition"
+
+#: src/Form/SelectionFieldset.php:24
+msgid "List"
+msgstr "Liste"
+
+#: src/Form/SelectionFieldset.php:25
+msgid "Hierarchy"
+msgstr "Arborescence"
 
 #: src/Api/Adapter/SelectionAdapter.php:183
 msgid "A selection must have an owner."
@@ -446,55 +528,110 @@ msgstr ""
 "La sélection ne peut pas regrouper des sélections de ressources quand elle "
 "utilise une requête."
 
-#: src/Api/Adapter/SelectionResourceAdapter.php:241
+#: src/Api/Adapter/SelectionResourceAdapter.php:243
 msgid "A selection resource must have an owner."
 msgstr "Une sélection de ressource doit avoir un propriétaire."
 
-#: src/Api/Adapter/SelectionResourceAdapter.php:245
+#: src/Api/Adapter/SelectionResourceAdapter.php:247
 msgid "A selection resource must have a resource."
 msgstr "Une sélection de ressource doit avoir une ressource."
 
-#: src/Api/Adapter/SelectionResourceAdapter.php:251
+#: src/Api/Adapter/SelectionResourceAdapter.php:253
 msgid "A selection resource must have the same owner than the selection."
 msgstr ""
 "Une sélection de ressource doit avoir le même propriétaire que la sélection."
 
-#: src/Api/Adapter/SelectionResourceAdapter.php:258
+#: src/Api/Adapter/SelectionResourceAdapter.php:260
 msgid "A resource must be unique inside a selection."
 msgstr "Une ressource doit être unique à l’intérieur d'une sélection."
 
-#: src/Api/Adapter/SelectionResourceAdapter.php:261
+#: src/Api/Adapter/SelectionResourceAdapter.php:263
 msgid ""
 "A selection resource must be unique for the owner when there is no selection."
 msgstr ""
 "Une sélection de ressource doit être unique pour le propriétaire lorsqu’il "
 "n’y a pas de sélection."
 
-#: src/Controller/Site/AbstractSelectionController.php:188
-#: src/Controller/Site/AbstractSelectionController.php:195
+#: src/Controller/Site/TraitSessionController.php:312
+#: src/Controller/Site/TraitDbController.php:366
+msgid "The destination group is not in the list of groups."
+msgstr "Le groupe destination n’est pas dans la liste des groupes."
+
+#: src/Controller/Site/AbstractSelectionController.php:189
+msgid "The destination group is not set."
+msgstr "Le groupe destination n’existe pas."
+
+#: src/Controller/Site/AbstractSelectionController.php:245
+#: src/Controller/Site/AbstractSelectionController.php:252
 msgid "The destination group \"{name}\" does not exist."
 msgstr "Le groupe destination « {name} » n’existe pas."
 
-#: src/Controller/Site/AbstractSelectionController.php:247
-#: src/Controller/Site/AbstractSelectionController.php:344
+#: src/Controller/Site/AbstractSelectionController.php:304
+#: src/Controller/Site/AbstractSelectionController.php:403
 msgid "The group name contains invalid characters ({characters})."
 msgstr "Le nom du groupe contient des caractères invalides ({characters})."
 
-#: src/Site/Navigation/Link/Selection.php:24
-#, php-format
-msgid "Invalid navigation: link without label (%s)"
-msgstr "Navigation invalide : lien sans libellé (%s)"
-
 #: src/Site/ResourcePageBlockLayout/SelectionButton.php:13
-msgid "Selection button"
-msgstr "Bouton de sélection"
+msgid "Selection: button"
+msgstr "Sélection : Bouton"
 
 #: src/Site/ResourcePageBlockLayout/SelectionList.php:13
-msgid "Selection list"
-msgstr "Liste des sélections"
+msgid "Selection: List"
+msgstr "Sélection : Liste"
 
-#~ msgid "See selection"
-#~ msgstr "Voir la sélection"
+#: src/Site/ResourcePageBlockLayout/SelectionButtonToGroup.php:13
+msgid "Selection: Button to group"
+msgstr "Sélection : Bouton des groupes"
+
+#: config/module.config.php:192
+msgid "Selections"
+msgstr "Sélections"
+
+#~ msgid ""
+#~ "The js \"selection.js\" was simplified to use \"common-dialog.js\", that "
+#~ "should be added to the templates. You should update your theme. Matching "
+#~ "templates: {json}"
+#~ msgstr ""
+#~ "Le js \"selection.js\" a été simplifié pour utiliser \"common-"
+#~ "dialog.js\", qui doit être ajouté aux modèles. Vous devez mettre à jour "
+#~ "votre thème. Modèles correspondants : {json}"
+
+#~ msgid "Items: Via resource block or custom theme"
+#~ msgstr "Contenu : via le bloc de ressource ou un thème personnalisé"
+
+#~ msgid "Media: Via resource block or custom theme"
+#~ msgstr "Média : via le bloc de ressource ou un thème personnalisé"
+
+#~ msgid "Item set: Via resource block or custom theme"
+#~ msgstr "Collection : via le bloc de ressource ou un thème personnalisé"
+
+#~ msgid "Grouped lists"
+#~ msgstr "Liste de sélections"
+
+#~ msgid "Set folder name"
+#~ msgstr "Définir le nom du dossier"
+
+#~ msgid "Create a folder"
+#~ msgstr "Créer un dossier"
+
+#~ msgid "Select a folder"
+#~ msgstr "Choisir un dossier"
+
+#~ msgid "Add a sub-folder"
+#~ msgstr "Ajouter un sous-dossier"
+
+#~ msgid "Rename folder"
+#~ msgstr "Renommer un dossier"
+
+#~ msgid "Move folder"
+#~ msgstr "Déplacer le dossier"
+
+#~ msgid "Delete folder"
+#~ msgstr "Supprimer le dossier"
+
+#, php-format
+#~ msgid "Invalid navigation: link without label (%s)"
+#~ msgstr "Navigation invalide : lien sans libellé (%s)"
 
 #, php-format
 #~ msgid "%d resources"
@@ -543,9 +680,6 @@ msgstr "Liste des sélections"
 #~ msgstr ""
 #~ "Le module \"%s\" a été automatiquement désactivé car ses dépendances ne "
 #~ "sont plus disponibles."
-
-#~ msgid "Download selection"
-#~ msgstr "Télécharger la sélection"
 
 #~ msgid "Move group"
 #~ msgstr "Déplacer un groupe"
