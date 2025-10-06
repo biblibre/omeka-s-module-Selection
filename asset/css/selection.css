@@ -98,21 +98,24 @@
     .selection-details {
         cursor: pointer;
     }
-    .action-details summary,
-    .selection-details summary,
-    .selection-details summary h3,
-    .selection-details summary h4,
-    .selection-details summary h5 {
-        display: inline-block;
+    .action-details summary {
+	    display: list-item;
         cursor: pointer;
     }
     .selections-details summary {
+        display: list-item;
+        cursor: pointer;
         font-weight: bold;
+    }
+    .action-details summary::marker,
+    .action-details summary::-webkit-details-marker,
+    .selection-details summary::marker,
+    .selection-details summary::-webkit-details-marker {
+	   content: none;
     }
     .action-details > summary::after,
     .selection-details > summary::after {
-        content: "";
-        font-family: "Font Awesome 5 Free";
+        content: "⏵";
         font-weight: 900;
         margin-left: .5em !important;
         margin-right: 0 !important;
@@ -121,18 +124,11 @@
         border: 0 !important;
         width: auto !important;
     }
-    .action-details[open] > summary:first-child::after,
-    .selection-details[open] > summary:first-child::after {
-        content: "";
+    .action-details[open] > summary::after,
+    .selection-details[open] > summary::after {
+        content: "▾";
     }
-    body.selection.browse .action-details[open] > p,
-    body.selection.browse .action-details[open] > ul,
-    body.selection.browse .action-details[open] > div,
-    body.selection.browse .selection-details[open] > p,
-    body.selection.browse .selection-details[open] > ul,
-    body.selection.browse .selection-details[open] > div {
-        display: block;
-        position: absolute;
+    body.selection.browse .selection-details[open] {
         z-index: 10;
         overflow: visible;
         cursor: auto;
@@ -143,6 +139,7 @@
         background-color: #FFFFFF;
         box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2);
     }
+
     body.selection.browse ul.resource-list .resource {
         overflow: initial;
         display: flow-root;
