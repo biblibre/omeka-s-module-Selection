@@ -188,6 +188,14 @@
     .unselected .selection-icon {
         background: url(../img/bookmark-unselected.svg) center / 22px  no-repeat;
     }
+    .selection-reset-icon::before {
+        background: inherit;
+        content: '🗙';
+        display: inline-block;
+        font-size: 1em;
+        margin-right: 0.5em;
+        vertical-align: middle;
+    }
     span.selection-icon.fa-sync.fa-spin {
         height: 20px;
         width: 20px;

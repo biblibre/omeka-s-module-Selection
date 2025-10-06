@@ -210,6 +210,34 @@ trait TraitDbController
     }
 
     /**
+     * Delete all resources from selection.
+     */
+    protected function resetDb(User $user)
+    {
+        /** @var \Omeka\Mvc\Controller\Plugin\Api $api */
+        $api = $this->api();
+        $userId = $user->getId();
+
+        $ids = $api->search('selection_resources', ['owner_id' => $userId], ['returnScalar' => 'id'])->getContent();
+        if ($ids) {
+            try {
+                $api->batchDelete('selection_resources', $ids);
+            } catch (Exception $e) {
+                // Nothing to do.
+            }
+        }
+
+        $data = [
+            'selection' => null,
+            'selection_resources' => [],
+        ];
+
+        // $this->selectionContainer();
+
+        return $this->jSend(JSend::SUCCESS, $data);
+    }
+
+    /**
      * Toggle select/unselect resource(s) for a selection.
      */
     protected function toggleDb(array $resources, bool $isMultiple, User $user)

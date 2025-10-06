@@ -23,6 +23,7 @@ $thumbnail = $plugins->get('thumbnail');
 $escapeAttr = $plugins->get('escapeHtmlAttr');
 $siteSetting = $plugins->get('siteSetting');
 $translatePlural = $plugins->get('translatePlural');
+$selectionReset = $plugins->get('selectionReset');
 $guestNavigation = $user && $plugins->has('guestNavigation') ? $plugins->get('guestNavigation')() : null;
 $breadcrumbs = $plugins->has('breadcrumbs') ? $plugins->get('breadcrumbs') : null;
 $bulkExport = $plugins->has('bulkExport') ? $plugins->get('bulkExport') : null;
@@ -79,6 +80,7 @@ $deleteText = $escapeAttr($translate('Remove from selection'));
     <div class="selection-count">
         <?= sprintf($translate($translatePlural('%s resource', '%s resources', count($currentRecords))), count($currentRecords)) ?>
     </div>
+    <?= $selectionReset() ?>
     <?php else: ?>
     <p class="selection-empty">
         <?= $translate('The selection is empty.') ?>

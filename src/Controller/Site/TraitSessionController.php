@@ -170,6 +170,28 @@ trait TraitSessionController
     }
 
     /**
+     * Delete all resources from selection.
+     */
+    protected function resetSession()
+    {
+        /**
+         * Read selection from session.
+         *
+         * @see \Selection\View\Helper\SelectionContainer
+         * @var \Laminas\Session\Container $selectionContainer
+         */
+        $selectionContainer = $this->selectionContainer();
+        $selectionContainer->exchangeArray([]);
+
+        $data = [
+            'selection' => null,
+            'selection_resources' => [],
+        ];
+
+        return $this->jSend(JSend::SUCCESS, $data);
+    }
+
+    /**
      * Toggle select/unselect resource(s) for a selection.
      */
     protected function toggleSession(array $resources, bool $isMultiple)

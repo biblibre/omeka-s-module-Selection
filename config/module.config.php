@@ -31,6 +31,7 @@ return  [
             'selectionList' => View\Helper\SelectionList::class,
         ],
         'factories' => [
+            'selectionReset' => Service\ViewHelper\SelectionResetFactory::class,
             'selectionContainer' => Service\ViewHelper\SelectionContainerFactory::class,
             'selectionLinkBrowse' => Service\ViewHelper\SelectionLinkBrowseFactory::class,
         ],
@@ -93,7 +94,7 @@ return  [
                             'route' => '/selection[/:action]',
                             'constraints' => [
                                 // Set groups first for regex.
-                                'action' => 'browse|add-group|rename-group|move-group|delete-group|add|delete|move|toggle',
+                                'action' => 'browse|add-group|rename-group|move-group|delete-group|add|delete|move|reset|toggle',
                             ],
                             'defaults' => [
                                 '__NAMESPACE__' => 'Selection\Controller\Site',
@@ -128,9 +129,12 @@ return  [
                         'may_terminate' => true,
                         'child_routes' => [
                             'selection' => [
-                                'type' => \Laminas\Router\Http\Literal::class,
+                                'type' => \Laminas\Router\Http\Segment::class,
                                 'options' => [
-                                    'route' => '/selection',
+                                    'route' => '/selection[/:action]',
+                                    'constraints' => [
+                                        'action' => 'browse|reset',
+                                    ],
                                     'defaults' => [
                                         '__NAMESPACE__' => 'Selection\Controller\Site',
                                         'controller' => 'Guest',

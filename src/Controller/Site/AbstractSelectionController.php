@@ -115,6 +115,25 @@ abstract class AbstractSelectionController extends AbstractActionController
     }
 
     /**
+     * Delete all resources from selection.
+     */
+    public function resetAction()
+    {
+        if (!$this->getRequest()->isXmlHttpRequest()) {
+            return $this->jsonErrorNotFound();
+        }
+
+        $user = $this->identity();
+        if (!$user && $this->siteSettings()->get('selection_disable_anonymous')) {
+            return $this->jsonPermissionDenied();
+        }
+
+        return $user
+            ? $this->resetDb($user)
+            : $this->resetSession();
+    }
+
+    /**
      * Toggle select/unselect resource(s) for a selection.
      */
     public function toggleAction()

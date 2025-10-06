@@ -1,0 +1,21 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Entity\User $user
+ * @var bool $isSession
+ * @var bool $isGuestActive
+ * @var string $urlReset
+ *
+ * and options passed from the caller.
+ */
+
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+?>
+
+<button type="button" class="button selection-button selection-reset" data-url="<?= $escapeAttr($urlReset) ?>">
+    <span class="selection-icon selection-reset-icon"></span>
+    <span class="selection-reset-label"><?= $escape($translate('Clear all selections')) ?></span>
+</button>

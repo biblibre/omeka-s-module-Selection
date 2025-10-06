@@ -8,25 +8,20 @@
          */
 
         const beforeSpin = function (element) {
-            var span = $(element).find('span');
+            let span = $(element).find('span.spinner');
             if (!span.length) {
-                span = $(element).next('span.appended');
-                if (!span.length) {
-                    $('<span class="appended"></span>').insertAfter($(element));
-                    span = $(element).next('span');
-                }
+                span = $('<span class="spinner appended fas fa-sync fa-spin"></span>');
+                $(element).append(span);
+            } else {
+                span.addClass('fas fa-sync fa-spin');
             }
-            element.hide();
-            span.addClass('fas fa-sync fa-spin');
+            $(element).prop('disabled', true);
         };
 
         const afterSpin = function (element) {
-            var span = $(element).find('span');
-            if (!span.length) {
-                span = $(element).next('span.appended');
-                if (span.length) {
-                    span.remove();
-                }
+            const span = $(element).find('span.appended');
+            if (span.length) {
+                span.remove();
             } else {
                 span.removeClass('fas fa-sync fa-spin');
             }
@@ -363,6 +358,35 @@
                 return false;
             })
             .fail(handleAjaxFail);
+        });
+
+        /**
+         * Reset selection.
+         */
+        $('body').on('click', '.selection-button.selection-reset', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const button = $(this);
+            const url = button.attr('data-url');
+            $.ajax({
+                url: url,
+                beforeSend: beforeSpin(button),
+            })
+            .done(function(data) {
+                const selectionResource = data.data.selection_resource;
+                // The status may be "fail" when the action is add/delete
+                // and the item is already added or deleted.
+                if (selectionResource.status === 'success') {
+                    updateSelectionButton(selectionResource);
+                    updateSelectionList(selectionResource);
+                    button.closest('body.selection.browse .selection-list .resource').remove();
+                    $(document).trigger('o:selection-updated', data);
+                }
+            })
+            .fail(handleAjaxFail)
+            .always(function () {
+                afterSpin(button)
+            });
         });
 
         const updateSelectionButton = function(selectionResource) {
