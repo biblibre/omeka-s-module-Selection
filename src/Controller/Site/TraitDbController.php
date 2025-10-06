@@ -94,14 +94,27 @@ trait TraitDbController
             'selection_id' => $selectionId,
         ], ['returnScalar' => 'resource'])->getContent();
 
+        // A check is needed for resources at root that may not be in structure.
+        $inStructure = [];
+        foreach ($selection->structure() as $leaf) {
+            $inStructure = array_merge($inStructure, $leaf['resources']);
+        }
+        $inStructure = array_unique($inStructure);
+        sort($inStructure);
+
         $newResources = [];
         foreach ($resources as $resourceId => $resource) {
             $data = $this->normalizeResource($resource, true, $selectionId);
             if (in_array($resourceId, $selectedResourceIds)) {
-                $data['status'] = 'fail';
-                $data['data'] = [
-                    'message' => $this->translate('Already in'), // @translate
-                ];
+                if ($inStructure) {
+                    $data['status'] = 'fail';
+                    $data['data'] = [
+                        'message' => $this->translate('Already in'), // @translate
+                    ];
+                } else {
+                    $data['status'] = 'success';
+                    $newResources[] = $resourceId;
+                }
             } else {
                 $data['status'] = 'success';
                 try {
@@ -118,7 +131,7 @@ trait TraitDbController
         }
 
         $newStructure = $this->addResourcesToStructure($selection->structure(), $newResources);
-        if ($newStructure) {
+        if ($newStructure !== null) {
             try {
                 $api->update('selections', $selectionId, ['o:structure' => $newStructure], [], ['isPartial' => true]);
             } catch (Exception $e) {

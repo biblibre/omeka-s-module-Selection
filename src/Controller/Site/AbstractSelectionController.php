@@ -643,15 +643,10 @@ abstract class AbstractSelectionController extends AbstractActionController
     /**
      * Store the new resources at the root of the structure of the selection.
      *
-     * @todo Currently not used: there cannot be a structure without name and resources without paths are displayed at root.
-     *
      * @return array|null Null if structure is unchanged.
      */
     protected function addResourcesToStructure(array $structure, array $newResources): ?array
     {
-        // TODO Currently not used: there cannot be a structure without name.
-        return null;
-
         if (!$newResources) {
             return null;
         }
