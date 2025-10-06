@@ -54,7 +54,7 @@ class SelectionRepresentation extends AbstractEntityRepresentation
             $selectionResources = null;
             $resources = $this->dynamicResources();
             foreach ($this->resources() as $resource) {
-                $resources[] = $resource->getReference();
+                $resources[] = $resource->getReference()->jsonSerialize();
             }
         } else {
             // The selection resources is useful only to get the date.
@@ -62,18 +62,18 @@ class SelectionRepresentation extends AbstractEntityRepresentation
             // reference, but it is not standard.
             $selectionResources = [];
             foreach ($this->selectionResources() as $selectionResource) {
-                $selectionResources[] = $selectionResource->getReference();
+                $selectionResources[] = $selectionResource->getReference()->jsonSerialize();
             }
             $resources = [];
             foreach ($this->resources() as $resource) {
-                $resources[] = $resource->getReference();
+                $resources[] = $resource->getReference()->jsonSerialize();
             }
         }
 
         $modified = $this->modified();
 
         return [
-            'o:owner' => $this->owner()->getReference(),
+            'o:owner' => $this->owner()->getReference()->jsonSerialize(),
             'o:is_public' => $this->isPublic(),
             'o:is_dynamic' => $this->isDynamic(),
             'o:label' => $this->label(),
@@ -83,13 +83,14 @@ class SelectionRepresentation extends AbstractEntityRepresentation
             'o:selection_resources' => $selectionResources,
             'o:resources' => $resources,
             'o:created' => [
-                '@value' => $this->getDateTime($this->created()),
+                '@value' => $this->getDateTime($this->created())->jsonSerialize(),
                 '@type' => 'http://www.w3.org/2001/XMLSchema#dateTime',
             ],
-            'o:modified' => $modified ? [
-                '@value' => $this->getDateTime($modified),
-                '@type' => 'http://www.w3.org/2001/XMLSchema#dateTime',
-            ] : null,
+            'o:modified' => $modified
+                ? [
+                    '@value' => $this->getDateTime($modified)->jsonSerialize(),
+                    '@type' => 'http://www.w3.org/2001/XMLSchema#dateTime',
+                ] : null,
         ];
     }
 

@@ -55,9 +55,9 @@ class SelectionResourceRepresentation extends AbstractEntityRepresentation
         $selection = $this->selection();
 
         return [
-            'o:owner' => $owner ? $owner->getReference() : null,
-            'o:resource' => $linkedResource ? $linkedResource->getReference() : null,
-            'o:selection' => $selection ? $selection->getReference() : null,
+            'o:owner' => $owner ? $owner->getReference()->jsonSerialize() : null,
+            'o:resource' => $linkedResource ? $linkedResource->getReference()->jsonSerialize() : null,
+            'o:selection' => $selection ? $selection->getReference()->jsonSerialize() : null,
             'o:created' => [
                 '@value' => $this->getDateTime($this->created()),
                 '@type' => 'http://www.w3.org/2001/XMLSchema#dateTime',

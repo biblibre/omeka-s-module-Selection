@@ -137,12 +137,12 @@ trait TraitDbController
 
         if ($isMultiple) {
             $data = [
-                'selection' => $selection ? $selection->getReference() : null,
+                'selection' => $selection ? $selection->getReference()->jsonSerialize() : null,
                 'selection_resources' => $results,
             ];
         } else {
             $data = [
-                'selection' => $selection ? $selection->getReference() : null,
+                'selection' => $selection ? $selection->getReference()->jsonSerialize() : null,
                 'selection_resource' => reset($results),
             ];
         }
@@ -206,12 +206,12 @@ trait TraitDbController
 
         if ($isMultiple) {
             $data = [
-                'selection' => $selection ? $selection->getReference() : null,
+                'selection' => $selection ? $selection->getReference()->jsonSerialize() : null,
                 'selection_resources' => $results,
             ];
         } else {
             $data = [
-                'selection' => $selection ? $selection->getReference() : null,
+                'selection' => $selection ? $selection->getReference()->jsonSerialize() : null,
                 'selection_resource' => reset($results),
             ];
         }
@@ -325,12 +325,12 @@ trait TraitDbController
 
         if ($isMultiple) {
             $data = [
-                'selection' => $selection ? $selection->getReference() : null,
+                'selection' => $selection ? $selection->getReference()->jsonSerialize() : null,
                 'selection_resources' => $results,
             ];
         } else {
             $data = [
-                'selection' => $selection ? $selection->getReference() : null,
+                'selection' => $selection ? $selection->getReference()->jsonSerialize() : null,
                 'selection_resource' => reset($results),
             ];
         }
@@ -479,7 +479,7 @@ trait TraitDbController
         // $this->selectionContainer();
 
         return $this->jSend(JSend::SUCCESS, [
-            'selection' => $selection ? $selection->getReference() : null,
+            'selection' => $selection ? $selection->getReference()->jsonSerialize() : null,
             'source' => $structure[$source] ?? null,
             'group' => $structure[$destination] ?? null,
         ]);
@@ -519,7 +519,7 @@ trait TraitDbController
         // $this->selectionContainer();
 
         return $this->jSend(JSend::SUCCESS, [
-            'selection' => $selection ? $selection->getReference() : null,
+            'selection' => $selection ? $selection->getReference()->jsonSerialize() : null,
             'group' => $group,
         ]);
     }
@@ -558,7 +558,7 @@ trait TraitDbController
         // $this->selectionContainer();
 
         return $this->jSend(JSend::SUCCESS, [
-            'selection' => $selection ? $selection->getReference() : null,
+            'selection' => $selection ? $selection->getReference()->jsonSerialize() : null,
             'structure' => $selection->structure(),
         ]);
     }
@@ -597,7 +597,7 @@ trait TraitDbController
         // $this->selectionContainer();
 
         return $this->jSend(JSend::SUCCESS, [
-            'selection' => $selection ? $selection->getReference() : null,
+            'selection' => $selection ? $selection->getReference()->jsonSerialize() : null,
             'structure' => $selection->structure(),
         ]);
     }
@@ -649,7 +649,7 @@ trait TraitDbController
         // $this->selectionContainer();
 
         return $this->jSend(JSend::SUCCESS, [
-            'selection' => $selection ? $selection->getReference() : null,
+            'selection' => $selection ? $selection->getReference()->jsonSerialize() : null,
             'structure' => $selection->structure(),
         ]);
     }
