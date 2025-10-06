@@ -14,7 +14,7 @@ $siteSetting = $plugins->get('siteSetting');
     <li>
         <?= $hyperlink(
             $siteSetting('selection_label_guest_link') ?: $translate('My selection'), // @translate
-            $url('site/guest/selection', [], true)
+            $url('site/guest/selection', ['action' => 'browse'], true)
         ) ?>
     </li>
 </ul>
