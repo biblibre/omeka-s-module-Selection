@@ -63,6 +63,7 @@ $selectedRecordModel = [
     'selectionId' => $selectionId,
     'selection' => $selection,
     'record' => null,
+    'disposition' => $disposition,
     'isGuestActive' => $isGuestActive,
     'isSession' => $isSession,
     'allowIndividualSelect' => $allowIndividualSelect,
@@ -112,11 +113,11 @@ $countsByType = array_count_values($recordsByType) + ['items' => 0, 'media' => 0
 </p>
 <?php endif; ?>
 
-<div class="selection-list selections selection-hierarchy">
+<div class="selection-list selections selection-grouped">
 
     <?php if (count($currentRecords)): ?>
     <div class="selection-count">
-        <?= sprintf($translate($translatePlural('%s resource', '%s resources', count($currentRecords))), count($currentRecords)) ?>
+        <?= sprintf($translatePlural('%s resource', '%s resources', count($currentRecords)), count($currentRecords)) ?>
     </div>
     <?php else: ?>
     <p class="selection-empty">
@@ -136,7 +137,7 @@ $countsByType = array_count_values($recordsByType) + ['items' => 0, 'media' => 0
 
     <?php // Groups and selected resources inside them. ?>
     <?php $templateGroup = $partial('selection/site/selection/selection-group'); ?>
-    <ul class="resource-list selection-resources selection-structure selection-structure-nested" data-msg-add-group="<?= $translate('Set selection name') ?>" data-template-group="<?= $escapeAttr($templateGroup) ?>">
+    <ul class="resource-list selection-resources selection-structure selection-structure-flat" data-msg-add-group="<?= $translate('Set selection name') ?>" data-template-group="<?= $escapeAttr($templateGroup) ?>">
         <?php
         foreach ($selection['structure'] ?? [] as $groupFullPath => $group):
             // Prepare the partial loop.

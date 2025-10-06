@@ -56,6 +56,7 @@ class SelectionList extends AbstractHelper
             'selectionId' => $selectionId,
             'selections' => $selectionContainer->selections,
             'records' => $selectionContainer->records,
+            'disposition' => $siteSetting('selection_browse_disposition', 'list') ?: 'list',
             'isGuestActive' => $plugins->has('guestWidget'),
             'isSession' => !$user,
             'allowIndividualSelect' => $allowIndividualSelect,

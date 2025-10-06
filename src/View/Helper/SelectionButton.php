@@ -64,6 +64,7 @@ class SelectionButton extends AbstractHelper
             'selectionId' => $selectionId,
             'selections' => $selectionContainer->selections,
             'records' => $selectionContainer->records,
+            'disposition' => $siteSetting('selection_browse_disposition', 'list') ?: 'list',
             'isGuestActive' => $plugins->has('guestWidget'),
             'isSession' => !$user,
             'value' => isset($selectionContainer->records[$selectionId][$resourceId]) ? 'selected' : 'unselected',

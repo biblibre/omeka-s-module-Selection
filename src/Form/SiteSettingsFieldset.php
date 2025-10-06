@@ -127,8 +127,9 @@ class SiteSettingsFieldset extends Fieldset
                     'label' => 'Default disposition of page Selection', // @translate
                     'info' => 'When the url query argument "disposition" is set, it overrides this option.', // @ŧranslate
                     'value_options' => [
-                        'list' => 'List', // @translate
-                        'hierarchy' => 'Hierarchy', // @translate
+                        'list' => 'List of resources', // @translate
+                        'grouped' => 'List of selections', // @translate
+                        'hierarchy' => 'Nested selections', // @translate
                     ],
                 ],
                 'attributes' => [

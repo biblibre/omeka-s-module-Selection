@@ -37,10 +37,12 @@ trait TraitSessionController
         $siteSettings = $this->siteSettings();
         $viewHelpers = $this->viewHelpers();
 
-        if (isset($query['disposition']) && in_array($query['disposition'], ['list', 'hierarchy'])) {
+        $allowedDispositions = ['list', 'grouped', 'hierarchy'];
+        if (isset($query['disposition']) && in_array($query['disposition'], $allowedDispositions)) {
             $disposition = $query['disposition'];
         } else {
-            $disposition = $siteSettings->get('selection_browse_disposition') === 'hierarchy' ? 'hierarchy' : 'list';
+            $disposition = $siteSettings->get('selection_browse_disposition');
+            $disposition = in_array($disposition, $allowedDispositions) ? $disposition : 'list';
         }
 
         $allowIndividualSelect = $siteSettings->get('selection_individual_select', 'auto');
@@ -54,6 +56,7 @@ trait TraitSessionController
             'selectionId' => $selectionId,
             'selections' => $selectionContainer->selections,
             'records' => $selectionContainer->records,
+            'disposition' => $disposition,
             'isGuestActive' => false,
             'isSession' => true,
             'allowIndividualSelect' => $allowIndividualSelect,

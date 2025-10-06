@@ -6,6 +6,7 @@
  * @var int $selectionId
  * @var array $selections
  * @var array $records
+ * @var string $disposition
  * @var bool $isGuestActive
  * @var bool $isSession
  * @var bool $allowIndividualSelect
@@ -30,10 +31,14 @@ $bulkExporters = $plugins->has('bulkExporters') ? $plugins->get('bulkExporters')
         <details class="action-details">
             <summary class="selection-summary group-name" aria-expanded="false"><?= $translate('Actions') ?></summary>
             <ul class="actions">
-                <li><button type="button" class="button add-group" data-url="<?= $baseUrl  ?>/add-group"><?= $escape($translate('Add a sub-folder')) ?></button></li>
-                <li><button type="button" class="button rename-group" data-url="<?= $baseUrl ?>/rename-group"><?= $escape($translate('Rename folder')) ?></button></li>
-                <li><button type="button" class="button move-group" data-url="<?= $baseUrl ?>/move-group"><?= $escape($translate('Move folder')) ?></button></li>
-                <li><button type="button" class="button delete-group" data-url="<?= $baseUrl ?>/delete-group"><?= $escape($translate('Delete folder')) ?></button></li>
+                <?php if ($disposition === 'hierarchy'): ?>
+                <li><button type="button" class="button add-group" data-url="<?= $baseUrl  ?>/add-group"><?= $escape($translate('Add a sub-selection')) ?></button></li>
+                <?php endif; ?>
+                <li><button type="button" class="button rename-group" data-url="<?= $baseUrl ?>/rename-group"><?= $escape($translate('Rename selection')) ?></button></li>
+                <?php if ($disposition === 'hierarchy'): ?>
+                <li><button type="button" class="button move-group" data-url="<?= $baseUrl ?>/move-group"><?= $escape($translate('Move selection')) ?></button></li>
+                <?php endif; ?>
+                <li><button type="button" class="button delete-group" data-url="<?= $baseUrl ?>/delete-group"><?= $escape($translate('Delete selection')) ?></button></li>
                 <li><button type="button" class="button move-resource" data-url="<?= $baseUrl ?>/move"><?= $escape($translate('Move resources')) ?></button></li>
                 <?php if ($bulkExporters):
                 foreach ($bulkExporters as $format => $label):

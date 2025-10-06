@@ -12,7 +12,7 @@
         margin-right: inherit;
     }
 
-    /* Selection list */
+    /* Selection list, common to display flat, grouped and hierarchy. */
 
     .selection-list ul {
         list-style-type: none;
@@ -56,6 +56,12 @@
         display: none;
     }
 
+    /* Selection grouped */
+
+    .selection-grouped .selection-structure > li {
+        margin: 16px 0 16px 0;
+    }
+
     /* Selection hierarchy */
 
     .selection-hierarchy .selection-structure > li {
@@ -76,10 +82,7 @@
     .selection-hierarchy .selection-structure > li[data-level='5'] {
         margin-left: 192px;
     }
-    .selection-hierarchy.selections.inactive,
-    .selection-hierarchy.selection-empty.inactive {
-        display: none;
-    }
+
     .group-name span:not(:last-of-type)::after {
         content:"/";
         padding-left: .5em;
