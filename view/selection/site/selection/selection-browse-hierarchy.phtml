@@ -118,7 +118,7 @@ $countsByType = array_count_values($recordsByType) + ['items' => 0, 'media' => 0
 
     <?php if (count($currentRecords)): ?>
     <div class="selection-count">
-        <?= sprintf($translate($translatePlural('%s resource', '%s resources', count($currentRecords))), count($currentRecords)) ?>
+        <?= sprintf($translatePlural('%s resource', '%s resources', count($currentRecords)), count($currentRecords)) ?>
     </div>
     <?php else: ?>
     <p class="selection-empty">

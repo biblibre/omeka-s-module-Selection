@@ -81,7 +81,7 @@ $deleteText = $escapeAttr($translate('Remove from selection'));
 
     <?php if (count($currentRecords)): ?>
     <div class="selection-count">
-        <?= sprintf($translate($translatePlural('%s resource', '%s resources', count($currentRecords))), count($currentRecords)) ?>
+        <?= sprintf($translatePlural('%s resource', '%s resources', count($currentRecords)), count($currentRecords)) ?>
     </div>
     <?= $selectionReset() ?>
     <?php else: ?>
