@@ -38,6 +38,11 @@ use Omeka\Api\Representation\UserRepresentation;
 
 class SelectionResourceRepresentation extends AbstractEntityRepresentation
 {
+    /**
+     * @var \Selection\Entity\SelectionResource
+     */
+    protected $resource;
+
     public function getJsonLdType()
     {
         return 'o:SelectionResource';
@@ -45,11 +50,13 @@ class SelectionResourceRepresentation extends AbstractEntityRepresentation
 
     public function getJsonLd()
     {
+        $owner = $this->owner();
+        $linkedResource = $this->resource();
         $selection = $this->selection();
 
         return [
-            'o:owner' => $this->owner()->getReference(),
-            'o:resource' => $this->resource()->getReference(),
+            'o:owner' => $owner ? $owner->getReference() : null,
+            'o:resource' => $linkedResource ? $linkedResource->getReference() : null,
             'o:selection' => $selection ? $selection->getReference() : null,
             'o:created' => [
                 '@value' => $this->getDateTime($this->created()),
@@ -58,16 +65,30 @@ class SelectionResourceRepresentation extends AbstractEntityRepresentation
         ];
     }
 
-    public function owner(): UserRepresentation
+    /**
+     * Get the owner associated to the selection, if allowed.
+     */
+    public function owner(): ?UserRepresentation
     {
         $adapter = $this->getAdapter('users');
-        return $adapter->getRepresentation($this->resource->getOwner());
+        $owner = $this->resource->getOwner();
+        return $owner
+            ? $adapter->getRepresentation($owner)
+            : null;
     }
 
-    public function resource(): AbstractResourceEntityRepresentation
+    /**
+     * Get the resource associated to the selection.
+     *
+     * May return null to fix issues with missing or private resources.
+     */
+    public function resource(): ?AbstractResourceEntityRepresentation
     {
         $adapter = $this->getAdapter('resources');
-        return $adapter->getRepresentation($this->resource->getResource());
+        $linkedResource = $this->resource->getResource();
+        return $linkedResource
+            ? $adapter->getRepresentation($linkedResource)
+            : null;
     }
 
     public function selection(): ?SelectionRepresentation
@@ -85,6 +106,9 @@ class SelectionResourceRepresentation extends AbstractEntityRepresentation
 
     public function primaryMedia(): ?MediaRepresentation
     {
-        return $this->resource()->primaryMedia();
+        $linkedResource = $this->resource();
+        return $linkedResource
+            ? $linkedResource->primaryMedia()
+            : null;
     }
 }

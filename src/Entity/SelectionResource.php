@@ -94,6 +94,8 @@ class SelectionResource extends AbstractEntity
     /**
      * @var Selection
      *
+     * TODO For now, nullable when there is no selection on mode single selection. Remove nullable.
+     *
      * @ManyToOne(
      *      targetEntity="Selection",
      *      inversedBy="selectionResources"
@@ -129,6 +131,10 @@ class SelectionResource extends AbstractEntity
         return $this;
     }
 
+    /**
+     * The output may be null, because the adapter check it before filling it.
+     * @see \Omeka\Api\Adapter\AbstractEntityAdapter::hydrateOwner()
+     */
     public function getOwner(): ?User
     {
         return $this->owner;
@@ -140,6 +146,9 @@ class SelectionResource extends AbstractEntity
         return $this;
     }
 
+    /**
+     * The output may be null, because there may be a check for visibility.
+     */
     public function getResource(): ?Resource
     {
         return $this->resource;

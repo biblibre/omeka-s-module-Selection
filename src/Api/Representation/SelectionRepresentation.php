@@ -36,6 +36,11 @@ use Omeka\Api\Representation\UserRepresentation;
 
 class SelectionRepresentation extends AbstractEntityRepresentation
 {
+    /**
+     * @var \Selection\Entity\Selection
+     */
+    protected $resource;
+
     public function getJsonLdType()
     {
         return 'o:Selection';

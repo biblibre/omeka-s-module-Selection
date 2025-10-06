@@ -128,9 +128,12 @@ class SelectionContainer extends AbstractHelper
 
         $records = [];
         foreach ($selectionResources as $selectionResource) {
+            $resource = $selectionResource->resource();
+            if (!$resource) {
+                continue;
+            }
             $selection = $selectionResource->selection();
             $selectionId = $selection ? $selection->id() : 0;
-            $resource = $selectionResource->resource();
             $resourceId = $resource->id();
             $title = (string) $resource->displayTitle(null, $defaultLang);
             $description = (string) $resource->displayDescription(null, $defaultLang);

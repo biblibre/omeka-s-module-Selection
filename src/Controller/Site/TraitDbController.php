@@ -244,8 +244,6 @@ trait TraitDbController
 
         /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $add */
         foreach ($add as $resourceId => $resource) {
-            $data = $this->normalizeResource($resource, true, $selectionId);
-            $data['status'] = 'success';
             try {
                 $api->create('selection_resources', [
                     'o:owner' => ['o:id' => $userId],
@@ -254,13 +252,13 @@ trait TraitDbController
                 ])->getContent();
             } catch (Exception $e) {
             }
+            $data = $this->normalizeResource($resource, true, $selectionId);
+            $data['status'] = 'success';
             $results[$resourceId] = $data;
         }
 
         /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $delete */
         foreach ($delete as $resourceId => $resource) {
-            $data = $this->normalizeResource($resource, false, $selectionId);
-            $data['status'] = 'success';
             try {
                 $api->delete('selection_resources', [
                     'owner' => $userId,
@@ -269,6 +267,8 @@ trait TraitDbController
                 ]);
             } catch (Exception $e) {
             }
+            $data = $this->normalizeResource($resource, false, $selectionId);
+            $data['status'] = 'success';
             $results[$resourceId] = $data;
         }
 
@@ -497,7 +497,8 @@ trait TraitDbController
         if ($selecteds) {
             $selectionResourceIds = [];
             foreach ($selection->selectionResources() as $selectionResource) {
-                if (in_array($selectionResource->resource()->id(), $selecteds)) {
+                $linkedResource = $selectionResource->resource();
+                if ($linkedResource && in_array($linkedResource->id(), $selecteds)) {
                     $selectionResourceIds[] = $selectionResource->id();
                 }
             }
