@@ -55,11 +55,8 @@ class SiteSettingsFieldset extends Fieldset
                 'type' => CommonElement\OptionalMultiCheckbox::class,
                 'options' => [
                     'element_group' => 'selection',
-                    'label' => 'Display selection button', // @translate
+                    'label' => 'Display selection button (old themes)', // @translate
                     'value_options' => [
-                        'block/items' => 'Items: Via resource block or custom theme', // @translate
-                        'block/media' => 'Media: Via resource block or custom theme', // @translate
-                        'block/item_sets' => 'Item set: Via resource block or custom theme', // @translate
                         'before/items' => 'Item: Top', // @translate
                         'before/media' => 'Media: Top', // @translate
                         'before/item_sets' => 'Item set: Top', // @translate
@@ -78,11 +75,8 @@ class SiteSettingsFieldset extends Fieldset
                 'type' => CommonElement\OptionalMultiCheckbox::class,
                 'options' => [
                     'element_group' => 'selection',
-                    'label' => 'Display selection list', // @translate
+                    'label' => 'Display selection list (old themes)', // @translate
                     'value_options' => [
-                        'block/items' => 'Items: Via resource block or custom theme', // @translate
-                        'block/media' => 'Media: Via resource block or custom theme', // @translate
-                        'block/item_sets' => 'Item set: Via resource block or custom theme', // @translate
                         'before/items' => 'Item: Top', // @translate
                         'before/media' => 'Media: Top', // @translate
                         'before/item_sets' => 'Item set: Top', // @translate
