@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-02 10:18+0200\n"
+"POT-Creation-Date: 2025-11-03 17:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,13 +17,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: Module.php:98
+#: Module.php:94
 msgid ""
 "This module cannot install its tables, because they exist already. Try to "
 "remove them first."
 msgstr ""
 
-#: Module.php:505 src/Controller/Site/TraitDbController.php:619
+#: Module.php:420 src/Controller/Site/TraitDbController.php:617
 #: src/Controller/Site/TraitSessionController.php:433
 #: src/View/Helper/SelectionContainer.php:50
 #: src/View/Helper/SelectionContainer.php:85
@@ -34,66 +34,66 @@ msgstr ""
 msgid "Selection"
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:173
-#: src/Controller/Site/AbstractSelectionController.php:344
-#: src/Controller/Site/AbstractSelectionController.php:425
+#: src/Controller/Site/AbstractSelectionController.php:174
+#: src/Controller/Site/AbstractSelectionController.php:345
+#: src/Controller/Site/AbstractSelectionController.php:426
 msgid "The group name is unchanged."
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:179
-#: src/Controller/Site/AbstractSelectionController.php:437
-#: src/Controller/Site/AbstractSelectionController.php:443
+#: src/Controller/Site/AbstractSelectionController.php:180
+#: src/Controller/Site/AbstractSelectionController.php:438
+#: src/Controller/Site/AbstractSelectionController.php:444
 #, php-format
 msgid "The group \"%s\" does not exist."
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:185
-#: src/Controller/Site/AbstractSelectionController.php:191
+#: src/Controller/Site/AbstractSelectionController.php:186
+#: src/Controller/Site/AbstractSelectionController.php:192
 #, php-format
 msgid "The destination group \"%s\" does not exist."
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:229
-#: src/Controller/Site/AbstractSelectionController.php:318
-#: src/Controller/Site/AbstractSelectionController.php:325
-#: src/Controller/Site/AbstractSelectionController.php:413
-#: src/Controller/Site/AbstractSelectionController.php:545
+#: src/Controller/Site/AbstractSelectionController.php:230
+#: src/Controller/Site/AbstractSelectionController.php:319
+#: src/Controller/Site/AbstractSelectionController.php:326
+#: src/Controller/Site/AbstractSelectionController.php:414
+#: src/Controller/Site/AbstractSelectionController.php:546
 msgid "No group set."
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:242
-#: src/Controller/Site/AbstractSelectionController.php:338
+#: src/Controller/Site/AbstractSelectionController.php:243
+#: src/Controller/Site/AbstractSelectionController.php:339
 #, php-format
 msgid "The group name contains invalid characters (%s)."
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:250
-#: src/Controller/Site/AbstractSelectionController.php:352
+#: src/Controller/Site/AbstractSelectionController.php:251
+#: src/Controller/Site/AbstractSelectionController.php:353
 msgid "The parent group does not exist."
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:257
-#: src/Controller/Site/AbstractSelectionController.php:362
+#: src/Controller/Site/AbstractSelectionController.php:258
+#: src/Controller/Site/AbstractSelectionController.php:363
 msgid "The group exists already."
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:431
+#: src/Controller/Site/AbstractSelectionController.php:432
 msgid "The group cannot be moved inside itself."
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:551
+#: src/Controller/Site/AbstractSelectionController.php:552
 msgid "The group does not exist."
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:739
+#: src/Controller/Site/AbstractSelectionController.php:740
 msgid "An internal error occurred."
 msgstr ""
 
-#: src/Controller/Site/AbstractSelectionController.php:748
+#: src/Controller/Site/AbstractSelectionController.php:749
 msgid "Permission denied"
 msgstr ""
 
-#: src/Controller/Site/TraitDbController.php:100
+#: src/Controller/Site/TraitDbController.php:98
 #: src/Controller/Site/TraitSessionController.php:89
 msgid "Already in"
 msgstr ""
@@ -192,7 +192,7 @@ msgstr ""
 msgid "Move resources"
 msgstr ""
 
-#: Module.php:192
+#: Module.php:186
 #, php-format
 msgid "The module removed tables \"%s\" from a previous broken install."
 msgstr ""
@@ -234,24 +234,20 @@ msgid ""
 "A selection resource must be unique for the owner when there is no selection."
 msgstr ""
 
-#: src/Form/SelectionFieldset.php:20
+#: src/Form/SelectionFieldset.php:21
 msgid "Disposition"
 msgstr ""
 
-#: src/Form/SelectionFieldset.php:22 src/Form/SiteSettingsFieldset.php:129
+#: src/Form/SelectionFieldset.php:23 src/Form/SiteSettingsFieldset.php:129
 msgid "List"
 msgstr ""
 
-#: src/Form/SelectionFieldset.php:23 src/Form/SiteSettingsFieldset.php:130
+#: src/Form/SelectionFieldset.php:24 src/Form/SiteSettingsFieldset.php:130
 msgid "Hierarchy"
 msgstr ""
 
-#: src/Form/SelectionFieldset.php:34 src/Form/SiteSettingsFieldset.php:142
+#: src/Form/SelectionFieldset.php:35 src/Form/SiteSettingsFieldset.php:142
 msgid "Add individual checkboxes for modules Bulk Export and Contact Us"
-msgstr ""
-
-#: src/Form/SelectionFieldset.php:36 src/Form/SiteSettingsFieldset.php:144
-msgid "When needed"
 msgstr ""
 
 #: src/Form/SiteSettingsFieldset.php:13
