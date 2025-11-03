@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 namespace Selection\Form;
+
 use Laminas\Form\Element;
 use Laminas\Form\Fieldset;
 

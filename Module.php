@@ -3,14 +3,11 @@
 namespace Selection;
 
 use Laminas\ServiceManager\ServiceLocatorInterface;
-use Laminas\View\Renderer\PhpRenderer;
-use Laminas\Mvc\Controller\AbstractController;
 use Laminas\EventManager\Event;
 use Laminas\EventManager\SharedEventManagerInterface;
 use Laminas\Mvc\MvcEvent;
 use Omeka\Module\AbstractModule;
 use Omeka\Stdlib\Message;
-use Omeka\Settings\SettingsInterface;
 
 /**
  * Selection.
@@ -21,7 +18,6 @@ use Omeka\Settings\SettingsInterface;
  */
 class Module extends AbstractModule
 {
-
     const NAMESPACE = __NAMESPACE__;
 
     /**
@@ -34,7 +30,7 @@ class Module extends AbstractModule
         return include __DIR__ . '/config/module.config.php';
     }
 
-    /** 
+    /**
      * Get the site settings of the current module.
      *
      * The config of the module is not merged with Omeka main config for
@@ -105,8 +101,7 @@ class Module extends AbstractModule
         $defaultSettings = $this->getModuleSiteConfig();
 
         // Adds settings needed by module
-        if ($defaultSettings)
-        {
+        if ($defaultSettings) {
             $settings = $this->getServiceLocator()->get('Omeka\Settings\Site');
             $api = $this->getServiceLocator()->get('Omeka\ApiManager');
             $ids = $api->search('sites', [], ['returnScalar' => 'id'])->getContent();
@@ -123,12 +118,11 @@ class Module extends AbstractModule
     {
         $this->setServiceLocator($serviceLocator);
         $this->execSqlFromFile(OMEKA_PATH . '/modules/Selection/data/install/uninstall.sql');
-        
+
         $defaultSettings = $this->getModuleSiteConfig();
 
         // Delete settings added by module
-        if ($defaultSettings)
-        {
+        if ($defaultSettings) {
             $settings = $serviceLocator->get('Omeka\Settings\Site');
             $api = $this->getServiceLocator()->get('Omeka\ApiManager');
             $ids = $api->search('sites', [], ['returnScalar' => 'id'])->getContent();
@@ -306,8 +300,7 @@ class Module extends AbstractModule
 
         foreach ($defaultSettings as $name => $value) {
             $val = $settings->get($name, is_array($value) ? [] : null);
-            if (!(is_array($val) && $val == []) && $val != null)
-            {
+            if (!(is_array($val) && $val == []) && $val != null) {
                 $currentSettings[$name] = $val;
             }
         }
@@ -360,7 +353,6 @@ class Module extends AbstractModule
          * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
          * @see \Selection\View\Helper\SelectionButton
          */
-
         $services = $this->getServiceLocator();
         $siteSettings = $services->get('Omeka\Settings\Site');
 
@@ -395,7 +387,6 @@ class Module extends AbstractModule
          * @var \Laminas\View\Renderer\PhpRenderer $view
          * @see \Selection\View\Helper\SelectionList
          */
-
         $services = $this->getServiceLocator();
         $siteSettings = $services->get('Omeka\Settings\Site');
 

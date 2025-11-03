@@ -72,7 +72,7 @@ return  [
         ],
         'invokables' => [
             'selectionJSend' => Mvc\Controller\Plugin\JSend::class,
-        ]
+        ],
     ],
     'navigation' => [
         'site' => [

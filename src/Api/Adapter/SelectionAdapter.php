@@ -129,7 +129,7 @@ class SelectionAdapter extends AbstractEntityAdapter
         EntityInterface $entity,
         ErrorStore $errorStore
     ): void {
-        /** @var \Selection\Entity\Selection $entity */
+        /* @var \Selection\Entity\Selection $entity */
 
         $this->hydrateOwner($request, $entity);
 
