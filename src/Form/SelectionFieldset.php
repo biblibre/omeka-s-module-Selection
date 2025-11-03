@@ -33,7 +33,6 @@ class SelectionFieldset extends Fieldset
                 'options' => [
                     'label' => 'Add individual checkboxes for modules Bulk Export and Contact Us', // @translate
                     'value_options' => [
-                        'auto' => 'When needed', // @translate
                         'no' => 'No', // @translate
                         'yes' => 'Yes', // @translate
                     ],

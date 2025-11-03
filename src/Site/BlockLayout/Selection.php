@@ -74,10 +74,8 @@ class Selection extends AbstractBlockLayout implements TemplateableBlockLayoutIn
             $disposition = $block->dataValue('disposition') === 'hierarchy' ? 'hierarchy' : 'list';
         }
 
-        $allowIndividualSelect = $block->dataValue('individual_select', 'auto');
-        $allowIndividualSelect = ($allowIndividualSelect !== 'no' && $allowIndividualSelect !== 'yes')
-            ? $plugins->has('bulkExport') || $plugins->has('contactUs')
-            : $allowIndividualSelect === 'yes';
+        $allowIndividualSelect = $block->dataValue('individual_select', 'no');
+        $allowIndividualSelect = $allowIndividualSelect === 'yes';
 
         $vars = [
             'block' => $block,

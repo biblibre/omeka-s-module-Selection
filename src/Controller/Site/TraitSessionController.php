@@ -43,7 +43,7 @@ trait TraitSessionController
             $disposition = $siteSettings->get('selection_browse_disposition') === 'hierarchy' ? 'hierarchy' : 'list';
         }
 
-        $allowIndividualSelect = $siteSettings->get('selection_individual_select', 'auto');
+        $allowIndividualSelect = $siteSettings->get('selection_individual_select', 'no');
         $allowIndividualSelect = ($allowIndividualSelect !== 'no' && $allowIndividualSelect !== 'yes')
             ? $viewHelpers->has('bulkExport') || $viewHelpers->has('contactUs')
             : $allowIndividualSelect === 'yes';
