@@ -31,7 +31,7 @@ class Module extends AbstractModule
      */
     public function getConfig()
     {
-        return include OMEKA_PATH . '/modules/Selection/config/module.config.php';
+        return include __DIR__ . '/config/module.config.php';
     }
 
     /** 
@@ -126,7 +126,7 @@ class Module extends AbstractModule
         
         $defaultSettings = $this->getModuleSiteConfig();
 
-        // Delete settings added by module, optional
+        // Delete settings added by module
         if ($defaultSettings)
         {
             $settings = $serviceLocator->get('Omeka\Settings\Site');
