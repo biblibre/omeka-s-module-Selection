@@ -3,14 +3,11 @@
 namespace Selection;
 
 use Laminas\ServiceManager\ServiceLocatorInterface;
-use Laminas\View\Renderer\PhpRenderer;
-use Laminas\Mvc\Controller\AbstractController;
 use Laminas\EventManager\Event;
 use Laminas\EventManager\SharedEventManagerInterface;
 use Laminas\Mvc\MvcEvent;
 use Omeka\Module\AbstractModule;
 use Omeka\Stdlib\Message;
-use Omeka\Settings\SettingsInterface;
 
 /**
  * Selection.
@@ -21,7 +18,6 @@ use Omeka\Settings\SettingsInterface;
  */
 class Module extends AbstractModule
 {
-
     const NAMESPACE = __NAMESPACE__;
 
     /**
@@ -31,14 +27,11 @@ class Module extends AbstractModule
      */
     public function getConfig()
     {
-        return include OMEKA_PATH . '/modules/' . static::NAMESPACE . '/config/module.config.php';
+        return include __DIR__ . '/config/module.config.php';
     }
 
-    /** 
-     * Get the settings of the current module.
-     *
-     * The settings are the default config of config, settings, site settings,
-     * user settings, block settings, etc.
+    /**
+     * Get the site settings of the current module.
      *
      * The config of the module is not merged with Omeka main config for
      * services before the end of install. So it is locally cached to avoid to
@@ -49,9 +42,8 @@ class Module extends AbstractModule
         static $localConfig;
 
         if (!isset($localConfig)) {
-            $space = strtolower(static::NAMESPACE);
             $localConfig = $this->getConfig();
-            $localConfig = $localConfig[$space] ?? false;
+            $localConfig = $localConfig['selection'] ?? false;
         }
 
         if ($localConfig === false) {
@@ -96,7 +88,7 @@ class Module extends AbstractModule
         $translator = $serviceLocator->get('ControllerPluginManager')->get('translate');
         $this->setServiceLocator($serviceLocator);
 
-        $sqlFile = OMEKA_PATH . '/modules/' . static::NAMESPACE . '/data/install/schema.sql';
+        $sqlFile = OMEKA_PATH . '/modules/Selection/data/install/schema.sql';
         if (!$this->checkNewTablesFromFile($sqlFile)) {
             $message = new Message(
                 $translator->translate('This module cannot install its tables, because they exist already. Try to remove them first.') // @translate
@@ -106,21 +98,10 @@ class Module extends AbstractModule
 
         $this->execSqlFromFile($sqlFile);
 
-        /** @var \Omeka\Module\Manager $moduleManager */
-        $moduleManager = $serviceLocator->get('Omeka\ModuleManager');
-        $module = $moduleManager->getModule('Basket');
-        if ($module) {
-            $message = new Message(
-                'The module Basket is present. Upgrade from it was removed since version 3.4.7. Install the previous version if you want to upgrade it.', // @translate
-            );
-            $messenger = $serviceLocator->get('ControllerPluginManager')->get('messenger');
-            $messenger->addWarning($message);
-        }
-
         $defaultSettings = $this->getModuleSiteConfig();
 
-        if ($defaultSettings)
-        {
+        // Adds settings needed by module
+        if ($defaultSettings) {
             $settings = $this->getServiceLocator()->get('Omeka\Settings\Site');
             $api = $this->getServiceLocator()->get('Omeka\ApiManager');
             $ids = $api->search('sites', [], ['returnScalar' => 'id'])->getContent();
@@ -136,12 +117,12 @@ class Module extends AbstractModule
     public function uninstall(ServiceLocatorInterface $serviceLocator): void
     {
         $this->setServiceLocator($serviceLocator);
-        $this->execSqlFromFile(OMEKA_PATH . '/modules/' . static::NAMESPACE . '/data/install/uninstall.sql');
-        
+        $this->execSqlFromFile(OMEKA_PATH . '/modules/Selection/data/install/uninstall.sql');
+
         $defaultSettings = $this->getModuleSiteConfig();
 
-        if ($defaultSettings)
-        {
+        // Delete settings added by module
+        if ($defaultSettings) {
             $settings = $serviceLocator->get('Omeka\Settings\Site');
             $api = $this->getServiceLocator()->get('Omeka\ApiManager');
             $ids = $api->search('sites', [], ['returnScalar' => 'id'])->getContent();
@@ -303,16 +284,9 @@ class Module extends AbstractModule
         $services = $this->getServiceLocator();
         $formElementManager = $services->get('FormElementManager');
 
-        $path = static::NAMESPACE . '\Form\SiteSettingsFieldset';
-
-        if (!$formElementManager->has($path))
-            return null;
-
         $settings = $services->get('Omeka\Settings\Site');
 
         $site = $services->get('ControllerPluginManager')->get('currentSite');
-        $id = $site()->id();
-
 
         // Simplify config of settings.
         if (empty($globalNext)) {
@@ -321,108 +295,15 @@ class Module extends AbstractModule
             $ckEditorHelper();
         }
 
-        // Allow to use a form without an id, for example to create a user.
-        if (!$id) {
-            $data = [];
-        }
-        else {
-            $this->initDataToPopulate($settings, $id);
-            $data = $this->prepareDataToPopulate($settings);
-            if ($data === null) {
-                return null;
-            }
-        }
-
-        $space = strtolower(static::NAMESPACE);
-
-        /**
-         * @var \Laminas\Form\Fieldset $fieldset
-         * @var \Laminas\Form\Form $form
-         */
-        $fieldset = $formElementManager->get($path);
-        $fieldset->setName($space);
-        $form = $event->getTarget();
-
-        // Allow to save data and to manage modules compatible with
-        // Omeka S v3 and v4.
-        //
-        // In Omeka S v4, settings are no more de-nested, next to the new
-        // "element group" feature, where default elements are attached
-        // directly to the main form with a fake fieldset (not managed by
-        // laminas), without using the formCollection() option.
-        // So un-de-nested params are checked, but no more automatically
-        // saved.
-        // And when data is populated, it is not possible to determinate
-        // directly if the form is valid or not as a whole, because the
-        // check is done after the filling inside the controller.
-        // To manage this new feature, either remove fieldsets and attach
-        // elements directly to the form, either save elements via event
-        // "view.browse.before", where the form is available.
-        // This second way is simpler to manage modules compatible with
-        // Omeka S v3 and v4, but it is not possible because there is a
-        // redirect in the controller when post is successfull.
-        // So append all elements and sub-fieldsets on the root of the form.
-        $fieldsetElementGroups = $fieldset->getOption('element_groups');
-        if ($fieldsetElementGroups) {
-            $form->setOption('element_groups', array_merge($form->getOption('element_groups') ?: [], $fieldsetElementGroups));
-        }
-
-        if (version_compare(\Omeka\Module::VERSION, '4', '<')) {
-            $form->add($fieldset);
-            $form->get($space)->populateValues($data);
-        } else {
-            foreach ($fieldset->getFieldsets() as $subFieldset) {
-                $form->add($subFieldset);
-            }
-            foreach ($fieldset->getElements() as $element) {
-                $form->add($element);
-            }
-            $form->populateValues($data);
-            $fieldset = $form;
-        }
-
-        return $fieldset;
-    }
-
-    /**
-     * Initialize each site settings.
-     *
-     * If the default settings were never registered, it means an incomplete
-     * config, install or upgrade, or a new site or a new user. In all cases,
-     * check it and save default value first.
-     *
-     * @param SettingsInterface $settings
-     * @param int $id Site id or user id.
-     * @param bool True if processed.
-     */
-    protected function initDataToPopulate(SettingsInterface $settings, $id = null): bool
-    {
-        // This method is not in the interface, but is set for config, site and
-        // user settings.
-        if (!method_exists($settings, 'getTableName')) {
-            return false;
-        }
-
+        $currentSettings = [];
         $defaultSettings = $this->getModuleSiteConfig();
-        if (!$defaultSettings) {
-            return false;
-        }
 
-        /** @var \Doctrine\DBAL\Connection $connection */
-        $services = $this->getServiceLocator();
-        $connection = $services->get('Omeka\Connection');
-        if ($id) {
-            if (!method_exists($settings, 'getTargetIdColumnName')) {
-                return false;
+        foreach ($defaultSettings as $name => $value) {
+            $val = $settings->get($name, is_array($value) ? [] : null);
+            if (!(is_array($val) && $val == []) && $val != null) {
+                $currentSettings[$name] = $val;
             }
-            $sql = sprintf('SELECT id, value FROM %s WHERE %s = :target_id', $settings->getTableName(), $settings->getTargetIdColumnName());
-            $stmt = $connection->executeQuery($sql, ['target_id' => $id]);
-        } else {
-            $sql = sprintf('SELECT id, value FROM %s', $settings->getTableName());
-            $stmt = $connection->executeQuery($sql);
         }
-
-        $currentSettings = $stmt->fetchAllKeyValue();
 
         // Skip settings that are arrays, because the fields "multi-checkbox"
         // and "multi-select" are removed when no value are selected, so it's
@@ -435,36 +316,32 @@ class Module extends AbstractModule
 
         foreach ($missingSettings as $name => $value) {
             $settings->set($name, $value);
+            $currentSettings[$name] = $value;
         }
 
-        return true;
-    }
+        /**
+         * @var \Laminas\Form\Fieldset $fieldset
+         * @var \Laminas\Form\Form $form
+         */
+        $fieldset = $formElementManager->get('Selection\Form\SiteSettingsFieldset');
+        $fieldset->setName('selection');
+        $form = $event->getTarget();
 
-    /**
-     * Prepare data for a form or a fieldset.
-     *
-     *
-     * @todo Use form methods to populate.
-     *
-     * @param SettingsInterface $settings
-     * @return array|null
-     */
-    protected function prepareDataToPopulate(SettingsInterface $settings): ?array
-    {
-        // TODO Explain this feature.
-        // Use isset() instead of empty() to give the possibility to display a
-        // specific form.
-        $defaultSettings = $this->getModuleSiteConfig();
-        if ($defaultSettings === null) {
-            return null;
+        $fieldsetElementGroups = $fieldset->getOption('element_groups');
+        if ($fieldsetElementGroups) {
+            $form->setOption('element_groups', array_merge($form->getOption('element_groups') ?: [], $fieldsetElementGroups));
         }
 
-        $data = [];
-        foreach ($defaultSettings as $name => $value) {
-            $val = $settings->get($name, is_array($value) ? [] : null);
-            $data[$name] = $val;
+        foreach ($fieldset->getFieldsets() as $subFieldset) {
+            $form->add($subFieldset);
         }
-        return $data;
+        foreach ($fieldset->getElements() as $element) {
+            $form->add($element);
+        }
+        $form->populateValues($currentSettings);
+        $fieldset = $form;
+
+        return $fieldset;
     }
 
     public function handleShowSelectionButton(Event $event): void
@@ -476,7 +353,6 @@ class Module extends AbstractModule
          * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
          * @see \Selection\View\Helper\SelectionButton
          */
-
         $services = $this->getServiceLocator();
         $siteSettings = $services->get('Omeka\Settings\Site');
 
@@ -511,7 +387,6 @@ class Module extends AbstractModule
          * @var \Laminas\View\Renderer\PhpRenderer $view
          * @see \Selection\View\Helper\SelectionList
          */
-
         $services = $this->getServiceLocator();
         $siteSettings = $services->get('Omeka\Settings\Site');
 

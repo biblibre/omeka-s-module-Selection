@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Solr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-17 09:29+0200\n"
+"POT-Creation-Date: 2025-10-02 10:18+0200\n"
 "PO-Revision-Date: 2025-06-02 00:00+0000\n"
 "Last-Translator: Daniel Berthereau <Daniel.fr@Berthereau.net>\n"
 "Language-Team: French\n"
@@ -18,12 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 3.2.2\n"
 
-#: data/scripts/upgrade.php:33
-#, php-format
-msgid "The module %1$s should be upgraded to version %2$s or later."
-msgstr "Le module %1$s doit être mis à niveau à la version %2$s ou supérieure."
-
-#: Module.php:74
+#: Module.php:98
 msgid ""
 "This module cannot install its tables, because they exist already. Try to "
 "remove them first."
@@ -31,7 +26,7 @@ msgstr ""
 "Ce module ne peut pas installer ses tables car elles existent déjà. Essayez "
 "de les supprimer manuellement."
 
-#: Module.php:567 src/Controller/Site/TraitDbController.php:619
+#: Module.php:505 src/Controller/Site/TraitDbController.php:619
 #: src/Controller/Site/TraitSessionController.php:433
 #: src/View/Helper/SelectionContainer.php:50
 #: src/View/Helper/SelectionContainer.php:85
@@ -51,15 +46,13 @@ msgstr "Le nom du groupe n’a pas été modifié."
 #: src/Controller/Site/AbstractSelectionController.php:179
 #: src/Controller/Site/AbstractSelectionController.php:437
 #: src/Controller/Site/AbstractSelectionController.php:443
-#, fuzzy, php-format
 msgid "The group \"%s\" does not exist."
-msgstr "Le groupe n’existe pas."
+msgstr "Le groupe \"%s\" n’existe pas."
 
 #: src/Controller/Site/AbstractSelectionController.php:185
 #: src/Controller/Site/AbstractSelectionController.php:191
-#, fuzzy, php-format
 msgid "The destination group \"%s\" does not exist."
-msgstr "Le groupe destination « {name} » n’existe pas."
+msgstr "Le groupe destination \"%s\" n’existe pas."
 
 #: src/Controller/Site/AbstractSelectionController.php:229
 #: src/Controller/Site/AbstractSelectionController.php:318
@@ -71,9 +64,8 @@ msgstr "Aucun groupe défini."
 
 #: src/Controller/Site/AbstractSelectionController.php:242
 #: src/Controller/Site/AbstractSelectionController.php:338
-#, fuzzy, php-format
 msgid "The group name contains invalid characters (%s)."
-msgstr "Le nom du groupe contient des caractères invalides ({characters})."
+msgstr "Le nom du groupe contient des caractères invalides (%s)."
 
 #: src/Controller/Site/AbstractSelectionController.php:250
 #: src/Controller/Site/AbstractSelectionController.php:352
@@ -111,7 +103,6 @@ msgid "Check your input for invalid data."
 msgstr ""
 
 #: src/Mvc/Controller/Plugin/JSend.php:74
-#, fuzzy
 msgid "An internal error has occurred."
 msgstr "Une erreur interne est survenue."
 
@@ -203,148 +194,11 @@ msgstr "Supprimer le dossier"
 msgid "Move resources"
 msgstr "Déplacer des ressources"
 
-#: Module.php:86
-msgid ""
-"The module Basket is present. Upgrade from it was removed since version "
-"3.4.7. Install the previous version if you want to upgrade it."
-msgstr ""
-"Le module Basket est présent. La mise à niveau a été supprimée depuis la "
-"version 3.4.7. Installez une version antérieure si vous voulez le mettre à "
-"niveau."
-
-#: Module.php:147
+#: Module.php:192
 #, php-format
 msgid "The module removed tables \"%s\" from a previous broken install."
 msgstr ""
 "Le module a supprimé les tables « %s » depuis une installation échouée."
-
-#: data/scripts/upgrade.php:136
-msgid ""
-"Helpers and templates were renamed. Old ones will be removed in a future "
-"version."
-msgstr ""
-"Les assistants de vue et les modèles doivent être renommés. Les anciens "
-"seront supprimés dans une version prochaine."
-
-#: data/scripts/upgrade.php:191
-msgid "It is now possible to organize selected resources in a structured way."
-msgstr ""
-"Il est désormais possible d’organiser les ressources choisies de manière "
-"structurée."
-
-#: data/scripts/upgrade.php:195
-msgid "The structure is not available for anonymous visitors yet."
-msgstr ""
-"Le classement des sélections dans une structure n’est pas encore disponible "
-"pour les visiteurs anonymes."
-
-#: data/scripts/upgrade.php:199
-msgid ""
-"Some url routes have been updated to use query arguments. Check your theme "
-"if needed."
-msgstr ""
-"Certaines urls ont été mises à jour pour utiliser des arguments. Vérifiez "
-"votre thème si nécessaire."
-
-#: data/scripts/upgrade.php:236
-msgid ""
-"The option \"selection_visitor_allow\" was renamed "
-"\"selection_disable_anonymous\" and \"selection_open\" as "
-"\"selection_resource_show_open\". Update your theme if you customized it."
-msgstr ""
-"L’option « selection_visitor_allow » a été renommée "
-"« selection_disable_anonymous » et « selection_open » en "
-"« selection_resource_show_open ». Mettez à jour le thème s’il a été "
-"personnalisé."
-
-#: data/scripts/upgrade.php:241
-msgid "The views were restructured, so check your theme if you customized it."
-msgstr ""
-"Les vues ont été restructurées. Il est donc recommandé de vérifier le thème "
-"si vous l’avez personnalisé."
-
-#: data/scripts/upgrade.php:246
-msgid ""
-"A new option in site settings and in block settings allows to display the "
-"selection flat, by default, or hierarchically."
-msgstr ""
-"Une nouvelle option dans les paramètres de site et dans les paramètres du "
-"bloc permet d’afficher la liste de sélection à plat, par défaut, ou en "
-"arborescence."
-
-#: data/scripts/upgrade.php:251
-msgid ""
-"A new option in site settings allows to define selectable resources (items, "
-"medias, item sets)."
-msgstr ""
-"Une nouvelle option dans les paramètres de site permet de définir les "
-"ressources sélectionnables (contenus, médias et collections)."
-
-#: data/scripts/upgrade.php:256
-msgid ""
-"The resource block \"Selection\" was split into a block \"Selection\" and a "
-"block \"Selection list\"."
-msgstr ""
-"Le bloc « Sélection » a été scindé en un blocs « Sélection » et en un bloc "
-"« Liste des sélections »."
-
-#: data/scripts/upgrade.php:261
-msgid ""
-"Modules {link_1}Bulk Export{link_end} and {link_2}Contact Us{link_end} are "
-"fully integrated in the selection page."
-msgstr ""
-"Les modules {link_1}Bulk Export{link_end} et {link_2}Contact Us{link_end} "
-"sont désormais entièrement intégrés dans la page de sélection."
-
-#: data/scripts/upgrade.php:344
-msgid ""
-"The setting \"heading\" was removed from block Selection. New blocks "
-"\"Heading\" or \"Html\" were prepended to all blocks that had a filled "
-"heading. You may check pages for styles: {json}"
-msgstr ""
-"Le paramètre « heading » a été supprimé du bloc Sélection. Des blocs "
-"« Titre » ou « Html » ont été ajoutés à tous les blocs qui avaient un titre. "
-"Vous pouvez vérifier les pages pour les styles : {json}"
-
-#: data/scripts/upgrade.php:354
-msgid ""
-"The setting \"template\" was moved to the new block layout settings "
-"available since Omeka S v4.1. You may check pages for styles: {json}"
-msgstr ""
-"Le paramètre « template » a été déplacé dans les nouveaux paramètres de bloc "
-"depuis Omeka S v4.1. Vous pouvez vérifier les pages pour les styles : {json}"
-
-#: data/scripts/upgrade.php:361
-msgid ""
-"The template files for the block Selection should be moved from \"view/"
-"common/block-layout\" to \"view/common/block-template\" in your themes. You "
-"may check your themes for pages: {json}"
-msgstr ""
-"Les fichiers de gabarits pour le bloc Sélection doit être déplacé de « view/"
-"common/block-layout » à « view/common/block-template » dans vos thèmes. Vous "
-"pouvez vérifier vos thèmes pour les pages : {json}"
-
-#: data/scripts/upgrade.php:396
-msgid ""
-"A new option is added to display selection button and list before, after or "
-"via resource blocks. See site settings."
-msgstr ""
-"Une nouvelle option permet d’afficher la bouton et la liste de sélection "
-"avant, après ou via les blocs de ressources dans les paramètres de site."
-
-#: data/scripts/upgrade.php:426
-msgid ""
-"The view helpers \"selectionButtonToggle\", \"showSelectionLink\", "
-"\"updateSelectionLink\" , and \"containerSelection\" were renamed "
-"\"selectionButton\", \"selectionList\", \"selectionLinkBrowse\", and "
-"\"selectionContainer\". You should update your theme. Matching templates: "
-"{json}"
-msgstr ""
-"Les assistants de vue « selectionButtonToggle », « showSelectionLink », "
-"« updateSelectionLink » et « containerSelection » ont été renommés "
-"« selectionButton », « selectionList », « selectionLinkBrowse » et "
-"« selectionContainer ». Vous devez mettre à jour votre thème. Vues "
-"correspondantes : {json}"
 
 #: src/Api/Adapter/SelectionAdapter.php:183
 msgid "A selection must have an owner."
@@ -521,8 +375,134 @@ msgstr "Bouton de sélection"
 msgid "Selection list"
 msgstr "Liste des sélections"
 
-#~ msgid "The group \"{name}\" does not exist."
-#~ msgstr "Le groupe « {name} » n’existe pas."
+#, php-format
+#~ msgid "The module %1$s should be upgraded to version %2$s or later."
+#~ msgstr ""
+#~ "Le module %1$s doit être mis à niveau à la version %2$s ou supérieure."
+
+#~ msgid ""
+#~ "The module Basket is present. Upgrade from it was removed since version "
+#~ "3.4.7. Install the previous version if you want to upgrade it."
+#~ msgstr ""
+#~ "Le module Basket est présent. La mise à niveau a été supprimée depuis la "
+#~ "version 3.4.7. Installez une version antérieure si vous voulez le mettre "
+#~ "à niveau."
+
+#~ msgid ""
+#~ "Helpers and templates were renamed. Old ones will be removed in a future "
+#~ "version."
+#~ msgstr ""
+#~ "Les assistants de vue et les modèles doivent être renommés. Les anciens "
+#~ "seront supprimés dans une version prochaine."
+
+#~ msgid ""
+#~ "It is now possible to organize selected resources in a structured way."
+#~ msgstr ""
+#~ "Il est désormais possible d’organiser les ressources choisies de manière "
+#~ "structurée."
+
+#~ msgid "The structure is not available for anonymous visitors yet."
+#~ msgstr ""
+#~ "Le classement des sélections dans une structure n’est pas encore "
+#~ "disponible pour les visiteurs anonymes."
+
+#~ msgid ""
+#~ "Some url routes have been updated to use query arguments. Check your "
+#~ "theme if needed."
+#~ msgstr ""
+#~ "Certaines urls ont été mises à jour pour utiliser des arguments. Vérifiez "
+#~ "votre thème si nécessaire."
+
+#~ msgid ""
+#~ "The option \"selection_visitor_allow\" was renamed "
+#~ "\"selection_disable_anonymous\" and \"selection_open\" as "
+#~ "\"selection_resource_show_open\". Update your theme if you customized it."
+#~ msgstr ""
+#~ "L’option « selection_visitor_allow » a été renommée "
+#~ "« selection_disable_anonymous » et « selection_open » en "
+#~ "« selection_resource_show_open ». Mettez à jour le thème s’il a été "
+#~ "personnalisé."
+
+#~ msgid ""
+#~ "The views were restructured, so check your theme if you customized it."
+#~ msgstr ""
+#~ "Les vues ont été restructurées. Il est donc recommandé de vérifier le "
+#~ "thème si vous l’avez personnalisé."
+
+#~ msgid ""
+#~ "A new option in site settings and in block settings allows to display the "
+#~ "selection flat, by default, or hierarchically."
+#~ msgstr ""
+#~ "Une nouvelle option dans les paramètres de site et dans les paramètres du "
+#~ "bloc permet d’afficher la liste de sélection à plat, par défaut, ou en "
+#~ "arborescence."
+
+#~ msgid ""
+#~ "A new option in site settings allows to define selectable resources "
+#~ "(items, medias, item sets)."
+#~ msgstr ""
+#~ "Une nouvelle option dans les paramètres de site permet de définir les "
+#~ "ressources sélectionnables (contenus, médias et collections)."
+
+#~ msgid ""
+#~ "The resource block \"Selection\" was split into a block \"Selection\" and "
+#~ "a block \"Selection list\"."
+#~ msgstr ""
+#~ "Le bloc « Sélection » a été scindé en un blocs « Sélection » et en un "
+#~ "bloc « Liste des sélections »."
+
+#~ msgid ""
+#~ "Modules {link_1}Bulk Export{link_end} and {link_2}Contact Us{link_end} "
+#~ "are fully integrated in the selection page."
+#~ msgstr ""
+#~ "Les modules {link_1}Bulk Export{link_end} et {link_2}Contact Us{link_end} "
+#~ "sont désormais entièrement intégrés dans la page de sélection."
+
+#~ msgid ""
+#~ "The setting \"heading\" was removed from block Selection. New blocks "
+#~ "\"Heading\" or \"Html\" were prepended to all blocks that had a filled "
+#~ "heading. You may check pages for styles: {json}"
+#~ msgstr ""
+#~ "Le paramètre « heading » a été supprimé du bloc Sélection. Des blocs "
+#~ "« Titre » ou « Html » ont été ajoutés à tous les blocs qui avaient un "
+#~ "titre. Vous pouvez vérifier les pages pour les styles : {json}"
+
+#~ msgid ""
+#~ "The setting \"template\" was moved to the new block layout settings "
+#~ "available since Omeka S v4.1. You may check pages for styles: {json}"
+#~ msgstr ""
+#~ "Le paramètre « template » a été déplacé dans les nouveaux paramètres de "
+#~ "bloc depuis Omeka S v4.1. Vous pouvez vérifier les pages pour les "
+#~ "styles : {json}"
+
+#~ msgid ""
+#~ "The template files for the block Selection should be moved from \"view/"
+#~ "common/block-layout\" to \"view/common/block-template\" in your themes. "
+#~ "You may check your themes for pages: {json}"
+#~ msgstr ""
+#~ "Les fichiers de gabarits pour le bloc Sélection doit être déplacé de "
+#~ "« view/common/block-layout » à « view/common/block-template » dans vos "
+#~ "thèmes. Vous pouvez vérifier vos thèmes pour les pages : {json}"
+
+#~ msgid ""
+#~ "A new option is added to display selection button and list before, after "
+#~ "or via resource blocks. See site settings."
+#~ msgstr ""
+#~ "Une nouvelle option permet d’afficher la bouton et la liste de sélection "
+#~ "avant, après ou via les blocs de ressources dans les paramètres de site."
+
+#~ msgid ""
+#~ "The view helpers \"selectionButtonToggle\", \"showSelectionLink\", "
+#~ "\"updateSelectionLink\" , and \"containerSelection\" were renamed "
+#~ "\"selectionButton\", \"selectionList\", \"selectionLinkBrowse\", and "
+#~ "\"selectionContainer\". You should update your theme. Matching templates: "
+#~ "{json}"
+#~ msgstr ""
+#~ "Les assistants de vue « selectionButtonToggle », « showSelectionLink », "
+#~ "« updateSelectionLink » et « containerSelection » ont été renommés "
+#~ "« selectionButton », « selectionList », « selectionLinkBrowse » et "
+#~ "« selectionContainer ». Vous devez mettre à jour votre thème. Vues "
+#~ "correspondantes : {json}"
 
 #, php-format
 #~ msgid "Invalid navigation: link without label (%s)"

@@ -42,10 +42,8 @@ class SelectionList extends AbstractHelper
         $selectionId = $selection['id'];
 
         /* // Useless here, or add a specific option.
-        $allowIndividualSelect = $siteSetting('selection_individual_select', 'auto');
-        $allowIndividualSelect = ($allowIndividualSelect !== 'no' && $allowIndividualSelect !== 'yes')
-            ? $plugins->has('bulkExport') || $plugins->has('contactUs')
-            : $allowIndividualSelect === 'yes';
+        $allowIndividualSelect = $siteSetting('selection_individual_select', 'no');
+        $allowIndividualSelect = allowIndividualSelect === 'yes';
          */
         $allowIndividualSelect = false;
 

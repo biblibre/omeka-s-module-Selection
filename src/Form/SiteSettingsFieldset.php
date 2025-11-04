@@ -141,7 +141,7 @@ class SiteSettingsFieldset extends Fieldset
                     'element_group' => 'selection',
                     'label' => 'Add individual checkboxes for modules Bulk Export and Contact Us', // @translate
                     'value_options' => [
-                        'auto' => 'When needed', // @translate
+
                         'no' => 'No', // @translate
                         'yes' => 'Yes', // @translate
                     ],
