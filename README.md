@@ -82,7 +82,7 @@ Copyright
 
 * Copyright Biblibre, 2016-2025 (see [Biblibre])
 * Copyright Daniel Berthereau, 2017-2025 (see [Daniel-KM] on GitLab)
-* Copyright Abel Boilevin 2025
+* Copyright Abel Boilevin 2025 (see [Biblibre])
 
 This module was initially based on the fork of the module [Basket] from BibLibre
 and restructured and improved for various projects, like [Collections de la Maison de Salins],
