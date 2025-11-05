@@ -2,7 +2,7 @@
 
 namespace Selection\Form;
 
-use Laminas\Form\Element;
+use Selection\Form\Element\OptionalRadio;
 use Laminas\Form\Fieldset;
 
 class SelectionFieldset extends Fieldset
@@ -16,7 +16,7 @@ class SelectionFieldset extends Fieldset
             // TODO Move this to a layout block-template?
             ->add([
                 'name' => 'o:block[__blockIndex__][o:data][disposition]',
-                'type' => Element\Radio::class,
+                'type' => OptionalRadio::class,
                 'options' => [
                     'label' => 'Disposition', // @translate
                     'value_options' => [
@@ -30,7 +30,7 @@ class SelectionFieldset extends Fieldset
             ])
             ->add([
                 'name' => 'o:block[__blockIndex__][o:data][individual_select]',
-                'type' => Element\Radio::class,
+                'type' => OptionalRadio::class,
                 'options' => [
                     'label' => 'Add individual checkboxes for modules Bulk Export and Contact Us', // @translate
                     'value_options' => [

@@ -4,6 +4,8 @@ namespace Selection\Form;
 
 use Laminas\Form\Element;
 use Laminas\Form\Fieldset;
+use Selection\Form\Element\OptionalRadio;
+use Selection\Form\Element\OptionalMultiCheckbox;
 
 class SiteSettingsFieldset extends Fieldset
 {
@@ -34,7 +36,7 @@ class SiteSettingsFieldset extends Fieldset
             ])
             ->add([
                 'name' => 'selection_selectable_resources',
-                'type' => Element\MultiCheckbox::class,
+                'type' => OptionalMultiCheckbox::class,
                 'options' => [
                     'element_group' => 'selection',
                     'label' => 'Limit selections to specific resources', // @translate
@@ -51,7 +53,7 @@ class SiteSettingsFieldset extends Fieldset
             ])
             ->add([
                 'name' => 'selection_placement_button',
-                'type' => Element\MultiCheckbox::class,
+                'type' => OptionalMultiCheckbox::class,
                 'options' => [
                     'element_group' => 'selection',
                     'label' => 'Display selection button', // @translate
@@ -74,7 +76,7 @@ class SiteSettingsFieldset extends Fieldset
             ])
             ->add([
                 'name' => 'selection_placement_list',
-                'type' => Element\MultiCheckbox::class,
+                'type' => OptionalMultiCheckbox::class,
                 'options' => [
                     'element_group' => 'selection',
                     'label' => 'Display selection list', // @translate
@@ -120,7 +122,7 @@ class SiteSettingsFieldset extends Fieldset
             // TODO Add a third view with a button to let user choose disposition.
             ->add([
                 'name' => 'selection_browse_disposition',
-                'type' => Element\Radio::class,
+                'type' => OptionalRadio::class,
                 'options' => [
                     'element_group' => 'selection',
                     'label' => 'Default disposition of page Selection', // @translate
@@ -136,7 +138,7 @@ class SiteSettingsFieldset extends Fieldset
             ])
             ->add([
                 'name' => 'selection_individual_select',
-                'type' => Element\Radio::class,
+                'type' => OptionalRadio::class,
                 'options' => [
                     'element_group' => 'selection',
                     'label' => 'Add individual checkboxes for modules Bulk Export and Contact Us', // @translate

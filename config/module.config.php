@@ -39,6 +39,8 @@ return  [
         'invokables' => [
             Form\SelectionFieldset::class => Form\SelectionFieldset::class,
             Form\SiteSettingsFieldset::class => Form\SiteSettingsFieldset::class,
+            Form\Element\OptionalRadio::class => Form\Element\OptionalRadio::class,
+            Form\Element\OptionalMultiCheckbox::class => Form\Element\OptionalMultiCheckbox::class,
         ],
     ],
     'block_layouts' => [
